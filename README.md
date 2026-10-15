@@ -133,7 +133,6 @@ formant/                 主扩展（加载此目录为「未打包的扩展」�
   viewer.js              JSON 树查看器
 bookmarks/               历史书签扩展片段（参考）
 oolaf-web-json-prettify/ JSON 预ttify 片段（已并入 formant DevTools）
-AGENTS.md                协作硬性规则
 DESIGN.md                视觉与 token
 LOGS.md                  更改记录（文末追加）
 README.md                本说明
@@ -678,7 +677,6 @@ Client 路由前缀：`/api/v1/client/newtab/*`、`/api/v1/client/gestures`、`/
 
 ## 设计与协作文档
 
-- [`AGENTS.md`](AGENTS.md) — Agent/协作硬性规则（改代码必读）
 - [`DESIGN.md`](DESIGN.md) — 扩展视觉与 CSS 变量
 - [`LOGS.md`](LOGS.md) — 更改记录（只在文末按时间追加）
 

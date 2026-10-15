@@ -978,3 +978,8 @@
 1. 加 GitHub Actions：`main` 每次提交（及手动触发）用 `pack-edge.py --zip-only` 打扩展 zip，发到 Releases，标签 `v<manifest.version>`；同版本再推会覆盖附件。
 2. `pack-edge.py` 的 Pillow 只在出商店图时才 import，CI 不再依赖 PIL。版本升到 1.8.154。
 
+2026-10-15 10:09:00
+
+1. `AGENTS.md` 不再纳入 git：加入根目录 `.gitignore`（`/AGENTS.md`），并用 `git rm --cached` 从版本库删除，GitHub 上已上传的副本会随本次提交消失。
+2. 本机文件保留，Cursor / 本地协作规则不受影响。README 去掉对仓库内该文件的目录项与链接，避免公开仓死链。
+
