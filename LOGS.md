@@ -983,3 +983,8 @@
 1. `AGENTS.md` 不再纳入 git：加入根目录 `.gitignore`（`/AGENTS.md`），并用 `git rm --cached` 从版本库删除，GitHub 上已上传的副本会随本次提交消失。
 2. 本机文件保留，Cursor / 本地协作规则不受影响。README 去掉对仓库内该文件的目录项与链接，避免公开仓死链。
 
+2026-10-15 10:52:52
+
+1. README 增加「快速开始」，用 GIF 演示第一次配置（加载未打包扩展 + `option.html#sync` 填 Client API Key）和日常使用（popup 翻译、划词、New Tab 四卡）。
+2. 新增 `scripts/render_readme_gifs.py`（Pillow）与 `docs/setup.gif`、`docs/usage.gif`，配色跟 formant 浅色 token；示例钥匙用占位符，不写入真实密钥。
+

@@ -4,6 +4,28 @@
 
 后端能力依赖 [`aphelios - mono`](../aphelios%20-%20mono) 的 Client API（`x-oolaf-client-key`）与 Admin 里的 Formant 配置组。
 
+## 快速开始
+
+先把扩展加载进 Chrome 或 Edge，再在「同步」里填 Client API Key。密钥只存在本机，不要写进仓库。
+
+### 1. 第一次配置
+
+Chrome → `chrome://extensions` → 打开「开发者模式」→「加载已解压的扩展程序」→ 选择本仓库的 `formant` 目录。然后点 popup 齿轮打开 `option.html#sync`：环境选 prod（`https://www.oolaf.top`）或 dev（`http://localhost:3101`），填入 mono Admin 签发的 Client API Key 并保存。
+
+![第一次配置：加载扩展并填写 Client API Key](docs/setup.gif)
+
+### 2. 日常使用
+
+点工具栏图标输入文本，自动按词库打分走 Google / GPT；网页划词点「译」出浮动面板；新标签页同一行四卡（天气 / 假期 / 汇率 / 热点英语）。
+
+![日常使用：popup 翻译、划词和新标签页](docs/usage.gif)
+
+更细的加载步骤见下方「本地加载」。重新生成这两张 GIF：
+
+```bash
+python scripts/render_readme_gifs.py
+```
+
 ## 技术栈
 
 | 层 | 技术 |
@@ -133,6 +155,8 @@ formant/                 主扩展（加载此目录为「未打包的扩展」�
   viewer.js              JSON 树查看器
 bookmarks/               历史书签扩展片段（参考）
 oolaf-web-json-prettify/ JSON 预ttify 片段（已并入 formant DevTools）
+docs/                    README 用户介绍 GIF（setup.gif / usage.gif）
+scripts/render_readme_gifs.py  用 Pillow 生成上述 GIF
 DESIGN.md                视觉与 token
 LOGS.md                  更改记录（文末追加）
 README.md                本说明
