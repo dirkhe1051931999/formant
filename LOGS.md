@@ -973,3 +973,8 @@
 1. 项目从 `D:\code\oolaf - formant`（oolaf 仓 `formant` 分支）迁到独立仓库 `D:\code\formant`（`dirkhe1051931999/formant`，`main`），准备公开。
 2. `AGENTS.md` 工作目录改为 `D:\code\formant`；README 本地加载改为选本仓库 `formant` 目录，不再写死旧路径。
 
+2026-10-15 10:00:40
+
+1. 加 GitHub Actions：`main` 每次提交（及手动触发）用 `pack-edge.py --zip-only` 打扩展 zip，发到 Releases，标签 `v<manifest.version>`；同版本再推会覆盖附件。
+2. `pack-edge.py` 的 Pillow 只在出商店图时才 import，CI 不再依赖 PIL。版本升到 1.8.154。
+

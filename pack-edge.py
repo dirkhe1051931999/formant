@@ -4,10 +4,9 @@
 from __future__ import annotations
 
 import json
+import sys
 import zipfile
 from pathlib import Path
-
-from PIL import Image, ImageDraw, ImageFont
 
 ROOT = Path(__file__).resolve().parent
 SRC = ROOT / "formant"
@@ -71,7 +70,8 @@ def write_zip(version: str) -> Path:
     return out
 
 
-def load_font(size: int, cjk: bool = False) -> ImageFont.FreeTypeFont | ImageFont.ImageFont:
+def load_font(size: int, cjk: bool = False):
+    from PIL import ImageFont
     latin = (
         Path(r"C:\Windows\Fonts\segoeui.ttf"),
         Path(r"C:\Windows\Fonts\arial.ttf"),
@@ -94,6 +94,8 @@ def load_font(size: int, cjk: bool = False) -> ImageFont.FreeTypeFont | ImageFon
 
 
 def write_store_images() -> None:
+    from PIL import Image, ImageDraw
+
     icon = Image.open(SRC / "icons" / "icon128.png").convert("RGBA")
     STORE.mkdir(parents=True, exist_ok=True)
 
@@ -127,12 +129,15 @@ def write_store_images() -> None:
 
 
 def main() -> None:
+    zip_only = "--zip-only" in sys.argv
     version = read_version()
     out = write_zip(version)
-    write_store_images()
     size_mb = out.stat().st_size / (1024 * 1024)
     count = len(zipfile.ZipFile(out).namelist())
     print(f"zip    {out}  ({count} files, {size_mb:.2f} MB)")
+    if zip_only:
+        return
+    write_store_images()
     print(f"icon   {STORE / 'icon-128.png'}")
     print(f"shot   {STORE / 'screenshot-1280x800.png'}")
     print(f"shot   {STORE / 'screenshot-640x400.png'}")

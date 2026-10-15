@@ -1,0 +1,45 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Pack extension zip
+        run: python pack-edge.py --zip-only
+
+      - name: Publish GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          VERSION=$(python -c "import json; print(json.load(open('formant/manifest.json', encoding='utf-8'))['version'])")
+          ZIP="dist/formant-${VERSION}.zip"
+          TAG="v${VERSION}"
+          if [[ ! -f "$ZIP" ]]; then
+            echo "missing $ZIP" >&2
+            exit 1
+          fi
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" "$ZIP" --clobber
+          else
+            gh release create "$TAG" "$ZIP" \
+              --title "formant ${VERSION}" \
+              --generate-notes \
+              --latest
+          fi

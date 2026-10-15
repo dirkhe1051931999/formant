@@ -167,6 +167,12 @@ python pack-edge.py
 
 清单短描述走 `_locales`（`default_locale` 为 `zh_CN`，另有 `en`），商店长描述、截图、隐私政策 URL 在 Partner Center 里另填，不打进 zip。截图须为 **640×480 或 1280×800**，最多 6 张。
 
+CI（`python pack-edge.py --zip-only`）只打 zip，不生成商店图，也不需要 Pillow。
+
+## GitHub Releases
+
+`main` 每次推送（以及手动 Run workflow）会跑 `.github/workflows/release.yml`：按 `formant/manifest.json` 的 `version` 打 `formant-<version>.zip`，发布到 [Releases](https://github.com/dirkhe1051931999/formant/releases)。标签为 `v<version>`；同一版本再次推送会覆盖该 tag 上的 zip，不另开一条 Release。
+
 ## 能力总览
 
 ### 功能开关
@@ -678,4 +684,4 @@ Client 路由前缀：`/api/v1/client/newtab/*`、`/api/v1/client/gestures`、`/
 
 ## 版本
 
-当前扩展版本见 [`formant/manifest.json`](formant/manifest.json) 的 `version` 字段（现为 `1.8.153`）。
+当前扩展版本见 [`formant/manifest.json`](formant/manifest.json) 的 `version` 字段（现为 `1.8.154`）。
