@@ -988,3 +988,8 @@
 1. README 增加「快速开始」，用 GIF 演示第一次配置（加载未打包扩展 + `option.html#sync` 填 Client API Key）和日常使用（popup 翻译、划词、New Tab 四卡）。
 2. 新增 `scripts/render_readme_gifs.py`（Pillow）与 `docs/setup.gif`、`docs/usage.gif`，配色跟 formant 浅色 token；示例钥匙用占位符，不写入真实密钥。
 
+2026-10-15 11:00:12
+
+1. 能力总览每个功能补一张示例 GIF（翻译、New Tab、工具箱、识图、截屏、oolafOffice、词库、书签、图片另存为、Telegram、GitZip、V2EX、AutoPagerize、手势、代理、扩展管理、站点数据、代码美化，以及 X / Discord / elitepvpers / linux.do / 虎扑 / freefq / huavod / Gemini / Gmail / Axure / Vue / HLS）。
+2. 生成脚本拆成 `gif_lib.py` / `gif_intro.py` / `gif_features_a.py` / `gif_features_b.py`，`python scripts/render_readme_gifs.py` 一次出齐；各文件不超过 500 行。
+

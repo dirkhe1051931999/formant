@@ -20,7 +20,7 @@ Chrome → `chrome://extensions` → 打开「开发者模式」→「加载已�
 
 ![日常使用：popup 翻译、划词和新标签页](docs/usage.gif)
 
-更细的加载步骤见下方「本地加载」。重新生成这两张 GIF：
+更细的加载步骤见下方「本地加载」。各功能示例 GIF 在「能力总览」对应小节。重新生成全部 GIF：
 
 ```bash
 python scripts/render_readme_gifs.py
@@ -155,8 +155,8 @@ formant/                 主扩展（加载此目录为「未打包的扩展」�
   viewer.js              JSON 树查看器
 bookmarks/               历史书签扩展片段（参考）
 oolaf-web-json-prettify/ JSON 预ttify 片段（已并入 formant DevTools）
-docs/                    README 用户介绍 GIF（setup.gif / usage.gif）
-scripts/render_readme_gifs.py  用 Pillow 生成上述 GIF
+docs/                    README 示例 GIF（setup / usage 以及各功能一张）
+scripts/                 Pillow 生成 README GIF（`python scripts/render_readme_gifs.py`）
 DESIGN.md                视觉与 token
 LOGS.md                  更改记录（文末追加）
 README.md                本说明
@@ -200,6 +200,8 @@ CI（`python pack-edge.py --zip-only`）只打 zip，不生成商店图，也不
 
 ### 功能开关
 
+各功能示例 GIF 见下方对应小节。
+
 - 入口：`option.html#features`（扩展设置 → 功能）
 - 存储：`chrome.storage.local.formantFeatures`
 - **翻译**：总开关 + 弹窗 / 划词浮标 / 右键菜单
@@ -232,6 +234,8 @@ CI（`python pack-edge.py --zip-only`）只打 zip，不生成商店图，也不
 
 ### 智能翻译
 
+![智能翻译：popup 自动路由](docs/translate.gif)
+
 - **入口**：popup 输入框；划词图标 / 右键「用 formant 翻译」
 - **模式**：自动 / Google / GPT / 全部（`translateMode` 持久化）
 - **路由**：本地打分（脚本嗅探 + 词库命中 + 句式）；简单偏 Google，复杂并行 GPT
@@ -245,6 +249,8 @@ CI（`python pack-edge.py --zip-only`）只打 zip，不生成商店图，也不
 - **上次原文**：仅在 popup 开着时切过浏览器标签，下次打开才还原上次原文和译文（不重新请求）。自己点外面 / 再点图标关掉再开，输入框是空的。改字、改模式或改目标语言才再请求；关浏览器后快照清空
 
 ### X 推文翻译（轻量）
+
+![X 推文翻译：时间线正文下补灰色译文](docs/x-translate.gif)
 
 - 入口：`option.html#features` 总开关（`features.xTranslate.enabled`，**默认开启**）+ `option.html#x-translate` 颜色 / 色号 / 字号。不另开独立 popup / options 页。
 - **能力**：在 X/Twitter 时间线为可见推文正文（`div[data-testid='tweetText']`）串行补译文。目标语言共用「翻译」面板的 `translateTarget`。译文与原文相同时不展示。
@@ -260,6 +266,8 @@ CI（`python pack-edge.py --zip-only`）只打 zip，不生成商店图，也不
 4. 未填 Client API Key 时时间线仍应能出译文；划词/popup 的 Google 失败兜底仍可走 mono。
 
 ### Discord 聊天翻译（轻量）
+
+![Discord 翻译：右下角手动翻译当前页](docs/discord.gif)
 
 - 入口：仅 `option.html#features` 总开关（`features.discord.enabled`，**默认开启**）。不另开独立 popup / options 页。
 - **能力**：在 `discord.com` / `ptb.discord.com` / `canary.discord.com` 的 `/channels/` 页面右下角（输入框上方）显示「翻译」。点击后只翻译当前聊天列表里已经渲染的消息正文（`[data-list-id="chat-messages"]` 内的 `[id^="message-content-"]`）。频道由地址 `/channels/{服务器或 @me}/{频道}` 识别：换频道是新窗口，清空本页记录后整页重翻；同一频道里消息 id 列表变了（往上滚加载更早历史，或底部来了新消息）是新页，只补还没翻过的消息。同一页再点不会重复请求。不点按钮不会翻译新加载的页。刷新页面后内存清空。
@@ -281,6 +289,8 @@ CI（`python pack-edge.py --zip-only`）只打 zip，不生成商店图，也不
 
 ### elitepvpers 帖子翻译（轻量）
 
+![elitepvpers：标题和楼层正文补译文](docs/elitepvpers.gif)
+
 - 入口：仅 `option.html#features` 总开关（`features.elitepvpers.enabled`，**默认开启**）。不另开独立 popup / options 页。
 - **能力**：在 `elitepvpers.com` / `www.elitepvpers.com` 为可见的帖子标题和楼层正文串行补译文。列表用 `a[id^="thread_title_"]`；帖子页标题用 `h1[itemprop="headline"]`（没有时用较短的 `div.cwhead`）；每楼标题用 `td[id^="td_post_"] > div.smallfont`；正文用 `div[id^="post_message_"]`。导航、用户名、签名不翻。目标语言共用「翻译」面板的 `translateTarget`。译文与原文相同时不展示。
 - **样式**：Shadow DOM 挂在对应节点后面。颜色和字号复用 `option.html#x-translate`（默认 `#8c8c8c` / `14px`）。
@@ -295,6 +305,8 @@ CI（`python pack-edge.py --zip-only`）只打 zip，不生成商店图，也不
 4. 关闭 `features.elitepvpers.enabled` 后刷新页面：译文消失。X 推文翻译开关互不影响。
 
 ### linux.do 列表（轻量）
+
+![linux.do 列表换成 formant 表格](docs/linuxdo.gif)
 
 - 入口：仅 `option.html#features` 总开关（`features.linuxdo.enabled`，**默认开启**）。不另开独立 popup / options 页。
 - **能力**：在 `https://linux.do/` 的最新 / 分类等列表页，把 Discourse `.topic-list` 换成飞书式文件表格（标题 / 所有者 / 回复 / 浏览 / 最近活跃），分类 Tab 收成底边指示条；未读/新帖左侧 accent 竖条 + 加粗标题；底栏默认只留分类、tag 悬停再出。列表与顶栏/全页搜索结果里的 `/t/` 帖子链接左键用 `window.open(..., "_blank")` 新标签打开（Ctrl/Cmd/中键仍交浏览器；分类/用户等非帖子链不动）；搜索面板字号/hover 与列表对齐。详情页 `/t/` 做阅读向精简：去掉统计条、楼层轴、标题下分类/tag、标语条、底部分享/书签/举报/通知（保留绿色回复）、相关话题、表情统计与附议/火箭小条；楼主帖左侧 accent 竖条，引用/代码块统一 fill 底。列表与详情都隐藏欢迎/公告横幅、顶栏 logo 与汉堡、语言切换、类别/标签下拉、侧栏底聊天与主题/工具图标。
@@ -312,6 +324,8 @@ CI（`python pack-edge.py --zip-only`）只打 zip，不生成商店图，也不
 6. AutoPagerize 开启时 linux.do 不叠翻页。
 
 ### 虎扑简洁版式（轻量）
+
+![虎扑简洁版式：白卡与上下帖](docs/hupu.gif)
 
 - 入口：仅 `option.html#features` 总开关（`features.hupu.enabled`，**默认开启**，不同步到 mono）。不另开 options 页，不新增权限。
 - **能力**：内容脚本匹配 `*://bbs.hupu.com/*`（`all_frames: false`，`document_start`）。顶栏换成白底两层导航，藏「手机虎扑 / 下载 App / 加入虎扑」与游戏中心，logo 转深色，当前栏目用主色下划线，登录/注册按钮用主色。帖子页 `/{id}.html`：主帖与回帖合为一张白卡；「这些回帖亮了 / 全部回帖」去灰底粗框，标题竖条换主色；回帖头像 32px、行距收紧；「点灭 / 只看此人 / 举报」与引用里的「只看此人」悬停才显示，楼层号常驻；引用块改左侧浅线 + 浅底；右侧最热 / 最新帖与回复框改成圆角卡片，吸顶标题条与回复按钮用主色。标题下和底部固定条提供「上一帖 / 下一帖」，顺序跟板块列表一致。板块列表页只把关注 / 发帖按钮、Tab 下划线与分页换成主色。
@@ -333,6 +347,8 @@ CI（`python pack-edge.py --zip-only`）只打 zip，不生成商店图，也不
 
 ### freefq 导出（轻量）
 
+![freefq：解除禁复制并导出 TXT](docs/freefq.gif)
+
 - 入口：仅 `option.html#features` 总开关（`features.freefq.enabled`，**默认开启**）。不另开独立 popup / options 页。
 - **能力**：在 `freefq.com` / `www.freefq.com` 帖子详情（含 `/m/` 移动端）解除禁划选/复制/右键：CSS `user-select`、清掉 `onselectstart` / `oncontextmenu` / `onmousedown` 等钩子，并用捕获阶段拦住站点页尾再次绑定；右下角 Shadow DOM「导出 TXT」从已渲染 DOM 取正文，经 `chrome.downloads` 保存 UTF-8（带 BOM）TXT。文件含标题、元信息、URL 与正文。
 - **正文选择器**：PC 优先 `td#text`；移动端 `div.wz`；再回退用户提供的文章区 XPath。标题读 `.title_info h1` / `h3.bt`。
@@ -346,6 +362,8 @@ CI（`python pack-edge.py --zip-only`）只打 zip，不生成商店图，也不
 
 ### huavod 控制台解锁（轻量）
 
+![huavod：F12 不再被踢走](docs/huavod.gif)
+
 - 入口：仅 `option.html#features` 总开关（`features.huavod.enabled`，**默认开启**）。不另开独立 popup / options 页。
 - **能力**：`huavod.com` / `www.huavod.com` 直播等页加载了 CDN `disable-devtool`（`disable-devtool-auto`），开 DevTools 会 `history.back()` 或清页。formant 用动态 DNR 拦该 script，并在 MAIN world `document_start` 挂起 `DisableDevtool.isSuspend`；无用户手势时吞掉 `history.back` / `history.go(-n)`。浏览器后退按钮（有用户手势）仍可用。
 - **边界**：formant 自研，不整包嵌入第三方 unlock 扩展。不新增权限（复用已有 `declarativeNetRequest`）。禁止改 `action.default_popup`，禁止 `contextMenus.removeAll()`。
@@ -357,6 +375,8 @@ CI（`python pack-edge.py --zip-only`）只打 zip，不生成商店图，也不
 3. 关闭 `features.huavod.enabled` 后硬刷新：再开 F12 应恢复被踢回上一页的行为。
 
 ### Gemini 去水印（轻量）
+
+![Gemini 下载去掉右下角水印](docs/gemini.gif)
 
 - 入口：仅 `option.html#features` 总开关（`features.gemini.enabled`，**默认开启**）。不另开独立 popup / options 页。
 - **能力**：`gemini.google.com` / `business.gemini.google` 上，页面 `fetch` 拉取的 Gemini 成图（`*.googleusercontent.com`，路径首段为 `gg` / `gg-*` / `rd-*`）会先升到原图尺寸（`=s0`），再按右下角蒙版做白色水印反混合，以 PNG 交回下载。已知输出尺寸用对应 48 或 96 蒙版；更大未知尺寸用 96，其余用 48。
@@ -370,6 +390,8 @@ CI（`python pack-edge.py --zip-only`）只打 zip，不生成商店图，也不
 
 ### Gmail 邮箱（轻量）
 
+![Gmail 顶栏显示当前邮箱](docs/gmail.gif)
+
 - 入口：仅 `option.html#features` 总开关（`features.gmail.enabled`，**默认开启**）。不另开独立 popup / options 页。
 - **能力**：只在 `https://mail.google.com/*` 顶栏，把当前账号邮箱放进问号（支持）和齿轮（设置）左边的空白。优先读账号按钮上的邮箱，读不到再用页面里的 `GLOBALS`。文字可选中，点击写入剪贴板。
 - **边界**：不注入其它 Google 域名。不新增权限。关闭开关后卸掉这块文字。不改 `action.default_popup`，禁止 `contextMenus.removeAll()`。
@@ -381,6 +403,8 @@ CI（`python pack-edge.py --zip-only`）只打 zip，不生成商店图，也不
 3. 关掉 `features.gmail.enabled`：邮箱文字消失。其它网站顶栏不受影响。
 
 ### Axure 原型（轻量）
+
+![Axure 本地原型跨框架转发](docs/axure.gif)
 
 - 入口：仅 `option.html#features` 总开关（`features.axure.enabled`，**默认开启**）。不另开独立 popup / options 页。
 - **能力**：内容脚本匹配 `file://*`，且所有框架都会注入。页面里同时有 `axureEventReceiverDiv` 和 `axureEventSenderDiv` 时，把 `axureMessageSenderEvent` 经 service worker 送到同一标签的各框架，再写成接收节点上的 `axureMessageReceiverEvent`。带 `#mainFrame` 的页面给 `body` 标 `pluginDetected`。选择器是 `$`（`querySelector`），不用 jQuery。
@@ -395,6 +419,8 @@ CI（`python pack-edge.py --zip-only`）只打 zip，不生成商店图，也不
 
 ### Vue 组件（轻量）
 
+![Vue 组件树与 Pinia 状态](docs/vue.gif)
+
 - 入口：`option.html#features` 总开关（`features.vue.enabled`，**默认开启**）。检查界面在现有 DevTools 里，面板名「Vue」，与原来的 formant 请求面板并列。不另开 popup。
 - **能力**：页面加载前注入 `__VUE_DEVTOOLS_GLOBAL_HOOK__`。Vue 3 用 `app:init`，Vue 2（legacy）用 `init` / `vuex:init`，并扫描 `__vue__`。点一个组件可看 props、setup 或 data、attrs，并在页面上框出对应元素。Pinia 和 Vuex 都能看当前状态，两边同时存在时各有一个按钮。检测到 Vue 的标签，工具栏图标右上角加一枚绿色 V，离开该页后恢复。面板脚本用 `$`（`querySelector`），没有 jQuery。
 - **边界**：不拷贝 Vue.js devtools 6.6.4 的 `build/`、popup 或图标。不新增权限，不改 `action.default_popup`。高亮在 Shadow DOM 里。只检查 DevTools 打开的顶层页面，iframe 里的应用不会列出来。生产构建若没打开 Vue 的 devtools 标志，官方扩展同样看不到。关闭开关后，已打开的页面停止检查，之后新开的页面不再注入。刚打开开关时需要刷新页面。若同时装着 Vue.js devtools，关掉其一。
@@ -407,6 +433,8 @@ CI（`python pack-edge.py --zip-only`）只打 zip，不生成商店图，也不
 4. 关掉 `features.vue.enabled`：面板提示已关闭，高亮消失，图标恢复。再打开一个新页面，不应再注入 hook。
 
 ### HLS 播放（轻量）
+
+![HLS：主框架 .m3u8 改开播放页](docs/hls.gif)
 
 - 入口：仅 `option.html#features` 总开关（`features.hls.enabled`，**默认开启**）。不另开独立 popup / options 页。地址栏关键字 `m3u8` 输入完整地址后，在当前标签打开播放页。
 - **能力**：主框架导航到 pathname 以 `.m3u8` 结尾的 http(s) 地址（忽略 query / hash）时，`tabs.update` 到 `hls/player.html#` 编码后的原 URL。播放页用 hls.js 1.6.10，请求带 cookie。底栏有播放、进度、音量、倍速（0.5–3）、旋转（0 / 90 / 180 / 270）和「存 MP4」。`[` `]` 调倍速，`R` 旋转，`←` `→` 每次 5 秒（按住 Shift 为 30 秒）。倍速、旋转和音量不写入存储，关掉标签后回到 1x / 0°。存 MP4 会拉完整播放列表（多码率取最高带宽），MPEG-TS 用 mux.js 封装，fMP4 直接拼接；支持 AES-128。直播只保存当前已列出的分片。音视频分开的流可能没有声音。不支持 SAMPLE-AES。
@@ -421,6 +449,10 @@ CI（`python pack-edge.py --zip-only`）只打 zip，不生成商店图，也不
 5. 关闭 `features.hls.enabled` 后再打开同一 `.m3u8` 直链：应回到浏览器默认下载，不再进播放页。
 
 ### 工具箱（轻量）
+
+![工具箱：二维码 / JSON 等本机小工具](docs/tools.gif)
+
+![识图：左右布局反解提示词](docs/image-prompt.gif)
 
 - 入口：popup 顶栏「工具箱」图标 → 新标签页 `tools.html`。总开关 `features.tools.enabled`（`option.html#features`，默认开启，不同步到 mono）。关闭后 6 个工具隐藏；若识图仍开启，图标与页面保留且只显示识图；两者都关则图标隐藏。**不新增权限**，不改 `action.default_popup`，不走 mono，没有密钥或本机配置 JSON。
 - **来源**：功能范围参考 FeHelper（前端助手）2026.7.28（MIT）的 6 个工具，全部用原生 JS 重写；**未带入** jQuery、Vue、evalCore、AI 功能、条形码、捐赠入口。`$` 即 `document.querySelector`，另有 `$$`（`querySelectorAll`）。第三方库只有 qrcode-generator 1.4.4（MIT）和 zxing（Apache-2.0），见 `formant/tools/vendor/NOTICE`。
@@ -448,6 +480,8 @@ CI（`python pack-edge.py --zip-only`）只打 zip，不生成商店图，也不
 
 ### 滚动截屏（轻量）
 
+![滚动截屏：逐屏拼接整页 PNG](docs/screenshot.gif)
+
 - 入口：`option.html#features` 总开关（`features.screenshot.enabled`，**默认开启**）+ 网页右键「formant 整页滚动截屏」/「formant 截取可见区域」。不另开独立 popup / options 页，不加入 popup 顶栏图标。
 - **能力**：
   - **可见区域**：截当前视口，直接存 PNG。
@@ -465,6 +499,8 @@ CI（`python pack-edge.py --zip-only`）只打 zip，不生成商店图，也不
 6. 在 `chrome://extensions` 上右键：不应出现该菜单（或点了会提示不能截系统页）。
 
 ### oolafOffice
+
+![oolafOffice：popup 快捷条打开 Word](docs/office.gif)
 
 - 入口：`option.html#features` 总开关（`features.office.enabled`，**默认开启**）+ popup 主界面快捷条（起始页 / Word / Excel / PPT）+ 网页右键「formant oolafOffice」。设置页说明里可打开起始页。不另开独立 popup / options 页，不增加 popup 顶栏图标，不放进工具箱面板。
 - **能力**：扩展页内编辑 Word（Quire）、Excel（Ledger）、PPT（Lectern）。打开和保存真实 `.docx` / `.xlsx` / `.pptx`，文件留在本机。最近文件存在扩展 origin 的 IndexedDB。Excel 里 Wingdings 2 空复选框（`£` / 0xA3）在画布和导出 PDF 时显示为 Unicode `□`，保存 xlsx 不改原文；中文与符号按 run 分字体绘制，避免宋体缺字变成空白框。Word 表格按 `tblGrid` 固定列宽排版，支持 `gridSpan` / `vMerge`、东亚竖排（`tbRlV`）、行级 `tblPrEx` 边框、`pctN` 底纹、百分比列宽 / 嵌套表 / `noWrap` / `gridAfter`。双栏节里宽于栏的行内图按栏宽等比缩小，不盖住邻栏。东亚文档网格（`docGrid type=lines`）对齐时按字号占格，不把 Normal 的自动倍数叠上去。Excel 自动换行按 CJK 字切行，内置 `numFmtId` 27–58 按年/月/日显示，主题东亚字体参与绘制。PPT 读取 `a:ea` / `a:cs` 与主题 `majorEa` / `minorEa`，表格单元格强制换行并支持竖排。西文主题字体（Arial / Calibri 等）缺东亚字形时回退微软雅黑 / 宋体。编辑器在窗口捕获阶段拦住浏览器抢键（F5 刷新、Ctrl+S 另存网页、Ctrl+P 打印、Ctrl+F 查找栏、Ctrl+R 刷新、Ctrl++/− 缩放、Backspace 后退等），快捷键走套件自己的命令；复制粘贴仍交给浏览器。
@@ -486,6 +522,8 @@ CI（`python pack-edge.py --zip-only`）只打 zip，不生成商店图，也不
 
 ### 词库包（插件化）
 
+![词库：内置包与自定义 JSON](docs/lexicon.gif)
+
 - **内置包**：`builtin:en|zh|ja|ko|tr`（俚语 + 部分习语/谚语），只读，可启用/停用
 - **自定义包**：`chrome.storage`（`formantLexiconPacks` / `formantLexiconDisabled`）
 - **管理页**：popup 齿轮 / 扩展选项 → `option.html`（`#newtab` / `#lexicon` / `#translate` / `#x-translate` / `#sync`）；mono 连接只在 `#sync`
@@ -497,6 +535,8 @@ CI（`python pack-edge.py --zip-only`）只打 zip，不生成商店图，也不
 - popup 标题旁显示扩展版本号（`manifest.version`）
 
 ### New Tab
+
+![New Tab：天气 / 假期 / 汇率 / 热点英语四卡](docs/newtab.gif)
 
 - 覆盖浏览器新标签页；布局可同步 mono `GET/PUT /client/newtab/home`
 - 齿轮打开 `option.html#newtab`（运行时扩展 URL，不硬编码扩展 ID），集中管理壁纸、遮罩、搜索框和天气城市。
@@ -517,6 +557,8 @@ CI（`python pack-edge.py --zip-only`）只打 zip，不生成商店图，也不
 
 ### 书签同步
 
+![书签同步到当前 Client API Key](docs/bookmarks.gif)
+
 - 监听书签变更防抖同步；手动同步按钮（popup 或 `option.html#sync`）
 - `POST /client/bookmarks/sync`（并集写入当前 Client API Key 的书签树；空文件夹列表不会覆盖云端）
 - 换 Client API Key 时会清掉本机 New Tab / 词卡 / 手势缓存，避免串数据
@@ -524,10 +566,14 @@ CI（`python pack-edge.py --zip-only`）只打 zip，不生成商店图，也不
 
 ### 图片另存为
 
+![图片另存为 PNG / JPG](docs/image-save.gif)
+
 - 图片上右键 → **formant 图片另存为** → PNG / JPG
 - 需要 `downloads` 权限；转码在扩展内完成
 
 ### Telegram 受限媒体下载（轻量）
+
+![Telegram 受限媒体补保存按钮](docs/telegram.gif)
 
 - 入口：仅 `option.html#features` 总开关（`features.telegram.enabled`，**默认开启**）。不另开独立 popup / options 页。
 - **能力**：在 Telegram Web（`web.telegram.org` / `webk` / `webz`，含 `/k/` 与 `/a/`）的受限群组、私密频道里，为当前账号已经能看到的 **图片和视频** 补保存按钮。允许保存的普通会话不插按钮。
@@ -541,6 +587,8 @@ CI（`python pack-edge.py --zip-only`）只打 zip，不生成商店图，也不
 3. 关闭 `features.telegram.enabled` 后刷新 Telegram Web：按钮与进度条消失。
 
 ### GitZip（公开 GitHub 仓库）
+
+![GitZip：公开仓库勾选下载 ZIP](docs/gitzip.gif)
 
 - 入口：GitHub 仓库根目录、`tree` 目录或 `blob` 文件页面；以及其右键 **formant GitZip** 子菜单。
 - 能力：勾选文件/目录、多选下载、当前文件/目录下载、整仓下载；单文件直接保存，其余生成 ZIP。分支名包含 `/` 时会通过页面分支信息和公开 branches API 解析。
@@ -560,6 +608,8 @@ CI（`python pack-edge.py --zip-only`）只打 zip，不生成商店图，也不
 
 ### V2EX Plus（GPLv3）
 
+![V2EX Plus：自动签到与未读角标](docs/v2ex.gif)
+
 - 入口：`option.html#v2ex`；总开关在 `option.html#features`。
 - **自动签到**：登录 V2EX 后，**浏览器保持运行时**后台每 5 分钟检查一次；当天成功后用 `checkinDate` 防重复。电脑关机或浏览器未打开时不会签到，下次打开浏览器后再补签当天。可选择签到成功通知。
 - **消息角标**：每 3 分钟读取未读数；未登录时显示 `!`，只更新 badge，绝不替换 formant 图标或改变 popup 点击行为。
@@ -576,6 +626,8 @@ CI（`python pack-edge.py --zip-only`）只打 zip，不生成商店图，也不
 
 ### AutoPagerize（自动翻页）
 
+![AutoPagerize：滚动到底自动接下一页](docs/autopagerize.gif)
+
 - 入口：`option.html#autopagerize`；总开关在 `option.html#features`。
 - **能力**：滚动到页面底部时自动加载下一页并插入当前页面；内置约 2400 条站点 XPath 规则（来自 AutoPagerize wedata 项目），另有 Google / Bing 等优先内置规则覆盖过期 XPath，同时支持 microformat（`rel="next"`、`autopagerize_*` class）。
 - **设置**：可开关底部状态条、编辑排除 URL 列表（通配符或正则）；设置键为 `chrome.storage.local.formantAutopagerize`。
@@ -591,6 +643,8 @@ CI（`python pack-edge.py --zip-only`）只打 zip，不生成商店图，也不
 5. 确认 formant popup、翻译、GitZip、V2EX 功能不受影响。
 
 ### 鼠标手势（轻量）
+
+![鼠标手势：右键划动关闭标签](docs/gestures.gif)
 
 - 入口：`option.html#gestures`；总开关在 `option.html#features`（`features.gestures.enabled`，**默认关闭**）。
 - **能力**：http/https 页面右键划动。识别按转折分段（忽略起点抖动），↓→ 与 →↓ 不会认反。另支持宽松圆圈 `O`（不必闭合；绕行序列也按圈匹配）和 ✕ `X`（可两笔交叉）。默认：`L` 后退、`R` 前进、`UD` 刷新、`DR` 关闭当前标签、`U` 到顶、`D` 到底。刷新走 `chrome.tabs.reload({ bypassCache: true })`。
@@ -613,6 +667,8 @@ CI（`python pack-edge.py --zip-only`）只打 zip，不生成商店图，也不
 
 ### 代理（轻量）
 
+![代理：popup 快捷切换](docs/proxy.gif)
+
 - 入口：`option.html#proxy`；总开关在 `option.html#features`；popup 顶部快捷切换（保持 formant `default_popup`）。
 - **默认**：首次使用为**系统代理**；固定代理表单默认端口 **7890**。
 - **能力**：直连 / 系统代理 / PAC（URL 或导入 `.pac` 脚本）/ 最多 5 条固定 HTTP·HTTPS·SOCKS4·SOCKS5；bypass 列表可编辑。
@@ -630,6 +686,8 @@ CI（`python pack-edge.py --zip-only`）只打 zip，不生成商店图，也不
 
 ### 扩展管理（轻量）
 
+![扩展管理：列表启用或禁用](docs/extensions.gif)
+
 - 入口：popup 顶栏「扩展」二级视图；完整管理仍在 `option.html#extensions`；总开关在 `option.html#features`。
 - **能力**：列出本机已安装扩展（排除 formant 自身与非 `extension` 类型）、按名称/描述/ID 搜索、一键启用/禁用；有 `optionsUrl` 时可打开选项页。
 - **权限**：manifest `management`。
@@ -644,6 +702,8 @@ CI（`python pack-edge.py --zip-only`）只打 zip，不生成商店图，也不
 5. 关闭 `features.extensions.enabled` 后 popup 入口隐藏，设置页只读提示。
 
 ### 站点数据（Cookie / Storage）
+
+![站点数据：Cookie / Local / Session](docs/site-data.gif)
 
 - 入口：popup 顶栏「站点数据」二级视图；总开关在 `option.html#features`（`features.siteData.enabled`）。
 - **能力**：进入视图时读取当前数据源，并后台预读另外两份；切换 Cookie/Local/Session 走缓存（点「刷新」才重拉）。工具条「刷新 / 复制 / 清除」+「列表 / 原文」。列表键值完整保留在 DOM（超长两行省略，可选中 Ctrl+C）；行内图标复制整条 `key=value`、删除（确认后）；当前 Tab 一键清除（确认后）。不再提供「键 / 值」与底部「完整 JSON」复制。
@@ -668,6 +728,8 @@ CI（`python pack-edge.py --zip-only`）只打 zip，不生成商店图，也不
 6. 关闭 `features.v2ex.enabled` 后刷新 V2EX：签到、badge、页面增强、DNR 和 sov2ex 菜单均应停止。
 
 ### JSON / JS / CSS 美化
+
+![JS / CSS 直链自动美化](docs/code.gif)
 
 - 整页查看器：直接打开 JSON、`.js` / `.mjs` / `.cjs`、`.css`（浏览器以纯文本 `PRE` 呈现的那种，例如 `ai-summary.min.js`）时自动美化。
 - JSON 仍是树视图；JS / CSS 是格式化源码，带关键字/字符串/注释高亮，可 Pretty / Raw、搜索、复制。工具栏可下载美化后的文件，文件名取当前地址或请求路径。
