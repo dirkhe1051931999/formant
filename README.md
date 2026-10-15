@@ -309,7 +309,7 @@ CI（`python pack-edge.py --zip-only`）只打 zip，不生成商店图，也不
 ![linux.do 列表换成 formant 表格](docs/linuxdo.gif)
 
 - 入口：仅 `option.html#features` 总开关（`features.linuxdo.enabled`，**默认开启**）。不另开独立 popup / options 页。
-- **能力**：在 `https://linux.do/` 的最新 / 分类等列表页，把 Discourse `.topic-list` 换成飞书式文件表格（标题 / 所有者 / 回复 / 浏览 / 最近活跃），分类 Tab 收成底边指示条；未读/新帖左侧 accent 竖条 + 加粗标题；底栏默认只留分类、tag 悬停再出。列表与顶栏/全页搜索结果里的 `/t/` 帖子链接左键用 `window.open(..., "_blank")` 新标签打开（Ctrl/Cmd/中键仍交浏览器；分类/用户等非帖子链不动）；搜索面板字号/hover 与列表对齐。详情页 `/t/` 做阅读向精简：去掉统计条、楼层轴、标题下分类/tag、标语条、底部分享/书签/举报/通知（保留绿色回复）、相关话题、表情统计与附议/火箭小条；楼主帖左侧 accent 竖条，引用/代码块统一 fill 底。列表与详情都隐藏欢迎/公告横幅、顶栏 logo 与汉堡、语言切换、类别/标签下拉、侧栏底聊天与主题/工具图标。
+- **能力**：在 `https://linux.do/` 的最新 / 分类等列表页，把 Discourse `.topic-list` 换成飞书式文件表格（标题 / 所有者 / 回复 / 浏览 / 最近活跃），分类 Tab 收成底边指示条；未读/新帖左侧 accent 竖条 + 加粗标题；底栏默认只留分类、tag 悬停再出。列表与顶栏/全页搜索结果里的 `/t/` 帖子链接左键用 `window.open(..., "_blank")` 新标签打开（Ctrl/Cmd/中键仍交浏览器；分类/用户等非帖子链不动）；搜索面板字号/hover 与列表对齐。详情页 `/t/` 做阅读向精简：去掉统计条、楼层轴、标题下分类/tag、标语条、底部分享/书签/举报/通知、相关话题、表情统计与附议/火箭小条；话题回复钮一进帖就常显在右下角（accent pill，点它触发站点原回复；打开回复框时隐藏），不需要滑到页底；楼主帖左侧 accent 竖条，引用/代码块统一 fill 底。列表与详情都隐藏欢迎/公告横幅、顶栏 logo 与汉堡、语言切换、类别/标签下拉、侧栏底聊天与主题/工具图标。
 - **样式**：共用前缀 `html.formant-linuxdo`；列表表格在 `html.formant-linuxdo-list`，详情精简在 `html.formant-linuxdo-topic`，搜索在 `search.css`。配色用 formant token（`#1f4b99` / `#151a22` / `#667084`）。深色跟随站点自身颜色模式。
 - **边界**：不拆 Ember、不拉话题 JSON、不改 favicon、不做楼中楼或列表预览。列表页会藏掉顶栏 logo/语言、公告、类别/标签和侧栏底工具，导航分区不重排。AutoPagerize 对 `linux.do` 硬排除。若已装 linuxdo-lark-ui 油猴会叠皮，关掉其一即可。
 - **许可**：列表手法派生自 [linuxdo-lark-ui](https://github.com/starwingcc/linuxdo-lark-ui) MIT；归属见 [`formant/linuxdo/LICENSE`](formant/linuxdo/LICENSE) 与 [`formant/linuxdo/NOTICE`](formant/linuxdo/NOTICE)。
@@ -319,7 +319,7 @@ CI（`python pack-edge.py --zip-only`）只打 zip，不生成商店图，也不
 1. 重载 formant（默认开启）；打开 `https://linux.do/`：列表应为表格；公告、顶栏 logo/汉堡/语言、类别/标签、侧栏底聊天与工具条应隐藏；搜索和头像仍在。
 2. 左键点列表帖子标题（或回复/活跃等 `/t/` 链接）：应新标签打开详情，原列表页不跳转；Ctrl/Cmd+点击仍可新标签。未读行应有左侧蓝条与加粗标题；悬停行才出现 tag。
 3. 顶栏搜索（或 `/search`）点绿色帖子标题：同样新标签打开，搜索面板所在页不跳转；搜索标题/摘要风格应接近列表。
-4. 点进 `/t/...`：详情继续藏上述控件；楼主帖左侧蓝条；引用块与代码块为 fill 底；无统计条、楼层轴、相关话题、底部分享/通知（绿色回复仍在）、标题 tag、表情/附议小条。后退回列表皮肤恢复且无重复列名。
+4. 点进 `/t/...`：详情继续藏上述控件；楼主帖左侧蓝条；引用块与代码块为 fill 底；无统计条、楼层轴、相关话题、底部分享/通知、标题 tag、表情/附议小条；右下角立刻有「回复」（不必滑到页底）；点开后回复框弹出、该钮隐藏。后退回列表皮肤恢复且无重复列名。
 5. 关闭 `features.linuxdo.enabled` 后刷新：恢复原列表；帖子恢复同页 SPA 跳转。
 6. AutoPagerize 开启时 linux.do 不叠翻页。
 

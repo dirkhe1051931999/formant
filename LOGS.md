@@ -993,3 +993,14 @@
 1. 能力总览每个功能补一张示例 GIF（翻译、New Tab、工具箱、识图、截屏、oolafOffice、词库、书签、图片另存为、Telegram、GitZip、V2EX、AutoPagerize、手势、代理、扩展管理、站点数据、代码美化，以及 X / Discord / elitepvpers / linux.do / 虎扑 / freefq / huavod / Gemini / Gmail / Axure / Vue / HLS）。
 2. 生成脚本拆成 `gif_lib.py` / `gif_intro.py` / `gif_features_a.py` / `gif_features_b.py`，`python scripts/render_readme_gifs.py` 一次出齐；各文件不超过 500 行。
 
+2026-10-15 15:25:00
+
+1. linux.do 详情页底栏「回复」改为右下角固定浮层（accent pill），不用再滑到帖子底部；打开回复框 / 草稿 / 全屏时隐藏，避免挡住输入区。
+2. 版本升到 1.8.155。重载后打开 `/t/`：滚动中途也应看到右下角回复钮，点开后该钮消失。
+
+2026-10-15 15:28:00
+
+1. 修正 linux.do 回复钮：Discourse 的 `#topic-footer-buttons` 要滑到最后一楼才插入，只把它 `position:fixed` 仍会「滑到底才出现」。
+2. 改为进帖即挂自有右下角「回复」（常显），点击再触发站点原 create/reply；页底原生底栏隐藏，打开回复框时浮钮隐藏。
+3. 版本升到 1.8.156。重载后打开 `/t/`：不用滚动，右下角就应有回复。
+

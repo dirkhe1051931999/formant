@@ -34,9 +34,7 @@ html.formant-linuxdo-topic #topic-title .discourse-tags,
 html.formant-linuxdo-topic #topic-title .extra-info-wrapper,
 html.formant-linuxdo-topic #topic-title .d-icon-rocket,
 html.formant-linuxdo-topic .title-wrapper .topic-statuses,
-html.formant-linuxdo-topic #topic-footer-buttons .topic-notifications-button,
-html.formant-linuxdo-topic #topic-footer-buttons .pinned-button,
-html.formant-linuxdo-topic .topic-footer-main-buttons > *:not(.create):not(.btn-primary),
+html.formant-linuxdo-topic #topic-footer-buttons,
 html.formant-linuxdo-topic .discourse-reactions-counter,
 html.formant-linuxdo-topic .discourse-reactions-list,
 html.formant-linuxdo-topic .discourse-reactions-state-panel,
@@ -194,6 +192,43 @@ html.formant-linuxdo-topic .post-menu-area {
 
 html.formant-linuxdo-topic .post-menu-area .actions button.toggle-like {
   color: var(--fd-muted) !important;
+}
+
+html.formant-linuxdo-topic button.formant-linuxdo-reply {
+  position: fixed !important;
+  right: 24px !important;
+  bottom: 24px !important;
+  z-index: 850 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-height: 40px !important;
+  padding: 0 16px !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: var(--fd-accent) !important;
+  color: #fff !important;
+  box-shadow: 0 4px 14px rgb(31 75 153 / 28%) !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+}
+
+html.formant-linuxdo-topic button.formant-linuxdo-reply:hover {
+  background: var(--fd-accent-strong) !important;
+  color: #fff !important;
+}
+
+html.formant-linuxdo-topic:has(#reply-control.open) button.formant-linuxdo-reply,
+html.formant-linuxdo-topic:has(#reply-control.fullscreen) button.formant-linuxdo-reply {
+  display: none !important;
+}
+
+@media (max-width: 800px) {
+  html.formant-linuxdo-topic button.formant-linuxdo-reply {
+    right: 16px !important;
+    bottom: 16px !important;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

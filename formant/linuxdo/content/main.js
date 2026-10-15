@@ -10,6 +10,16 @@
   const DARK_CLASS = "formant-linuxdo-dark";
   const LABEL_CLASS = "formant-linuxdo-col";
   const HIDE_CLASS = "formant-linuxdo-hide";
+  const REPLY_FAB_CLASS = "formant-linuxdo-reply";
+  const NATIVE_REPLY_SEL = [
+    ".topic-navigation button.create",
+    ".timeline-footer-controls button.create",
+    "#topic-progress-wrapper button.create",
+    "#topic-footer-buttons button.create",
+    "#topic-footer-buttons .btn-primary.create",
+    ".topic-post .post-menu-area button.reply",
+    ".topic-post .post-menu-area button.create",
+  ].join(", ");
   const LOCALE_RE = /^(ZH|EN|JA|KO|CN|TW|语言)$/i;
   const COLUMN_LABELS = [
     ["th.default, th.main-link", "标题"],
@@ -170,10 +180,43 @@
     }
   }
 
+  function nativeReplyButton() {
+    return document.querySelector(NATIVE_REPLY_SEL);
+  }
+
+  function removeReplyFab() {
+    document.querySelectorAll(`button.${REPLY_FAB_CLASS}`).forEach((node) => node.remove());
+  }
+
+  /**
+   * @param {MouseEvent} event
+   */
+  function onReplyFabClick(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    nativeReplyButton()?.click();
+  }
+
+  function ensureReplyFab() {
+    if (!enabled || !isTopicPath()) {
+      removeReplyFab();
+      return;
+    }
+    if (document.querySelector(`button.${REPLY_FAB_CLASS}`)) return;
+    const fab = document.createElement("button");
+    fab.type = "button";
+    fab.className = REPLY_FAB_CLASS;
+    fab.textContent = "回复";
+    fab.setAttribute("aria-label", "回复");
+    fab.addEventListener("click", onReplyFabClick);
+    (document.body || document.documentElement).appendChild(fab);
+  }
+
   function teardownSkin() {
     document.documentElement.classList.remove(ROOT_CLASS, LIST_CLASS, TOPIC_CLASS, DARK_CLASS);
     clearColumnLabels();
     clearHideMarks();
+    removeReplyFab();
   }
 
   /** 列表行 + 顶栏/全页搜索结果（不含分类/用户等非帖子链） */
@@ -232,6 +275,8 @@
     } else {
       clearHideMarks();
     }
+    if (onTopic) ensureReplyFab();
+    else removeReplyFab();
   }
 
   function scheduleApply() {

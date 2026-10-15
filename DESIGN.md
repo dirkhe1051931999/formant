@@ -142,6 +142,7 @@ formant 的气质是 **桌面效率工具**：窄 popup（固定约 380px 宽）
 - 阅读向：去掉 topic-map 统计条和右侧楼层轴；标题 20px / 正文 14px；点赞与回复常显，分享等悬停才出。
 - 楼间距约 18/14；楼主帖左侧 3px accent 竖条（隐藏原 Discourse `::before/::after` 装饰）。
 - `blockquote` / `aside.quote`：左线 + fill 底；`pre`/`code`：fill 底、6px 圆角、等宽字体。
+- 话题回复用自有 `button.formant-linuxdo-reply` 常显右下角 pill（accent 底白字）；一进 `/t/` 就出现，不依赖滑到页底的 `#topic-footer-buttons`。composer 打开 / 全屏时隐藏。
 
 ### freefq 导出钮（`freefq/content/main.js` Shadow DOM）
 
