@@ -1,0 +1,200 @@
+html:not(.formant-hupu-off) {
+  --fh-accent: #1f4b99;
+  --fh-accent-soft: #e8eef9;
+  --fh-ink: #151a22;
+  --fh-text: #2b3340;
+  --fh-muted: #667084;
+  --fh-faint: #98a2b3;
+  --fh-line: #e5eaf0;
+  --fh-line-soft: #eef1f5;
+  --fh-bg: #f4f6f9;
+  --fh-surface: #ffffff;
+  --fh-radius: 10px;
+}
+
+html:not(.formant-hupu-off),
+html:not(.formant-hupu-off) body {
+  background: var(--fh-bg);
+}
+
+html:not(.formant-hupu-off) body {
+  color: var(--fh-text);
+  font-family: "Segoe UI Variable Text", "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+html:not(.formant-hupu-off) a {
+  transition: color 0.12s ease;
+}
+
+/* ---------- 顶栏：两层白底导航，去掉 App 推广与游戏中心 ---------- */
+
+html:not(.formant-hupu-off) .hp-pc-rc-TopMenu {
+  height: 44px !important;
+  background: var(--fh-surface) !important;
+  border-bottom: 1px solid var(--fh-line);
+  color: var(--fh-text);
+}
+
+html:not(.formant-hupu-off) .hp-pc-rc-TopMenu-top-container {
+  height: 0 !important;
+  background: transparent !important;
+}
+
+html:not(.formant-hupu-off) .hp-pc-rc-TopMenu-top {
+  top: 0 !important;
+  height: 44px !important;
+  justify-content: flex-end !important;
+  background: transparent !important;
+  pointer-events: none;
+}
+
+html:not(.formant-hupu-off) .hp-quickNav,
+html:not(.formant-hupu-off) .hp-pc-rc-TopMenu .gamecenter,
+html:not(.formant-hupu-off) .hp-pc-rc-TopMenu-top .line {
+  display: none !important;
+}
+
+html:not(.formant-hupu-off) .hp-topLogin-info {
+  position: relative;
+  z-index: 3;
+  pointer-events: auto;
+  color: var(--fh-muted);
+  font-size: 12px;
+  line-height: 44px !important;
+}
+
+html:not(.formant-hupu-off) .hp-topLogin-info a {
+  color: var(--fh-muted);
+}
+
+html:not(.formant-hupu-off) .hp-topLogin-info .btn-reg,
+html:not(.formant-hupu-off) .hp-topLogin-info .btn-login {
+  padding: 3px 9px;
+  border-radius: 6px;
+  background: var(--fh-accent) !important;
+  color: #fff !important;
+  font-weight: 550;
+}
+
+html:not(.formant-hupu-off) .hp-topLogin-info .btn-reg {
+  background: var(--fh-accent-soft) !important;
+  color: var(--fh-accent) !important;
+}
+
+html:not(.formant-hupu-off) .hp-pc-rc-TopMenu-banner {
+  top: 0 !important;
+  height: 44px !important;
+}
+
+html:not(.formant-hupu-off) .hp-pc-rc-TopMenu-banner {
+  justify-content: flex-start !important;
+}
+
+html:not(.formant-hupu-off) .hp-topLogin-info .btn-reg span,
+html:not(.formant-hupu-off) .hp-topLogin-info .btn-login span {
+  color: inherit !important;
+}
+
+html:not(.formant-hupu-off) .bannerlogonew {
+  height: 44px !important;
+  margin-right: 12px !important;
+  align-items: center;
+}
+
+html:not(.formant-hupu-off) .bannerlogonew img {
+  margin-left: 0 !important;
+  filter: brightness(0) opacity(0.82);
+}
+
+html:not(.formant-hupu-off) .banneritem {
+  flex: 0 0 auto !important;
+  width: auto !important;
+  height: 44px !important;
+  padding: 0 14px !important;
+  background: transparent !important;
+  line-height: 44px !important;
+}
+
+html:not(.formant-hupu-off) .banneritem a {
+  color: var(--fh-muted) !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+}
+
+html:not(.formant-hupu-off) .banneritem:hover a {
+  color: var(--fh-ink) !important;
+}
+
+html:not(.formant-hupu-off) .banneritem.active {
+  box-shadow: inset 0 -2px 0 var(--fh-accent);
+}
+
+html:not(.formant-hupu-off) .banneritem.active a {
+  color: var(--fh-accent) !important;
+  font-weight: 650 !important;
+}
+
+html:not(.formant-hupu-off) .hp-pc-rc-SuperMenu-sub-menu {
+  height: 36px !important;
+  border-bottom: 1px solid var(--fh-line);
+  background: var(--fh-surface) !important;
+}
+
+html:not(.formant-hupu-off) .hp-pc-rc-SuperMenu-sub-menu-container {
+  height: 36px !important;
+  line-height: 36px !important;
+}
+
+html:not(.formant-hupu-off) .hp-pc-rc-SuperMenu-sub-menu .rc-menu-item {
+  padding: 0 12px !important;
+  line-height: 36px !important;
+}
+
+html:not(.formant-hupu-off) .hp-pc-rc-SuperMenu-sub-menu .rc-menu-item a {
+  height: 36px !important;
+  color: var(--fh-muted) !important;
+  font-size: 13px !important;
+  line-height: 36px !important;
+}
+
+html:not(.formant-hupu-off) .hp-pc-rc-SuperMenu-sub-menu .rc-menu-item a:hover {
+  color: var(--fh-ink) !important;
+}
+
+html:not(.formant-hupu-off) a.rc-submenu-item-active {
+  height: 36px !important;
+  border-bottom: 2px solid var(--fh-accent) !important;
+  color: var(--fh-accent) !important;
+  font-weight: 650 !important;
+  line-height: 36px !important;
+}
+
+html:not(.formant-hupu-off) .hp-pc-rc-SuperMenu-search {
+  top: -1px;
+}
+
+html:not(.formant-hupu-off) .hp-pc-rc-SuperMenu-search input {
+  border: 1px solid var(--fh-line) !important;
+  border-radius: 7px !important;
+  background: var(--fh-bg) !important;
+  font-size: 12px;
+}
+
+html:not(.formant-hupu-off) .hp-pc-rc-SuperMenu-search input:focus {
+  border-color: var(--fh-accent) !important;
+  background: var(--fh-surface) !important;
+  outline: none;
+}
+
+/* ---------- 页脚 ---------- */
+
+html:not(.formant-hupu-off) [class*="index_hp-pc-footer__"] {
+  background: transparent !important;
+  color: var(--fh-faint) !important;
+  font-size: 12px;
+}
+
+html:not(.formant-hupu-off) [class*="index_hp-pc-footer__"] a {
+  color: var(--fh-muted) !important;
+}

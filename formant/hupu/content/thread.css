@@ -1,0 +1,269 @@
+/* 帖子页：只收紧版式与配色，不改 DOM 结构。CSS Modules 带 hash，一律用 [class*="前缀__"] 匹配。
+   面包屑 / 分页在列表页也用，所以这两块挂在 html:not(.formant-hupu-off) 下。 */
+
+html.formant-hupu-thread:not(.formant-hupu-off) [class*="index_bbs-post-web__"] {
+  background: var(--fh-bg) !important;
+}
+
+html.formant-hupu-thread:not(.formant-hupu-off) [class*="index_bbs-post-web-container__"] {
+  padding: 14px 0 28px !important;
+  background: transparent !important;
+}
+
+/* ---------- 左主栏：一张白卡 ---------- */
+
+html.formant-hupu-thread:not(.formant-hupu-off) [class*="index_bbs-post-web-body-left-wrapper__"] {
+  padding: 0 24px 8px !important;
+  border: 1px solid var(--fh-line);
+  border-radius: var(--fh-radius);
+  background: var(--fh-surface) !important;
+}
+
+html.formant-hupu-thread:not(.formant-hupu-off) [class*="index_bbs-post-web-main__"] {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  background: transparent !important;
+}
+
+html.formant-hupu-thread:not(.formant-hupu-off) [class*="index_bbs-post-web-main__"] > * {
+  flex: 0 0 auto !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  float: none !important;
+}
+
+/* 面包屑 */
+html:not(.formant-hupu-off) [class*="index_hp-pc-breadcrumb"] {
+  font-size: 12px;
+  color: var(--fh-faint);
+}
+
+html:not(.formant-hupu-off) [class*="index_hp-pc-breadcrumb"] a,
+html:not(.formant-hupu-off) [class*="index_hp-pc-breadcrumb"] i {
+  color: var(--fh-muted) !important;
+}
+
+html:not(.formant-hupu-off) [class*="index_hp-pc-breadcrumb"] a:hover {
+  color: var(--fh-accent) !important;
+}
+
+/* 标题（粘性）：白底，下面一条细线 */
+html.formant-hupu-thread:not(.formant-hupu-off) [class*="index_bbs-post-web-main-title__"] {
+  height: auto !important;
+  min-height: 44px;
+  background: var(--fh-surface) !important;
+  border-bottom: 1px solid var(--fh-line-soft);
+}
+
+html.formant-hupu-thread:not(.formant-hupu-off) h1[class*="index_name__"] {
+  margin: 10px 8px 10px 0 !important;
+  color: var(--fh-ink) !important;
+  font-size: 18px !important;
+  font-weight: 650 !important;
+  line-height: 1.35 !important;
+}
+
+html.formant-hupu-thread:not(.formant-hupu-off) [class*="index_reply__"],
+html.formant-hupu-thread:not(.formant-hupu-off) [class*="index_light__"],
+html.formant-hupu-thread:not(.formant-hupu-off) [class*="index_read__"] {
+  color: var(--fh-faint) !important;
+  font-size: 12px !important;
+}
+
+/* 分页：页码必须横排。步行街长帖里 li 一旦变 block 会拉成整列蓝条，回复框被挤到右边。 */
+html.formant-hupu-thread:not(.formant-hupu-off) [class*="index_pagination__"] {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  padding: 8px 0 !important;
+  box-sizing: border-box !important;
+  float: none !important;
+}
+
+html.formant-hupu-thread:not(.formant-hupu-off) [class*="index_pagination__"] [class*="index_pagination__"] {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  gap: 8px;
+  padding: 0 !important;
+}
+
+html:not(.formant-hupu-off) .hupu-rc-pagination {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  width: auto !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  list-style: none !important;
+}
+
+html:not(.formant-hupu-off) .hupu-rc-pagination > li {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: auto !important;
+  min-width: 32px !important;
+  height: 32px !important;
+  margin: 0 6px 6px 0 !important;
+  padding: 0 !important;
+  flex: 0 0 auto !important;
+  float: none !important;
+  box-sizing: border-box !important;
+  border-radius: 6px !important;
+}
+
+html:not(.formant-hupu-off) .hupu-rc-pagination-item {
+  border: 1px solid var(--fh-line) !important;
+  background: var(--fh-surface) !important;
+}
+
+html:not(.formant-hupu-off) .hupu-rc-pagination-item a,
+html:not(.formant-hupu-off) .hupu-rc-pagination-prev a,
+html:not(.formant-hupu-off) .hupu-rc-pagination-next a {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 30px !important;
+  height: 30px !important;
+  padding: 0 8px !important;
+  color: var(--fh-text) !important;
+  line-height: 30px !important;
+}
+
+html:not(.formant-hupu-off) .hupu-rc-pagination-item:hover {
+  border-color: var(--fh-accent) !important;
+}
+
+html:not(.formant-hupu-off) .hupu-rc-pagination-item-active,
+html:not(.formant-hupu-off) .hupu-rc-pagination-item-active:hover {
+  border-color: var(--fh-accent) !important;
+  background: var(--fh-accent) !important;
+}
+
+html:not(.formant-hupu-off) .hupu-rc-pagination-item-active a {
+  color: #fff !important;
+}
+
+html.formant-hupu-thread:not(.formant-hupu-off) #formant-hupu-nav {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  flex: 0 0 auto !important;
+  margin: 8px 0 4px !important;
+}
+
+html:not(.formant-hupu-off) [class*="index_jumpToPage__"] input {
+  border: 1px solid var(--fh-line) !important;
+  border-radius: 6px !important;
+}
+
+html:not(.formant-hupu-off) [class*="index_jumpToPage__"] [class*="index_button__"] {
+  color: var(--fh-accent) !important;
+  font-weight: 600;
+}
+
+/* ---------- 主帖 ---------- */
+
+html.formant-hupu-thread:not(.formant-hupu-off) [class*="index_post-wrapper__"] {
+  padding: 10px 0 4px !important;
+  background: transparent !important;
+}
+
+html.formant-hupu-thread:not(.formant-hupu-off) [class*="post-user_post-user-comp-avatar__"] {
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 50% !important;
+  object-fit: cover;
+}
+
+html.formant-hupu-thread:not(.formant-hupu-off) [class*="post-user_post-user-comp__"] {
+  height: auto !important;
+  min-height: 0 !important;
+}
+
+html.formant-hupu-thread:not(.formant-hupu-off) [class*="post-content_main-post-info__"] {
+  margin: -6px 0 0 52px !important;
+}
+
+html.formant-hupu-thread:not(.formant-hupu-off) [class*="post-user_post-user-comp-info-top-name__"],
+html.formant-hupu-thread:not(.formant-hupu-off) .post-reply-list-user-info-top-name {
+  color: var(--fh-ink) !important;
+  font-weight: 600;
+}
+
+html.formant-hupu-thread:not(.formant-hupu-off) [class*="post-user_post-user-comp-info-top-name__"]:hover,
+html.formant-hupu-thread:not(.formant-hupu-off) .post-reply-list-user-info-top-name:hover {
+  color: var(--fh-accent) !important;
+}
+
+html.formant-hupu-thread:not(.formant-hupu-off) [class*="post-user_post-user-comp-info-top-time__"],
+html.formant-hupu-thread:not(.formant-hupu-off) [class*="post-user_post-user-comp-info-top-tip__"],
+html.formant-hupu-thread:not(.formant-hupu-off) [class*="post-user_post-user-comp-info-top-level__"],
+html.formant-hupu-thread:not(.formant-hupu-off) [class*="post-user_post-user-comp-info-bottom"] {
+  color: var(--fh-faint) !important;
+  font-size: 12px !important;
+}
+
+html.formant-hupu-thread:not(.formant-hupu-off) [class*="post-user_post-user-comp-info-bottom"] a {
+  color: var(--fh-muted) !important;
+}
+
+html.formant-hupu-thread:not(.formant-hupu-off) [class*="post-user_post-user-comp-info-bottom"] {
+  margin-top: 3px !important;
+  line-height: 1.5 !important;
+}
+
+/* 正文：行高统一，段间距收紧 */
+html.formant-hupu-thread:not(.formant-hupu-off) .thread-content-detail,
+html.formant-hupu-thread:not(.formant-hupu-off) [class*="simple-detail-content"] {
+  color: var(--fh-text);
+  font-size: 14.5px;
+  line-height: 1.7;
+}
+
+html.formant-hupu-thread:not(.formant-hupu-off) .thread-content-detail p {
+  margin: 8px 0 0 !important;
+  line-height: 1.7 !important;
+}
+
+html.formant-hupu-thread:not(.formant-hupu-off) .thread-content-detail .lazyload-wrapper {
+  line-height: 0;
+}
+
+html.formant-hupu-thread:not(.formant-hupu-off) .thread-content-detail a {
+  color: var(--fh-accent);
+}
+
+/* 主帖操作条 */
+html.formant-hupu-thread:not(.formant-hupu-off) .post-operate-comp.main-operate {
+  margin-top: 14px !important;
+}
+
+html.formant-hupu-thread:not(.formant-hupu-off) .todo-list,
+html.formant-hupu-thread:not(.formant-hupu-off) .todo-list-text,
+html.formant-hupu-thread:not(.formant-hupu-off) .todo-list .iconfont {
+  color: var(--fh-muted) !important;
+}
+
+html.formant-hupu-thread:not(.formant-hupu-off) .todo-list-text {
+  font-size: 12.5px !important;
+}
+
+html.formant-hupu-thread:not(.formant-hupu-off) .todo-list .iconfont {
+  font-size: 14px !important;
+}
+
+html.formant-hupu-thread:not(.formant-hupu-off) .todo-list:hover,
+html.formant-hupu-thread:not(.formant-hupu-off) .todo-list:hover .todo-list-text,
+html.formant-hupu-thread:not(.formant-hupu-off) .todo-list:hover .iconfont {
+  color: var(--fh-accent) !important;
+}
+
+html.formant-hupu-thread:not(.formant-hupu-off) .todo-list .todo-list-text.bold {
+  font-weight: 600;
+}

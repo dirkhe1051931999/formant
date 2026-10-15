@@ -1,0 +1,9 @@
+# Browser-generated when loading an unpacked extension
+formant/_metadata/
+
+# Icon export toolchain; not part of the shipped extension
+formant/oolafoffice/icons/node_modules/
+
+# Edge / Chrome store packages and listing tiles
+dist/
+*.zip

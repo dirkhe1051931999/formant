@@ -1,0 +1,203 @@
+html.formant-linuxdo-topic .topic-map,
+html.formant-linuxdo-topic .topic-map.--bottom,
+html.formant-linuxdo-topic .topic-navigation,
+html.formant-linuxdo-topic .timeline-container,
+html.formant-linuxdo-topic .topic-timeline,
+html.formant-linuxdo-topic #topic-progress-wrapper,
+html.formant-linuxdo-topic .progress-wrapper,
+html.formant-linuxdo-topic .suggested-topics,
+html.formant-linuxdo-topic .suggested-topics-wrapper,
+html.formant-linuxdo-topic #suggested-topics,
+html.formant-linuxdo-topic .more-topics,
+html.formant-linuxdo-topic .more-topics__container,
+html.formant-linuxdo-topic .related-topics,
+html.formant-linuxdo-topic .signup-cta,
+html.formant-linuxdo-topic .topic-status-info,
+html.formant-linuxdo-topic .topic-owner-badge,
+html.formant-linuxdo-topic span.topic-owner,
+html.formant-linuxdo-topic .names .user-title,
+html.formant-linuxdo-topic .names .user-status,
+html.formant-linuxdo-topic .poster-icon,
+html.formant-linuxdo-topic .post-info.post-date + .post-info:not(.edits),
+html.formant-linuxdo-topic .post-menu-area .actions button.share,
+html.formant-linuxdo-topic .post-menu-area .actions button.copy-link,
+html.formant-linuxdo-topic .post-menu-area .actions button.bookmark,
+html.formant-linuxdo-topic .post-menu-area .actions button.show-more-actions,
+html.formant-linuxdo-topic .post-menu-area .actions button:has(.d-icon-rocket),
+html.formant-linuxdo-topic .names .d-icon-rocket,
+html.formant-linuxdo-topic .names .d-icon-thumbtack,
+html.formant-linuxdo-topic .embedded-posts,
+html.formant-linuxdo-topic .show-replies,
+html.formant-linuxdo-topic #topic-title .topic-category,
+html.formant-linuxdo-topic #topic-title .badge-wrapper,
+html.formant-linuxdo-topic #topic-title .discourse-tags,
+html.formant-linuxdo-topic #topic-title .extra-info-wrapper,
+html.formant-linuxdo-topic #topic-title .d-icon-rocket,
+html.formant-linuxdo-topic .title-wrapper .topic-statuses,
+html.formant-linuxdo-topic #topic-footer-buttons .topic-notifications-button,
+html.formant-linuxdo-topic #topic-footer-buttons .pinned-button,
+html.formant-linuxdo-topic .topic-footer-main-buttons > *:not(.create):not(.btn-primary),
+html.formant-linuxdo-topic .discourse-reactions-counter,
+html.formant-linuxdo-topic .discourse-reactions-list,
+html.formant-linuxdo-topic .discourse-reactions-state-panel,
+html.formant-linuxdo-topic .user-signature,
+html.formant-linuxdo-topic .signature,
+html.formant-linuxdo-topic .post-links-container,
+html.formant-linuxdo-topic .fa-rocket,
+html.formant-linuxdo-topic [data-icon="rocket"],
+html.formant-linuxdo-topic img[src*="rocket"],
+html.formant-linuxdo-topic .regular.contents > *:not(.cooked):not(.post-menu-area),
+html.formant-linuxdo-topic .cooked ~ *:not(.post-menu-area):not(.actions),
+html.formant-linuxdo-topic .topic-body > *:not(.topic-meta-data):not(.regular):not(.post-menu-area):not(.gap) {
+  display: none !important;
+}
+
+html.formant-linuxdo-topic .topic-post:hover .post-menu-area .actions button.share,
+html.formant-linuxdo-topic .topic-post:hover .post-menu-area .actions button.copy-link,
+html.formant-linuxdo-topic .topic-post:hover .post-menu-area .actions button.bookmark,
+html.formant-linuxdo-topic .topic-post:hover .post-menu-area .actions button.show-more-actions,
+html.formant-linuxdo-topic .topic-post:hover .post-menu-area .actions button:has(.d-icon-rocket) {
+  display: inline-flex !important;
+}
+
+html.formant-linuxdo-topic #topic-title {
+  margin: 8px 0 12px !important;
+  padding: 0 !important;
+}
+
+html.formant-linuxdo-topic #topic-title h1,
+html.formant-linuxdo-topic #topic-title .fancy-title,
+html.formant-linuxdo-topic #topic-title .fancy-title a {
+  margin: 0 !important;
+  color: var(--fd-ink) !important;
+  font-size: 20px !important;
+  font-weight: 650 !important;
+  line-height: 1.4 !important;
+  letter-spacing: 0 !important;
+  text-decoration: none !important;
+}
+
+html.formant-linuxdo-topic .container.posts {
+  max-width: 920px !important;
+  margin: 0 !important;
+}
+
+html.formant-linuxdo-topic .post-stream {
+  border-top: 1px solid var(--fd-line-soft) !important;
+}
+
+html.formant-linuxdo-topic .topic-post,
+html.formant-linuxdo-topic .topic-body {
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+html.formant-linuxdo-topic .topic-body {
+  padding: 18px 0 14px !important;
+  border-bottom: 1px solid var(--fd-line-soft) !important;
+}
+
+html.formant-linuxdo-topic .topic-post.topic-owner .topic-body,
+html.formant-linuxdo-topic article.topic-owner .topic-body {
+  padding-left: 12px !important;
+  border-left: 3px solid var(--fd-accent) !important;
+}
+
+html.formant-linuxdo-topic .topic-post.topic-owner .topic-body::before,
+html.formant-linuxdo-topic .topic-post.topic-owner .topic-body::after {
+  display: none !important;
+}
+
+html.formant-linuxdo-topic .topic-avatar {
+  padding-top: 20px !important;
+}
+
+html.formant-linuxdo-topic .topic-avatar img.avatar {
+  width: 36px !important;
+  height: 36px !important;
+  border-radius: 50% !important;
+}
+
+html.formant-linuxdo-topic .names {
+  color: var(--fd-ink) !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+}
+
+html.formant-linuxdo-topic .post-info,
+html.formant-linuxdo-topic .relative-date,
+html.formant-linuxdo-topic .post-date {
+  color: var(--fd-muted) !important;
+  font-size: 12px !important;
+}
+
+html.formant-linuxdo-topic .cooked {
+  color: var(--fd-ink) !important;
+  font-size: 14px !important;
+  line-height: 1.65 !important;
+}
+
+html.formant-linuxdo-topic .cooked a {
+  color: var(--fd-accent) !important;
+}
+
+html.formant-linuxdo-topic .cooked blockquote,
+html.formant-linuxdo-topic .cooked aside.quote {
+  margin: 10px 0 !important;
+  padding: 8px 12px !important;
+  border: 0 !important;
+  border-left: 3px solid var(--fd-line) !important;
+  border-radius: 0 6px 6px 0 !important;
+  background: var(--fd-fill) !important;
+  color: var(--fd-ink) !important;
+}
+
+html.formant-linuxdo-topic .cooked aside.quote .title {
+  color: var(--fd-muted) !important;
+  font-size: 12px !important;
+  font-weight: 550 !important;
+}
+
+html.formant-linuxdo-topic .cooked pre,
+html.formant-linuxdo-topic .cooked code {
+  border-radius: 6px !important;
+  background: var(--fd-fill) !important;
+  color: var(--fd-ink) !important;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace !important;
+}
+
+html.formant-linuxdo-topic .cooked :not(pre) > code {
+  padding: 1px 5px !important;
+  border: 1px solid var(--fd-line-soft) !important;
+  font-size: 0.92em !important;
+}
+
+html.formant-linuxdo-topic .cooked pre {
+  margin: 10px 0 !important;
+  padding: 12px 14px !important;
+  border: 1px solid var(--fd-line-soft) !important;
+  overflow: auto !important;
+  line-height: 1.5 !important;
+}
+
+html.formant-linuxdo-topic .cooked pre code {
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  font-size: 12.5px !important;
+}
+
+html.formant-linuxdo-topic .post-menu-area {
+  margin-top: 4px !important;
+}
+
+html.formant-linuxdo-topic .post-menu-area .actions button.toggle-like {
+  color: var(--fd-muted) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.formant-linuxdo-topic .post-menu-area .actions button {
+    transition: none !important;
+  }
+}

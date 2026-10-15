@@ -1,0 +1,22 @@
+/* 板块列表页：只把站点红换成 formant 主色，不动结构。 */
+
+html:not(.formant-hupu-off) .bbs-sl-web-intro-detail-button {
+  border-color: var(--fh-accent) !important;
+  border-radius: 6px !important;
+  background: var(--fh-accent) !important;
+  color: #fff !important;
+}
+
+html:not(.formant-hupu-off) .bbs-sl-web-intro-detail-button:hover {
+  background: #173a78 !important;
+}
+
+html:not(.formant-hupu-off) .bbs-sl-web-type {
+  color: var(--fh-muted) !important;
+}
+
+html:not(.formant-hupu-off) .bbs-sl-web-type.active {
+  border-bottom-color: var(--fh-accent) !important;
+  color: var(--fh-accent) !important;
+  font-weight: 650;
+}

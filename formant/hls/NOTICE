@@ -1,0 +1,10 @@
+hls.min.js is hls.js 1.6.10 (Apache License 2.0).
+https://github.com/video-dev/hls.js
+
+The file is the same build shipped with Native HLS Playback 1.6.10.
+formant does not ship that extension, its jQuery, or its older hls.js builds.
+Playback UI and the .m3u8 redirect are formant's own code.
+
+mux.min.js is mux.js 6.3.0 (Apache License 2.0).
+https://github.com/videojs/mux.js
+It remuxes MPEG-TS HLS segments into an MP4 file. formant does not ship ffmpeg.

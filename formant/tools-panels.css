@@ -1,0 +1,458 @@
+/* 各工具专属样式（壳层与通用控件见 tools.css） */
+
+/* 时间戳 */
+.ts-clock {
+  font-family: var(--mono);
+  font-size: 15px;
+}
+
+.ts-result {
+  min-width: 260px;
+  cursor: copy;
+}
+
+.ts-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.ts-table th,
+.ts-table td {
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+}
+
+.ts-table th {
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.ts-table td {
+  font-family: var(--mono);
+}
+
+/* 图片 Base64 */
+.ib-result {
+  min-height: 200px;
+}
+
+.ib-preview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  border: 1px dashed var(--line);
+  border-radius: 12px;
+  background: #f8fafc;
+}
+
+.ib-preview img {
+  max-width: 100%;
+  max-height: 320px;
+  object-fit: contain;
+}
+
+/* 编码转换 */
+.cd-methods {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.cd-methods button {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--ink);
+  font: inherit;
+  font-size: 13px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.cd-methods button.is-active {
+  border-color: rgba(31, 75, 153, 0.45);
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.cd-group-title {
+  margin: 10px 0 6px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.cd-group-title:first-child {
+  margin-top: 0;
+}
+
+.cd-params {
+  width: 100%;
+  margin-top: 10px;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.cd-params th,
+.cd-params td {
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  word-break: break-all;
+}
+
+/* 二维码 */
+.qr-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  gap: 12px;
+}
+
+.qr-stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 260px;
+  border: 1px dashed var(--line);
+  border-radius: 12px;
+  background: #fff;
+}
+
+.qr-stage canvas {
+  max-width: 100%;
+  height: auto;
+  image-rendering: pixelated;
+}
+
+.qr-color {
+  width: 38px;
+  height: 32px;
+  padding: 2px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+}
+
+/* JSON 美化 */
+.js-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+  gap: 12px;
+  align-items: start;
+}
+
+.js-layout .tl-textarea {
+  min-height: 520px;
+}
+
+.js-code {
+  min-height: 520px;
+  max-height: 78vh;
+  margin: 0;
+  padding: 10px 12px;
+  overflow: auto;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  font-family: var(--mono);
+  font-size: 13px;
+  line-height: 1.5;
+  white-space: pre;
+  tab-size: 2;
+}
+
+/* 工具箱底色固定为浅色，配色不跟系统深色走 */
+.js-code .oolaf-json-key {
+  color: #8f3d8b;
+}
+
+.js-code .oolaf-json-string {
+  color: #0f7a48;
+}
+
+.js-code .oolaf-json-number {
+  color: #0b65c2;
+}
+
+.js-code .oolaf-json-boolean {
+  color: #b35309;
+}
+
+.js-code .oolaf-json-null {
+  color: #697386;
+}
+
+.js-out {
+  min-height: 520px;
+  max-height: 78vh;
+  overflow: auto;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #f6f7f9;
+}
+
+.js-out .oolaf-json-app {
+  min-height: 0;
+}
+
+.js-out .oolaf-json-toolbar {
+  top: 0;
+}
+
+.js-empty {
+  padding: 24px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+/* JSON 对比 */
+.df-sides {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.df-sides .tl-textarea {
+  min-height: 300px;
+}
+
+.df-view {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.df-code {
+  max-height: 460px;
+  margin: 0;
+  overflow: auto;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+  font-family: var(--mono);
+  font-size: 12.5px;
+  line-height: 1.55;
+}
+
+.df-line {
+  display: block;
+  min-height: 1.55em;
+  padding: 0 10px;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.df-line--add {
+  background: #e7f6ec;
+}
+
+.df-line--del {
+  background: #fdecea;
+}
+
+.df-line--pad {
+  background: repeating-linear-gradient(45deg, #f6f7f9, #f6f7f9 6px, #eef0f4 6px, #eef0f4 12px);
+}
+
+.df-summary {
+  max-height: 260px;
+  margin-top: 12px;
+  overflow: auto;
+}
+
+.df-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px;
+  padding: 5px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 13px;
+}
+
+.df-item code {
+  font-family: var(--mono);
+  word-break: break-all;
+}
+
+.df-op {
+  min-width: 44px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.df-op--add {
+  background: #e7f6ec;
+  color: var(--ok);
+}
+
+.df-op--remove {
+  background: #fdecea;
+  color: var(--danger);
+}
+
+.df-op--replace {
+  background: #fff4d6;
+  color: #8a5a00;
+}
+
+/* 并排布局：卡片顶部对齐，不叠 `.tl-card + .tl-card` 的上外边距 */
+.qr-layout > .tl-card,
+.js-layout > .tl-card,
+.df-sides > .tl-card,
+.df-view > * {
+  margin-top: 0;
+}
+
+.tl-error:empty,
+.tl-meta:empty {
+  display: none;
+}
+
+/* JSON 美化：多页标签（只在内存里，刷新重置） */
+.js-pages {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.js-page {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--muted);
+}
+
+.js-page.is-active {
+  border-color: rgba(31, 75, 153, 0.35);
+  background: var(--accent-soft);
+  color: var(--ink);
+}
+
+.js-page button,
+.js-page__add {
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.js-page__main {
+  padding: 5px 6px 5px 14px;
+}
+
+.js-page__main:only-child {
+  padding-right: 14px;
+}
+
+.js-page__x {
+  width: 22px;
+  height: 22px;
+  margin-right: 5px;
+  padding: 0;
+  border-radius: 50%;
+  line-height: 1;
+}
+
+.js-page__x:hover {
+  background: rgba(21, 26, 34, 0.1);
+}
+
+.js-page__add {
+  width: 30px;
+  height: 30px;
+  border: 1px dashed var(--line);
+  border-radius: 50%;
+  background: #fff;
+  color: var(--accent);
+  font-size: 18px;
+  line-height: 1;
+}
+
+.js-page__add:hover:not(:disabled) {
+  background: var(--accent-soft);
+}
+
+.js-page__add:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* 识图 */
+.ip-result {
+  min-height: 260px;
+}
+
+.tl-drop.is-busy {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.ip-body {
+  margin: 12px 0 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-family: inherit;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.ip-body--json {
+  font-family: var(--mono);
+  font-size: 13px;
+}
+
+.ip-loading__bar {
+  height: 4px;
+  border-radius: 99px;
+  background: #e6ebf3;
+  overflow: hidden;
+}
+
+.ip-loading__bar span {
+  display: block;
+  width: 38%;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--accent);
+  animation: ip-slide 1.1s ease-in-out infinite;
+}
+
+.ip-loading__step {
+  margin: 10px 0 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+@keyframes ip-slide {
+  0% {
+    transform: translateX(-120%);
+  }
+  100% {
+    transform: translateX(320%);
+  }
+}
+
+@media (max-width: 860px) {
+  .qr-layout,
+  .js-layout,
+  .df-sides,
+  .df-view {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

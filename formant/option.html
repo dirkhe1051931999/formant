@@ -1,0 +1,1130 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>formant · 扩展设置</title>
+    <link rel="stylesheet" href="option.css" />
+  </head>
+  <body>
+    <div class="app">
+      <header class="shell-top">
+        <div class="shell-top__brand">
+          <img src="icons/icon32.png" width="24" height="24" alt="" />
+          <div>
+            <h1>扩展设置</h1>
+            <p>formant 通用管理页 · 功能 / New Tab / V2EX / GitZip / 自动翻页 / 手势 / 代理 / 扩展 / 词库 / 翻译 / X 推文 / 识图 / 同步</p>
+          </div>
+        </div>
+        <div class="shell-top__meta">
+          <button type="button" id="shellClientKey" class="shell-key" hidden data-go-panel="sync"></button>
+          <span id="shellVersion" class="shell-version"></span>
+        </div>
+      </header>
+
+      <div class="shell">
+        <nav class="shell-nav" aria-label="设置导航">
+          <button type="button" class="shell-nav__item is-active" data-panel="general">概览</button>
+          <button type="button" class="shell-nav__item" data-panel="features">功能</button>
+          <button type="button" class="shell-nav__item" data-panel="newtab">New Tab</button>
+          <button type="button" class="shell-nav__item" data-panel="v2ex">V2EX</button>
+          <button type="button" class="shell-nav__item" data-panel="gitzip">GitZip</button>
+          <button type="button" class="shell-nav__item" data-panel="autopagerize">自动翻页</button>
+          <button type="button" class="shell-nav__item" data-panel="gestures">手势</button>
+          <button type="button" class="shell-nav__item" data-panel="proxy">代理</button>
+          <button type="button" class="shell-nav__item" data-panel="extensions">扩展</button>
+          <button type="button" class="shell-nav__item" data-panel="lexicon">词库</button>
+          <button type="button" class="shell-nav__item" data-panel="translate">翻译</button>
+          <button type="button" class="shell-nav__item" data-panel="x-translate">X 推文</button>
+          <button type="button" class="shell-nav__item" data-panel="image-prompt">识图</button>
+          <button type="button" class="shell-nav__item" data-panel="sync">同步</button>
+        </nav>
+
+        <div class="shell-body">
+          <section class="panel is-active" data-panel="general" id="panel-general">
+            <header class="panel__head">
+              <div>
+                <h2>概览</h2>
+                <p class="muted">从左侧切换模块：功能（含 Discord / freefq / huavod / elitepvpers / Gemini 去水印 / Gmail 邮箱 / HLS 播放等总开关）、New Tab、V2EX、GitZip、自动翻页、手势、代理、扩展、词库、翻译、X 推文与同步。</p>
+              </div>
+            </header>
+            <div class="general-grid">
+              <article class="general-card">
+                <h3>功能</h3>
+                <p class="ui-clamp-2" data-tooltip-clamp>翻译 / New Tab / Discord 聊天翻译 / elitepvpers 帖子翻译 / freefq 导出 / huavod 控制台 / Gemini 去水印 / Gmail 邮箱 / HLS 播放等能力的总开关与细分开关。</p>
+                <button type="button" class="btn" data-go-panel="features">打开功能</button>
+              </article>
+              <article class="general-card">
+                <h3>New Tab</h3>
+                <p class="ui-clamp-2" data-tooltip-clamp>主页外观、天气城市、搜索框与主页数据同步。</p>
+                <button type="button" class="btn" data-go-panel="newtab">打开 New Tab 设置</button>
+              </article>
+              <article class="general-card">
+                <h3>V2EX Plus</h3>
+                <p class="ui-clamp-2" data-tooltip-clamp>自动签到、未读角标、主题/回复增强与用户管理。</p>
+                <button type="button" class="btn" data-go-panel="v2ex">打开 V2EX</button>
+              </article>
+              <article class="general-card">
+                <h3>GitZip</h3>
+                <p class="ui-clamp-2" data-tooltip-clamp>公开 GitHub 仓库的文件、目录、多选项 ZIP 下载。</p>
+                <button type="button" class="btn" data-go-panel="gitzip">打开 GitZip</button>
+              </article>
+              <article class="general-card">
+                <h3>AutoPagerize</h3>
+                <p class="ui-clamp-2" data-tooltip-clamp>滚动到底部自动加载下一页；内置站点规则与 microformat 兼容。</p>
+                <button type="button" class="btn" data-go-panel="autopagerize">打开自动翻页</button>
+              </article>
+              <article class="general-card">
+                <h3>鼠标手势</h3>
+                <p class="ui-clamp-2" data-tooltip-clamp>右键划动：后退 / 前进 / 刷新 / 关标签 / 到顶 / 到底。映射可同步 mono。默认关闭，避免与 smartUp 双触发。</p>
+                <button type="button" class="btn" data-go-panel="gestures">打开手势</button>
+              </article>
+              <article class="general-card">
+                <h3>代理</h3>
+                <p class="ui-clamp-2" data-tooltip-clamp>默认系统代理；支持 PAC 导入与固定 HTTP·SOCKS；popup 可快速切换。</p>
+                <button type="button" class="btn" data-go-panel="proxy">打开代理</button>
+              </article>
+              <article class="general-card">
+                <h3>扩展</h3>
+                <p class="ui-clamp-2" data-tooltip-clamp>搜索并一键启用 / 禁用已安装扩展；popup 顶栏也可开关。</p>
+                <button type="button" class="btn" data-go-panel="extensions">打开扩展管理</button>
+              </article>
+              <article class="general-card">
+                <h3>词库</h3>
+                <p class="ui-clamp-2" data-tooltip-clamp>内置多语言俚语包，可导入/新建自定义包，供智能翻译打分使用。</p>
+                <button type="button" class="btn" data-go-panel="lexicon">打开词库</button>
+              </article>
+              <article class="general-card">
+                <h3>翻译</h3>
+                <p class="ui-clamp-2" data-tooltip-clamp>默认引擎模式与目标语言；与 popup / 划词翻译共用。</p>
+                <button type="button" class="btn" data-go-panel="translate">打开翻译</button>
+              </article>
+              <article class="general-card">
+                <h3>X 推文</h3>
+                <p class="ui-clamp-2" data-tooltip-clamp>x.com 时间线自动译推文；用颜色和字号与原文区分。走 Google 直连，不扣 Client API Key。</p>
+                <button type="button" class="btn" data-go-panel="x-translate">打开 X 推文</button>
+              </article>
+              <article class="general-card">
+                <h3>识图</h3>
+                <p class="ui-clamp-2" data-tooltip-clamp>从 popup 顶栏「工具箱」进入，上传图片或填 URL，用你自己的视觉模型反解提示词。不走 mono。</p>
+                <button type="button" class="btn" data-go-panel="image-prompt">配置模型</button>
+              </article>
+              <article class="general-card">
+                <h3>同步</h3>
+                <p class="ui-clamp-2" data-tooltip-clamp>mono Base URL、Client API Key。不同 Key 对应不同的 New Tab、手势、书签与热点英语。</p>
+                <button type="button" class="btn" data-go-panel="sync">打开同步</button>
+              </article>
+            </div>
+          </section>
+
+          <section class="panel" data-panel="features" id="panel-features" hidden>
+            <header class="panel__head">
+              <div>
+                <h2>功能开关</h2>
+                <p class="muted" id="featuresSummary">加载中…</p>
+              </div>
+            </header>
+            <form id="featuresForm" class="settings-stack" onsubmit="return false">
+              <section class="settings-card">
+                <h3>翻译</h3>
+                <p class="muted">总开关关闭后，下列细分入口全部停用；右键菜单会即时重建。</p>
+                <label class="feature-row">
+                  <span>
+                    <strong>启用翻译</strong>
+                    <small>总开关</small>
+                  </span>
+                  <input type="checkbox" data-feature="translate.enabled" />
+                </label>
+                <label class="feature-row feature-row--nested" data-requires-translate-wrap>
+                  <span>
+                    <strong>弹窗翻译</strong>
+                    <small>工具栏 popup 内翻译</small>
+                  </span>
+                  <input type="checkbox" data-feature="translate.popup" data-requires-translate />
+                </label>
+                <label class="feature-row feature-row--nested">
+                  <span>
+                    <strong>划词浮标</strong>
+                    <small>选中文本后显示翻译图标</small>
+                  </span>
+                  <input type="checkbox" data-feature="translate.selection" data-requires-translate />
+                </label>
+                <label class="feature-row feature-row--nested">
+                  <span>
+                    <strong>右键翻译</strong>
+                    <small>上下文菜单「用 formant 翻译」</small>
+                  </span>
+                  <input type="checkbox" data-feature="translate.contextMenu" data-requires-translate />
+                </label>
+              </section>
+
+              <section class="settings-card">
+                <h3>New Tab</h3>
+                <p class="muted">关闭后新标签页将尝试回到浏览器默认页（扩展仍声明 override，仅运行时跳过）。</p>
+                <label class="feature-row">
+                  <span>
+                    <strong>启用 formant New Tab</strong>
+                    <small>iTab 风格主页</small>
+                  </span>
+                  <input type="checkbox" data-feature="newtab.enabled" />
+                </label>
+              </section>
+
+              <section class="settings-card">
+                <h3>图片另存为</h3>
+                <p class="muted">按格式控制右键菜单项；两项都关则隐藏整组菜单。</p>
+                <label class="feature-row">
+                  <span>
+                    <strong>另存为 PNG</strong>
+                    <small>右键 → formant 图片另存为 → PNG</small>
+                  </span>
+                  <input type="checkbox" data-feature="imageSave.png" />
+                </label>
+                <label class="feature-row">
+                  <span>
+                    <strong>另存为 JPG</strong>
+                    <small>右键 → formant 图片另存为 → JPG</small>
+                  </span>
+                  <input type="checkbox" data-feature="imageSave.jpg" />
+                </label>
+              </section>
+              <section class="settings-card">
+                <h3>滚动截屏</h3>
+                <p class="muted">默认开启。网页右键「formant 整页滚动截屏」或「formant 截取可见区域」。只处理 http / https，不走 mono，不另开面板。超长页会缩小后保存。关闭后隐藏该菜单。</p>
+                <label class="feature-row">
+                  <span>
+                    <strong>启用滚动截屏</strong>
+                    <small>右键 → formant 整页滚动截屏</small>
+                  </span>
+                  <input type="checkbox" data-feature="screenshot.enabled" />
+                </label>
+              </section>
+              <section class="settings-card">
+                <h3>oolafOffice</h3>
+                <p class="muted">默认开启。popup 主界面快捷条和网页右键「formant oolafOffice」打开起始页 / Word / Excel / PPT（独立目录 <code>oolafoffice/</code>，本机读写 .docx / .xlsx / .pptx）。不走 mono，不另开面板，不增加 popup 顶栏图标。关闭后隐藏快捷条和该菜单。<a href="oolafoffice/index.html" target="_blank" rel="noopener">打开 oolafOffice 起始页</a></p>
+                <label class="feature-row">
+                  <span>
+                    <strong>启用 oolafOffice</strong>
+                    <small>popup 快捷条 / 右键 → formant oolafOffice</small>
+                  </span>
+                  <input type="checkbox" data-feature="office.enabled" />
+                </label>
+              </section>
+              <section class="settings-card">
+                <h3>V2EX Plus</h3>
+                <p class="muted">关闭后自动签到、未读角标、V2EX 页面增强与 sov2ex 右键菜单都会停用。</p>
+                <label class="feature-row">
+                  <span>
+                    <strong>启用 V2EX Plus</strong>
+                    <small>V2EX 功能总开关</small>
+                  </span>
+                  <input type="checkbox" data-feature="v2ex.enabled" />
+                </label>
+              </section>
+              <section class="settings-card">
+                <h3>GitZip</h3>
+                <p class="muted">仅用于公开 GitHub 仓库；关闭后页面勾选、悬浮下载面板和 GitHub 右键菜单都会停用。</p>
+                <label class="feature-row">
+                  <span>
+                    <strong>启用 GitZip</strong>
+                    <small>公开仓库文件 / 目录 / ZIP 下载</small>
+                  </span>
+                  <input type="checkbox" data-feature="gitzip.enabled" />
+                </label>
+              </section>
+              <section class="settings-card">
+                <h3>AutoPagerize</h3>
+                <p class="muted">滚动到底部自动加载下一页并插入当前页面；关闭后所有站点停止自动翻页。</p>
+                <label class="feature-row">
+                  <span>
+                    <strong>启用 AutoPagerize</strong>
+                    <small>自动加载分页页面</small>
+                  </span>
+                  <input type="checkbox" data-feature="autopagerize.enabled" />
+                </label>
+              </section>
+              <section class="settings-card">
+                <h3>鼠标手势</h3>
+                <p class="muted">关闭后页面不再响应右键划动；映射仍保留在「手势」面板。默认关闭，避免与已安装的 smartUp 同时吃右键。</p>
+                <label class="feature-row">
+                  <span>
+                    <strong>启用鼠标手势</strong>
+                    <small>右键划动后退 / 前进 / 刷新 / 关标签 / 滚动</small>
+                  </span>
+                  <input type="checkbox" data-feature="gestures.enabled" />
+                </label>
+              </section>
+              <section class="settings-card">
+                <h3>代理</h3>
+                <p class="muted">关闭后扩展不再控制浏览器代理（恢复系统默认）；已保存的配置仍保留。</p>
+                <label class="feature-row">
+                  <span>
+                    <strong>启用代理切换</strong>
+                    <small>直连 / 系统 / 固定 HTTP·SOCKS</small>
+                  </span>
+                  <input type="checkbox" data-feature="proxy.enabled" />
+                </label>
+              </section>
+              <section class="settings-card">
+                <h3>扩展管理</h3>
+                <p class="muted">关闭后 popup 入口隐藏，设置页只读提示；不会自动改动其它扩展状态。</p>
+                <label class="feature-row">
+                  <span>
+                    <strong>启用扩展管理</strong>
+                    <small>popup 顶栏列表与一键开关</small>
+                  </span>
+                  <input type="checkbox" data-feature="extensions.enabled" />
+                </label>
+              </section>
+              <section class="settings-card">
+                <h3>站点数据</h3>
+                <p class="muted">关闭后 popup 不再提供 Cookie / Storage 提取入口。概念参考「Cookie和Storage提取器」，未嵌入其源码。</p>
+                <label class="feature-row">
+                  <span>
+                    <strong>启用站点数据提取</strong>
+                    <small>当前页 Cookie · localStorage · sessionStorage</small>
+                  </span>
+                  <input type="checkbox" data-feature="siteData.enabled" />
+                </label>
+              </section>
+              <section class="settings-card">
+                <h3>Telegram 下载</h3>
+                <p class="muted">默认开启。仅作用于 Telegram Web：在禁止保存内容的群组 / 私密频道里，为已经能看到的图片和视频补下载按钮。关闭后立即停用。</p>
+                <label class="feature-row">
+                  <span>
+                    <strong>启用 Telegram 受限下载</strong>
+                    <small>web.telegram.org 受限群组 / 私密频道保存图片与视频</small>
+                  </span>
+                  <input type="checkbox" data-feature="telegram.enabled" />
+                </label>
+              </section>
+              <section class="settings-card">
+                <h3>X 推文翻译</h3>
+                <p class="muted">默认开启。在 x.com / Twitter 时间线为可见推文补译文（Google 直连，不走 mono）。颜色和字号在「X 推文」面板。关闭后立即停用。</p>
+                <label class="feature-row">
+                  <span>
+                    <strong>启用 X 推文翻译</strong>
+                    <small>x.com / pro.x.com / twitter.com 时间线自动翻译</small>
+                  </span>
+                  <input type="checkbox" data-feature="xTranslate.enabled" />
+                </label>
+              </section>
+              <section class="settings-card">
+                <h3>Discord 翻译</h3>
+                <p class="muted">默认开启。在 discord.com 聊天页右下角放一个「翻译」按钮，点一下只翻当前频道里已经加载的这一页消息。往上滚出更早的历史时不会自动翻，需要再点一次。刷新页面后这次的译文记录清空。聊天消息翻译用 Google 直连，不走 mono。输入框右侧另有一个翻译图标（样式与旁边的图标一致）：点一下选「Google」或「GPT」，译文直接写入输入框，原文贴在输入框正上方，可一键撤回（GPT 走 mono，消耗 Client API Key，只在你点选时调用）。颜色和字号与「X 推文」面板共用。关闭后立即卸按钮、图标和译文。</p>
+                <label class="feature-row">
+                  <span>
+                    <strong>启用 Discord 聊天翻译</strong>
+                    <small>discord.com 当前频道手动翻译</small>
+                  </span>
+                  <input type="checkbox" data-feature="discord.enabled" />
+                </label>
+              </section>
+              <section class="settings-card">
+                <h3>elitepvpers 翻译</h3>
+                <p class="muted">默认开启。只给 www.elitepvpers.com 的帖子标题和楼层正文补译文（列表标题、帖子页标题、每楼标题与正文），不翻导航、用户名和签名。Google 直连，不走 mono。颜色和字号与「X 推文」面板共用。关闭后立即停用。</p>
+                <label class="feature-row">
+                  <span>
+                    <strong>启用 elitepvpers 帖子翻译</strong>
+                    <small>elitepvpers.com 帖子标题与回复正文</small>
+                  </span>
+                  <input type="checkbox" data-feature="elitepvpers.enabled" />
+                </label>
+              </section>
+              <section class="settings-card">
+                <h3>linux.do 列表</h3>
+                <p class="muted">默认开启。把 linux.do 话题列表换成 formant 风格的文件表格（参考飞书表格结构，不改品牌/侧栏，不碰帖子详情）。关闭后立即恢复原列表。若已装同类油猴会叠皮，关掉其一即可。</p>
+                <label class="feature-row">
+                  <span>
+                    <strong>启用 linux.do 列表表格</strong>
+                    <small>linux.do 最新 / 分类话题列表</small>
+                  </span>
+                  <input type="checkbox" data-feature="linuxdo.enabled" />
+                </label>
+              </section>
+              <section class="settings-card">
+                <h3>虎扑帖子</h3>
+                <p class="muted">默认开启。把 bbs.hupu.com 的顶栏、帖子页和板块列表换成 formant 的简洁风格：去掉 App 推广与灰底粗框，回帖行距收紧，「点灭 / 只看此人 / 举报」悬停才出现，帖子里的表情包统一高度、大图限制最大边。帖子详情提供上一帖 / 下一帖（按板块列表顺序）；直接打开详情也会去板块列表里找邻居，不依赖从列表带过来的上下文。只改样式与翻帖，不碰登录与发帖。关闭后立即恢复站点原样。</p>
+                <label class="feature-row">
+                  <span>
+                    <strong>启用虎扑简洁版式</strong>
+                    <small>bbs.hupu.com 帖子详情与板块列表</small>
+                  </span>
+                  <input type="checkbox" data-feature="hupu.enabled" />
+                </label>
+              </section>
+              <section class="settings-card">
+                <h3>freefq 导出</h3>
+                <p class="muted">默认开启。在 freefq.com 帖子详情页彻底放开划选/复制/右键（站点页尾脚本也会被压住），并提供「导出 TXT」。关闭后立即卸按钮并恢复站点原限制。</p>
+                <label class="feature-row">
+                  <span>
+                    <strong>启用 freefq 一键导出</strong>
+                    <small>freefq.com 帖子详情 → TXT</small>
+                  </span>
+                  <input type="checkbox" data-feature="freefq.enabled" />
+                </label>
+              </section>
+              <section class="settings-card">
+                <h3>huavod 控制台</h3>
+                <p class="muted">默认开启。拦截 huavod.com 上的 disable-devtool，避免开 DevTools 被 <code>history.back</code> 踢走；关闭后恢复站点原检测。</p>
+                <label class="feature-row">
+                  <span>
+                    <strong>启用 huavod 控制台解锁</strong>
+                    <small>huavod.com 直播页可开 F12</small>
+                  </span>
+                  <input type="checkbox" data-feature="huavod.enabled" />
+                </label>
+              </section>
+              <section class="settings-card">
+                <h3>Gemini 去水印</h3>
+                <p class="muted">默认开启。在 gemini.google.com 和 business.gemini.google 下载生成图时，去掉右下角 Gemini 水印再保存。只处理 googleusercontent 上的成图（路径以 <code>gg</code> / <code>rd</code> 开头），并尽量取原图尺寸。对话文字、导航和其它网站不受影响。关闭后下一次下载恢复带水印原图。不另开面板，不同步到 mono。</p>
+                <label class="feature-row">
+                  <span>
+                    <strong>启用 Gemini 下载去水印</strong>
+                    <small>gemini.google.com 生成图下载时去掉右下角水印</small>
+                  </span>
+                  <input type="checkbox" data-feature="gemini.enabled" />
+                </label>
+              </section>
+              <section class="settings-card">
+                <h3>Gmail 邮箱</h3>
+                <p class="muted">默认开启。只在 mail.google.com 顶栏的问号和设置左边显示当前登录的 Google 邮箱，点击即可复制。其它网站不注入。关闭后这块文字立即去掉。不另开面板，不同步到 mono。</p>
+                <label class="feature-row">
+                  <span>
+                    <strong>启用 Gmail 当前邮箱</strong>
+                    <small>mail.google.com 顶栏显示邮箱，便于复制</small>
+                  </span>
+                  <input type="checkbox" data-feature="gmail.enabled" />
+                </label>
+              </section>
+              <section class="settings-card">
+                <h3>Axure 原型</h3>
+                <p class="muted">默认开启。用 <code>file://</code> 打开本地发布的 Axure HTML 原型时，在各框架之间转发页面消息，并在首页标上 <code>pluginDetected</code>。没有 Axure 事件节点的本地文件不会挂监听。关闭后立即停掉转发。不另开面板，不同步到 mono。Edge / Chrome 扩展详情里还要打开「允许访问文件 URL」。若仍装着 Axure RP Extension，请关掉其一，避免同一条消息发两次。</p>
+                <label class="feature-row">
+                  <span>
+                    <strong>启用 Axure 本地原型</strong>
+                    <small>file:// 打开的 Axure HTML 可在框架间通信</small>
+                  </span>
+                  <input type="checkbox" data-feature="axure.enabled" />
+                </label>
+              </section>
+              <section class="settings-card">
+                <h3>Vue 组件</h3>
+                <p class="muted">默认开启。在 DevTools 里增加「Vue」面板，查看 Vue 3 / Vue 2 的组件树、props / setup / data，以及 Pinia 或 Vuex 的当前状态，并在页面上高亮选中组件。当前标签检测到 Vue 时，工具栏图标右上角会出现绿色 V。关闭后已打开的页面停止检查，图标恢复，新页面不再注入。不另开 popup，不同步到 mono。生产构建需要带 Vue 的 devtools 标志。若仍装着 Vue.js devtools，请关掉其一，避免抢同一个 hook。</p>
+                <label class="feature-row">
+                  <span>
+                    <strong>启用 Vue 组件检查</strong>
+                    <small>DevTools 的 Vue 面板查看组件树</small>
+                  </span>
+                  <input type="checkbox" data-feature="vue.enabled" />
+                </label>
+              </section>
+              <section class="settings-card">
+                <h3>HLS 播放</h3>
+                <p class="muted">默认开启。主框架打开以 <code>.m3u8</code> 结尾的地址时，改在扩展内用 hls.js 播放，可调倍速和旋转，左右键快进快退，并可把当前列表存成 MP4。地址栏输入 <code>m3u8</code> 再回车也能打开播放页。关闭后这些地址回到浏览器默认下载。不另开面板，不同步到 mono。若仍装着 Native HLS Playback，请关掉其一，避免抢同一次导航。</p>
+                <label class="feature-row">
+                  <span>
+                    <strong>启用 HLS 播放</strong>
+                    <small>打开 .m3u8 直链时用扩展播放器</small>
+                  </span>
+                  <input type="checkbox" data-feature="hls.enabled" />
+                </label>
+              </section>
+              <section class="settings-card">
+                <h3>识图</h3>
+                <p class="muted">默认开启。入口在 popup 顶栏「工具箱」页的左侧列表里，识图是工具箱内的左右布局面板；上传或填写图片 URL 后，用「识图」面板里的模型反解提示词。关闭后工具箱里隐藏识图，模型配置保留。不走 mono，不注入网页。</p>
+                <label class="feature-row">
+                  <span>
+                    <strong>启用识图</strong>
+                    <small>工具箱列表里的识图入口</small>
+                  </span>
+                  <input type="checkbox" data-feature="imagePrompt.enabled" />
+                </label>
+              </section>
+              <section class="settings-card">
+                <h3>工具箱</h3>
+                <p class="muted">默认开启。popup 顶栏「工具箱」图标打开新标签页，内含二维码、时间戳、JSON 美化、JSON 对比、图片 Base64、编码转换，以及识图入口。全部在本机运行，不走 mono，不注入网页，不新增权限。关闭后隐藏这 6 个工具；若识图仍开启，工具箱入口保留且只显示识图。</p>
+                <label class="feature-row">
+                  <span>
+                    <strong>启用工具箱</strong>
+                    <small>二维码 / 时间戳 / JSON / 对比 / Base64 / 编码</small>
+                  </span>
+                  <input type="checkbox" data-feature="tools.enabled" />
+                </label>
+              </section>
+            </form>
+          </section>
+
+          <section class="panel" data-panel="newtab" id="panel-newtab" hidden>
+            <header class="panel__head">
+              <div>
+                <h2>New Tab</h2>
+                <p class="muted">管理主页外观、天气城市和主页数据。「刷新数据」从当前 Client API Key 拉取；「同步主页」上传到该 Key（空主页或较旧本机不会覆盖云端）。打开 New Tab 会自动拉取较新的云端主页。</p>
+              </div>
+              <div class="panel__actions">
+                <button type="button" id="newtabRefresh" class="btn btn--ghost">刷新数据</button>
+                <button type="button" id="newtabSync" class="btn">同步主页</button>
+              </div>
+            </header>
+            <form id="newtabForm" class="settings-stack" onsubmit="return false">
+              <section class="settings-card">
+                <h3>主页外观与城市</h3>
+                <div class="settings-grid">
+                  <label class="settings-field">
+                    LocationID（和风）
+                    <input id="newtabLocationId" type="text" placeholder="101110101" />
+                  </label>
+                  <label class="settings-field">
+                    城市名
+                    <input id="newtabCityName" type="text" placeholder="西安" />
+                  </label>
+                  <label class="settings-field settings-field--wide">
+                    壁纸 URL
+                    <input id="newtabWallpaperUrl" type="url" spellcheck="false" placeholder="https://" />
+                  </label>
+                  <label class="settings-field settings-field--wide">
+                    遮罩 <span id="newtabWallpaperMaskValue">0.12</span>
+                    <input id="newtabWallpaperMask" type="range" min="0" max="0.85" step="0.01" />
+                  </label>
+                </div>
+                <label class="feature-row">
+                  <span>
+                    <strong>显示搜索框</strong>
+                    <small>在主页顶部显示搜索或网址输入框</small>
+                  </span>
+                  <input id="newtabShowSearch" type="checkbox" />
+                </label>
+                <div class="panel__actions panel__actions--start">
+                  <button type="button" id="newtabSave" class="btn btn--ghost">保存 New Tab 设置</button>
+                </div>
+                <p id="newtabState" class="settings-meta">加载中…</p>
+                <p class="settings-meta" data-client-key-scope></p>
+              </section>
+              <section class="settings-card">
+                <h3>mono 连接</h3>
+                <p class="muted">换电脑请先配置同一把 Client API Key；打开 New Tab 会自动拉取该 Key 上较新的云端主页（不限空主页）。凭据会尽量经 Chrome 同步带到其它设备。</p>
+                <div class="panel__actions panel__actions--start">
+                  <button type="button" class="btn btn--ghost" data-go-panel="sync">打开同步设置</button>
+                </div>
+              </section>
+            </form>
+          </section>
+
+          <section class="panel" data-panel="v2ex" id="panel-v2ex" hidden>
+            <header class="panel__head">
+              <div>
+                <h2>V2EX Plus</h2>
+                <p class="muted">自动签到、通知与页面增强。需先在浏览器中登录 V2EX。</p>
+              </div>
+              <div class="panel__actions">
+                <button type="button" id="v2exCheckinNow" class="btn">立即签到</button>
+                <button type="button" id="v2exReset" class="btn btn--ghost">恢复默认</button>
+              </div>
+            </header>
+            <p id="v2exState" class="settings-meta">加载中…</p>
+            <div id="v2exSettings" class="settings-stack"></div>
+            <div class="settings-stack">
+            <section class="settings-card">
+              <h3>Imgur 图片上传</h3>
+              <p class="muted">回复区的「插入图片」会使用你自己的 Imgur Client ID；该值只保存到本机，不会写入 V2EX 兼容设置或扩展包。换电脑可在「同步」里和其它本机钥匙一起导出。</p>
+              <div class="settings-grid">
+                <label class="settings-field settings-field--wide">
+                  Imgur Client ID
+                  <span class="settings-inline">
+                    <input id="v2exImgurClientId" type="password" spellcheck="false" autocomplete="off" placeholder="可选：保存后刷新 V2EX 页面" />
+                    <button type="button" id="v2exImgurSave" class="btn btn--ghost">保存 Imgur ID</button>
+                  </span>
+                </label>
+              </div>
+              <p id="v2exImgurMeta" class="settings-meta"></p>
+            </section>
+            <section class="settings-card">
+              <h3>入口与管理</h3>
+              <p class="muted">页面增强仅在 v2ex.com 生效；列表会通过 V2EX 当前登录状态读取。</p>
+              <div class="v2ex-entry">
+                <div class="panel__actions panel__actions--start">
+                  <button type="button" id="v2exStyles" class="btn btn--ghost">样式商城</button>
+                  <button type="button" id="v2exShortcuts" class="btn btn--ghost">设置快捷键</button>
+                </div>
+                <div id="v2exManagement" class="v2ex-management"></div>
+              </div>
+            </section>
+            </div>
+          </section>
+
+          <section class="panel" data-panel="gitzip" id="panel-gitzip" hidden>
+            <header class="panel__head">
+              <div>
+                <h2>GitZip（公开仓库）</h2>
+                <p class="muted">在 GitHub 文件列表勾选项目，下载单个文件或目录 / 多选项 ZIP。</p>
+              </div>
+            </header>
+            <form id="gitzipForm" class="settings-stack" onsubmit="return false">
+              <section class="settings-card">
+                <h3>选择方式</h3>
+                <div class="settings-grid">
+                  <label class="settings-field settings-field--wide">
+                    文件列表选择
+                    <select id="gitzipSelectBehaviour">
+                      <option value="both">复选标记 + 双击行</option>
+                      <option value="single-check">仅复选标记</option>
+                      <option value="double-click">仅双击行</option>
+                    </select>
+                  </label>
+                </div>
+                <p class="settings-hint">双击模式会在每行显示只读的选择标记，双击文件或目录行即可切换。</p>
+              </section>
+              <section class="settings-card">
+                <h3>悬浮下载面板主题</h3>
+                <div class="settings-grid">
+                  <label class="settings-field settings-field--wide">
+                    主题
+                    <select id="gitzipTheme">
+                      <option value="default">跟随系统</option>
+                      <option value="light">浅色</option>
+                      <option value="dark">深色</option>
+                    </select>
+                  </label>
+                </div>
+              </section>
+              <section class="settings-card">
+                <h3>公开模式限制</h3>
+                <ul class="settings-list">
+                  <li>不保存 GitHub PAT，不使用 OAuth，也不会访问 <code>gitzip.org</code>。</li>
+                  <li>仅能下载公开仓库。GitHub 匿名 API 通常每小时约 60 次请求；大目录或频繁下载可能触发限流。</li>
+                  <li>右键菜单会与 formant 翻译、图片另存为和 V2EX sov2ex 菜单共存。</li>
+                </ul>
+                <div class="panel__actions panel__actions--start">
+                  <button type="button" id="gitzipReset" class="btn btn--ghost">恢复默认</button>
+                </div>
+                <p id="gitzipState" class="settings-meta">加载中…</p>
+              </section>
+            </form>
+          </section>
+
+          <section class="panel" data-panel="autopagerize" id="panel-autopagerize" hidden>
+            <header class="panel__head">
+              <div>
+                <h2>AutoPagerize（自动翻页）</h2>
+                <p class="muted">滚动到页面底部时自动加载下一页并插入当前页面。</p>
+              </div>
+              <div class="panel__actions">
+                <button type="button" id="autopagerizeReset" class="btn btn--ghost">恢复默认</button>
+              </div>
+            </header>
+            <form id="autopagerizeForm" class="settings-stack" onsubmit="return false">
+              <section class="settings-card">
+                <h3>显示与排除</h3>
+                <label class="feature-row">
+                  <span>
+                    <strong>显示状态条</strong>
+                    <small>加载下一页时在页面底部显示提示</small>
+                  </span>
+                  <input id="autopagerizeMessageBar" type="checkbox" />
+                </label>
+                <label class="settings-field settings-field--wide">
+                  排除 URL（每行一条，支持通配符 <code>*</code> 或 <code>/正则/</code>）
+                  <textarea id="autopagerizeExclude" rows="5" cols="60" placeholder="https://mail.google.com/*&#10;/[^.]+\.example\.com\//"></textarea>
+                </label>
+                <div class="panel__actions panel__actions--start">
+                  <button type="button" id="autopagerizeSave" class="btn">保存设置</button>
+                </div>
+                <p id="autopagerizeState" class="settings-meta">加载中…</p>
+              </section>
+              <section class="settings-card">
+                <h3>站点规则</h3>
+                <p class="muted">内置约 2400 条站点规则（来自 AutoPagerize wedata 项目，2010 年数据）。现代网站若使用 <code>rel="next"</code> 或 <code>autopagerize_*</code> class，无需规则即可工作。</p>
+                <p class="muted">规则匹配顺序：自定义规则 → 内置规则 → microformat。</p>
+              </section>
+            </form>
+          </section>
+
+          <section class="panel" data-panel="gestures" id="panel-gestures" hidden>
+            <header class="panel__head">
+              <div>
+                <h2>鼠标手势</h2>
+                <p class="muted">右键按下后划动；位移小于阈值仍弹出系统菜单。行为 ID 固定（后退/前进/刷新/关标签/滚动），可增删改绑定。「刷新」从当前 Client API Key 拉取，「同步」上传到该 Key。</p>
+              </div>
+              <div class="panel__actions">
+                <button type="button" id="gesturesRefresh" class="btn btn--ghost">刷新</button>
+                <button type="button" id="gesturesSync" class="btn">同步</button>
+                <button type="button" id="gesturesReset" class="btn btn--ghost">恢复默认</button>
+              </div>
+            </header>
+            <form id="gesturesForm" class="settings-stack" onsubmit="return false">
+              <section class="settings-card">
+                <h3>识别</h3>
+                <label class="settings-field">
+                  最小位移（像素）
+                  <input id="gesturesMinDistance" type="number" min="6" max="40" step="1" />
+                </label>
+                <p class="settings-hint">小于该距离的右键仍走原生菜单（翻译 / 图片另存为等）。输入框内不触发。</p>
+              </section>
+              <section class="settings-card">
+                <h3>手势</h3>
+                <p class="muted">点「添加」或某条的「绘制」，在画板按住左键或右键划路径。网页上用右键。圈不必闭合；✕ 可两笔交叉。预览图按 Client API Key 存 S3，列表同时显示箭头/圈/✕ 和图片。</p>
+                <div class="gesture-pad" id="gesturesPad" tabindex="0">
+                  <svg id="gesturesPadSvg" class="gesture-pad__svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+                    <g id="gesturesPadStrokes"></g>
+                  </svg>
+                  <p id="gesturesPadHint" class="gesture-pad__hint">点「添加」或「绘制」后在此划动</p>
+                </div>
+                <div class="gesture-add">
+                  <select id="gesturesAddAction" aria-label="要添加的动作"></select>
+                  <button type="button" id="gesturesAdd" class="btn">添加</button>
+                </div>
+                <div class="gesture-bind-list" id="gesturesBindList"></div>
+                <p id="gesturesState" class="settings-meta">加载中…</p>
+                <p class="settings-meta" data-client-key-scope></p>
+              </section>
+              <section class="settings-card">
+                <h3>限制</h3>
+                <ul class="settings-list">
+                  <li>只认右键划动，不改工具栏 popup，也不调用 <code>contextMenus.removeAll()</code>。</li>
+                  <li>浏览器禁止向 <code>edge://</code>、<code>chrome://</code>、扩展商店（含 Edge Add-ons）和 PDF 查看器注入脚本，这些页无法用手势。</li>
+                  <li>若同时开着 smartUp，两套手势会抢右键。请只开其中一个。</li>
+                </ul>
+              </section>
+            </form>
+          </section>
+
+          <section class="panel" data-panel="proxy" id="panel-proxy" hidden>
+            <header class="panel__head">
+              <div>
+                <h2>代理</h2>
+                <p class="muted">默认系统代理；支持 PAC（URL / 导入脚本），以及最多 5 条固定 HTTP / HTTPS / SOCKS。概念参考 SwitchyOmega，未嵌入其源码。</p>
+              </div>
+            </header>
+            <form id="proxyForm" class="settings-stack" onsubmit="return false">
+              <section class="settings-card">
+                <h3>当前配置</h3>
+                <p id="proxyState" class="settings-meta">加载中…</p>
+                <div id="proxyProfileList" class="proxy-profile-list"></div>
+              </section>
+              <section class="settings-card">
+                <h3>PAC 脚本</h3>
+                <p class="muted">填写远程 PAC URL，或导入 / 粘贴本地脚本；保存后可在上方列表启用「PAC」。</p>
+                <div class="settings-grid">
+                  <label class="settings-field settings-field--wide">
+                    PAC URL
+                    <input id="proxyPacUrl" type="url" spellcheck="false" placeholder="https://example.com/proxy.pac" />
+                  </label>
+                  <label class="settings-field settings-field--wide">
+                    PAC 内容（导入或粘贴）
+                    <textarea id="proxyPacData" rows="6" placeholder="function FindProxyForURL(url, host) {&#10;  return &quot;PROXY 127.0.0.1:7890&quot;;&#10;}"></textarea>
+                  </label>
+                  <label class="settings-field settings-field--wide">
+                    导入 .pac 文件
+                    <input id="proxyPacFile" type="file" accept=".pac,.js,text/plain,text/javascript" />
+                  </label>
+                </div>
+                <p class="settings-hint">同时填写时优先使用本地脚本内容；URL 需浏览器可直接拉取。</p>
+                <div class="panel__actions panel__actions--start">
+                  <button type="button" id="proxyPacSave" class="btn">保存 PAC</button>
+                  <button type="button" id="proxyPacApply" class="btn">启用 PAC</button>
+                  <button type="button" id="proxyPacClear" class="btn btn--ghost">清除 PAC</button>
+                </div>
+              </section>
+              <section class="settings-card">
+                <h3>添加 / 编辑固定代理</h3>
+                <input id="proxyEditId" type="hidden" value="" />
+                <div class="settings-grid">
+                  <label class="settings-field">
+                    名称
+                    <input id="proxyName" type="text" maxlength="40" placeholder="公司 SOCKS" />
+                  </label>
+                  <label class="settings-field">
+                    协议
+                    <select id="proxyScheme">
+                      <option value="http">HTTP</option>
+                      <option value="https">HTTPS</option>
+                      <option value="socks4">SOCKS4</option>
+                      <option value="socks5" selected>SOCKS5</option>
+                    </select>
+                  </label>
+                  <label class="settings-field">
+                    主机
+                    <input id="proxyHost" type="text" spellcheck="false" placeholder="127.0.0.1" />
+                  </label>
+                  <label class="settings-field">
+                    端口
+                    <input id="proxyPort" type="number" min="1" max="65535" value="7890" />
+                  </label>
+                  <label class="settings-field settings-field--wide">
+                    绕过列表（每行一条）
+                    <textarea id="proxyBypass" rows="4" placeholder="localhost&#10;127.0.0.1&#10;&lt;local&gt;"></textarea>
+                  </label>
+                </div>
+                <p class="settings-hint">首版不支持代理用户名/密码；需要认证时请改用「系统代理」或自建 PAC。</p>
+                <div class="panel__actions panel__actions--start">
+                  <button type="button" id="proxySaveProfile" class="btn">添加代理</button>
+                  <button type="button" id="proxyResetForm" class="btn btn--ghost">清空表单</button>
+                </div>
+              </section>
+            </form>
+          </section>
+
+          <section class="panel" data-panel="extensions" id="panel-extensions" hidden>
+            <header class="panel__head">
+              <div>
+                <h2>扩展管理</h2>
+                <p class="muted">搜索并一键启用 / 禁用其它扩展。popup 顶栏也可进入。概念参考「扩展管理器」，未嵌入其源码；不含分组与锁定。</p>
+              </div>
+            </header>
+            <div id="extensionsPanelBody" class="settings-stack">
+              <section class="settings-card">
+                <h3>已安装扩展</h3>
+                <p id="extensionsState" class="settings-meta">加载中…</p>
+                <label class="settings-field settings-field--wide">
+                  搜索
+                  <input id="extensionsSearch" type="search" placeholder="名称 / 描述 / ID" autocomplete="off" />
+                </label>
+                <div id="extensionsList" class="ext-list"></div>
+              </section>
+            </div>
+          </section>
+
+          <section class="panel" data-panel="lexicon" id="panel-lexicon" hidden>
+            <header class="panel__head">
+              <div>
+                <h2>词库</h2>
+                <p class="muted">
+                  导入 JSON = <strong>单语言</strong>自定义包；默认<strong>新建</strong>，也可合并/替换当前自定义包。内置包不会被改写。
+                </p>
+              </div>
+              <div class="panel__actions">
+                <button type="button" id="btnNew" class="btn">新建包</button>
+                <button
+                  type="button"
+                  id="btnImport"
+                  class="btn btn--ghost"
+                  title="单个 JSON = 一种语言；导入前可选新建 / 合并 / 替换"
+                >
+                  导入 JSON
+                </button>
+                <input id="fileImport" type="file" accept="application/json,.json" hidden />
+                <button type="button" id="btnExport" class="btn btn--ghost">导出当前包</button>
+              </div>
+            </header>
+
+            <div class="layout">
+              <aside class="side">
+                <section class="side__group">
+                  <h2>内置词库</h2>
+                  <div id="builtinList" class="pack-list"></div>
+                </section>
+                <section class="side__group">
+                  <h2>自定义词库</h2>
+                  <div id="customList" class="pack-list"></div>
+                  <p id="customEmpty" class="muted">暂无自定义包，可新建或导入 JSON。</p>
+                </section>
+              </aside>
+
+              <main class="main">
+                <div class="main__toolbar">
+                  <div>
+                    <h2 id="packTitle">选择左侧词库</h2>
+                    <p id="packMeta" class="muted"></p>
+                  </div>
+                  <div class="main__toolbar-right">
+                    <input id="searchInput" type="search" placeholder="搜索短语 / 释义…" />
+                    <button type="button" id="btnAddEntry" class="btn" hidden>添加条目</button>
+                    <button type="button" id="btnDeletePack" class="btn btn--danger" hidden>删除包</button>
+                  </div>
+                </div>
+
+                <div id="editorBar" class="editor" hidden>
+                  <label>
+                    名称
+                    <input id="packNameInput" type="text" />
+                  </label>
+                  <label>
+                    语言
+                    <select id="packLangSelect">
+                      <option value="en">英语</option>
+                      <option value="zh">中文</option>
+                      <option value="ja">日语</option>
+                      <option value="ko">韩语</option>
+                      <option value="tr">土耳其语</option>
+                    </select>
+                  </label>
+                  <button type="button" id="btnSavePackMeta" class="btn btn--ghost">保存包信息</button>
+                </div>
+
+                <div class="table-wrap">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th>短语</th>
+                        <th>释义</th>
+                        <th>标签</th>
+                        <th class="col-actions">操作</th>
+                      </tr>
+                    </thead>
+                    <tbody id="entryBody">
+                      <tr>
+                        <td colspan="4" class="muted">请选择左侧词库包</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </main>
+            </div>
+          </section>
+
+          <section class="panel" data-panel="translate" id="panel-translate" hidden>
+            <header class="panel__head">
+              <div>
+                <h2>翻译</h2>
+                <p class="muted">默认模式与目标语言会同步到 popup 与划词面板（chrome.storage）。</p>
+              </div>
+            </header>
+            <div class="settings-stack">
+              <section class="settings-card">
+                <h3>默认模式</h3>
+                <p class="muted">与 popup 顶部引擎切换共用同一存储键。</p>
+                <div id="optTranslateMode" class="opt-mode" role="tablist" aria-label="默认翻译模式"></div>
+                <p id="optTranslateModeHint" class="settings-hint"></p>
+              </section>
+              <section class="settings-card">
+                <h3>默认目标语言</h3>
+                <p class="muted">popup 打开时预填；划词翻译也会使用该偏好（「自动检测」则由引擎判断）。</p>
+                <label class="settings-field">
+                  目标语言
+                  <select id="optTranslateTarget"></select>
+                </label>
+              </section>
+              <section class="settings-card">
+                <h3>DeepLX</h3>
+                <p class="muted">Google 失败时的备用，以及「全部」模式的第三张卡。请求直连 api.deeplx.org，不经 mono。</p>
+                <label class="settings-field settings-field--wide">
+                  API Key
+                  <input
+                    id="optDeeplxKey"
+                    type="password"
+                    spellcheck="false"
+                    autocomplete="off"
+                    placeholder="填在 api.deeplx.org 路径里的那段"
+                  />
+                </label>
+              </section>
+              <section class="settings-card">
+                <h3>引擎说明</h3>
+                <ul class="settings-list">
+                  <li><strong>Google</strong>：直连；失败时走 DeepLX 备用。</li>
+                  <li><strong>GPT</strong>：经 mono 代理，适合俚语与意译。</li>
+                  <li><strong>DeepLX</strong>：本机 API Key 直连；Google 不可用时备用，或「全部」模式下对照。</li>
+                </ul>
+              </section>
+            </div>
+          </section>
+
+          <section class="panel" data-panel="x-translate" id="panel-x-translate" hidden>
+            <header class="panel__head">
+              <div>
+                <h2>X 推文翻译</h2>
+                <p class="muted" id="xTranslateState">加载中…</p>
+              </div>
+              <div class="panel__actions">
+                <button type="button" id="xTranslateReset" class="btn btn--ghost">恢复默认</button>
+              </div>
+            </header>
+            <form id="xTranslateForm" class="settings-stack" onsubmit="return false">
+              <section class="settings-card">
+                <h3>译文样式</h3>
+                <p class="muted">用来和原文区分。默认灰色 14px，接近常见推文翻译扩展。Discord 聊天译文和 elitepvpers 帖子译文共用这组颜色和字号。</p>
+                <div class="settings-grid">
+                  <label class="settings-field">
+                    颜色
+                    <span class="x-translate-color-row">
+                      <input id="xTranslateColor" type="color" />
+                      <input id="xTranslateHex" type="text" spellcheck="false" maxlength="7" placeholder="#8c8c8c" />
+                    </span>
+                  </label>
+                  <label class="settings-field">
+                    字号（px）
+                    <input id="xTranslateSize" type="number" min="10" max="24" step="1" />
+                  </label>
+                </div>
+                <p id="xTranslatePreview" class="x-translate-preview">译文预览：The quick brown fox 跳过懒狗</p>
+                <p class="settings-hint">色号填 #RRGGBB。目标语言跟「翻译」面板；时间线只走 Google 直连，失败不扣 Client API Key。</p>
+              </section>
+            </form>
+          </section>
+
+          <section class="panel" data-panel="image-prompt" id="panel-image-prompt" hidden>
+            <header class="panel__head">
+              <div>
+                <h2>识图</h2>
+                <p class="muted" id="imagePromptState">加载中…</p>
+              </div>
+              <div class="panel__actions">
+                <button type="button" id="imagePromptSave" class="btn">保存</button>
+              </div>
+            </header>
+            <form id="imagePromptForm" class="settings-stack" onsubmit="return false">
+              <section class="settings-card">
+                <h3>视觉模型</h3>
+                <p class="muted">OpenAI 兼容接口。请求发到 <code>{Base URL}/chat/completions</code>，图片以 JPEG data URL 附在消息里。API Key 只存在本机 <code>formantImagePrompt</code>，不进仓库、不同步到 mono。</p>
+                <div class="settings-grid">
+                  <label class="settings-field settings-field--wide">
+                    Base URL
+                    <input id="imagePromptBaseUrl" type="url" spellcheck="false" autocomplete="off" placeholder="https://api.openai.com/v1" />
+                  </label>
+                  <label class="settings-field settings-field--wide">
+                    API Key
+                    <input id="imagePromptApiKey" type="password" spellcheck="false" autocomplete="off" placeholder="sk-…" />
+                  </label>
+                  <label class="settings-field settings-field--wide">
+                    Model
+                    <input id="imagePromptModel" type="text" spellcheck="false" autocomplete="off" placeholder="gpt-4.1-mini" />
+                  </label>
+                </div>
+                <p class="settings-hint">需要支持图像输入的模型。未填齐时，工具箱里的识图面板会提示来这里配置。Base URL、API Key 和 Model 可在「同步」里和其它本机钥匙一起导出。</p>
+              </section>
+            </form>
+          </section>
+
+          <section class="panel" data-panel="sync" id="panel-sync" hidden>
+            <header class="panel__head">
+              <div>
+                <h2>同步</h2>
+                <p class="muted">连接 mono。New Tab / 手势 / 书签 / 热点英语按 Client API Key 隔离，换 Key 即换一套云端配置。</p>
+              </div>
+              <div class="panel__actions">
+                <button type="button" id="optSyncSave" class="btn btn--ghost">保存</button>
+                <button type="button" id="optSyncNow" class="btn">立即同步</button>
+              </div>
+            </header>
+            <div class="settings-stack">
+              <section class="settings-card">
+                <h3>mono 连接</h3>
+                <div class="settings-grid">
+                  <label class="settings-field">
+                    环境
+                    <select id="optEnvSelect">
+                      <option value="dev">dev（本地）</option>
+                      <option value="prod">prod</option>
+                    </select>
+                  </label>
+                  <label class="settings-field settings-field--wide">
+                    mono Base URL
+                    <input id="optBaseUrl" type="url" spellcheck="false" autocomplete="off" placeholder="https://" />
+                  </label>
+                  <label class="settings-field settings-field--wide">
+                    Client API Key
+                    <input
+                      id="optClientKey"
+                      type="password"
+                      spellcheck="false"
+                      autocomplete="off"
+                      placeholder="ock_live_…"
+                    />
+                  </label>
+                </div>
+                <p id="optSyncMeta" class="settings-meta">尚未同步</p>
+                <p class="settings-meta" data-client-key-scope></p>
+              </section>
+              <section class="settings-card">
+                <h3>本机钥匙</h3>
+                <p class="muted">导出一份 JSON，换电脑时再导入。可以选文件，也可以把 JSON 贴在下面。包含同步的 Base URL 与 Client API Key、识图的 Base URL / API Key / Model、V2EX 的 Imgur Client ID，以及翻译的 DeepLX API Key。New Tab、手势、词库、代理和功能开关不在这份文件里。</p>
+                <div class="panel__actions panel__actions--start">
+                  <button type="button" id="optKeysExport" class="btn btn--ghost">导出 JSON</button>
+                  <button type="button" id="optKeysImport" class="btn btn--ghost">导入 JSON</button>
+                  <input id="optKeysFile" type="file" accept="application/json,.json" hidden />
+                </div>
+                <label class="settings-field settings-field--wide">
+                  粘贴 JSON
+                  <textarea id="optKeysPaste" rows="8" spellcheck="false" placeholder='{"version":2,...}'></textarea>
+                </label>
+                <div class="panel__actions panel__actions--start">
+                  <button type="button" id="optKeysPasteImport" class="btn btn--ghost">导入这段 JSON</button>
+                </div>
+              </section>
+              <section class="settings-card">
+                <h3>说明</h3>
+                <ul class="settings-list">
+                  <li>New Tab 主页、热点英语、鼠标手势、书签按 Client API Key 隔离：每把 Key 一份云端数据，互不可见。</li>
+                  <li>换 Key 会清空本机 New Tab / 词卡 / 手势缓存，避免串数据；请到对应面板点「刷新」拉取。</li>
+                  <li>功能开关、代理、词库包、V2EX 只存在本机，不跟 Key 走。</li>
+                  <li>保存时会请求对应域名的 host 权限。</li>
+                  <li>密钥仅保存在本机 <code>chrome.storage.local</code>，不会写入扩展包；界面只显示 Key 指纹，不展示全文。</li>
+                  <li>书签同步由后台 service worker 执行，与 popup「书签」页同一通道。</li>
+                </ul>
+              </section>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <p id="toast" class="toast" hidden></p>
+    </div>
+
+    <dialog id="importDialog">
+      <form method="dialog" id="importForm" class="dialog">
+        <h3>导入 JSON</h3>
+        <p class="dialog__hint">
+          一个文件对应<strong>一种语言</strong>的词库包（字段 <code>lang</code> + <code>entries</code>）。
+          不会覆盖内置包；多语言请分多个文件分别导入。
+        </p>
+        <fieldset class="import-mode">
+          <legend>导入方式</legend>
+          <label class="import-mode__option">
+            <input type="radio" name="importMode" value="create" checked />
+            <span>
+              <strong>新建自定义包</strong>
+              <small>始终新增一个包，不改动已有包（推荐）</small>
+            </span>
+          </label>
+          <label class="import-mode__option">
+            <input type="radio" name="importMode" value="merge" id="importModeMerge" />
+            <span>
+              <strong>合并到当前自定义包</strong>
+              <small>同短语以导入为准；需先选中左侧自定义包</small>
+            </span>
+          </label>
+          <label class="import-mode__option">
+            <input type="radio" name="importMode" value="replace" id="importModeReplace" />
+            <span>
+              <strong>替换当前自定义包条目</strong>
+              <small>清空当前包条目后再写入导入内容</small>
+            </span>
+          </label>
+        </fieldset>
+        <p id="importTargetHint" class="muted"></p>
+        <div class="dialog__actions">
+          <button type="submit" class="btn" value="pick">选择文件…</button>
+          <button type="button" class="btn btn--ghost" id="importCancel">取消</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="entryDialog">
+      <form method="dialog" id="entryForm" class="dialog">
+        <h3 id="entryDialogTitle">添加条目</h3>
+        <label>
+          短语
+          <input id="entryPhrase" type="text" required />
+        </label>
+        <label>
+          释义
+          <input id="entryMeaning" type="text" />
+        </label>
+        <label>
+          标签（逗号分隔）
+          <input id="entryTags" type="text" placeholder="日常口语, 网络语" />
+        </label>
+        <label>
+          例句（可选）
+          <textarea id="entryExamples" rows="3" placeholder="每行一条"></textarea>
+        </label>
+        <div class="dialog__actions">
+          <button type="submit" class="btn" value="save">保存</button>
+          <button type="button" class="btn btn--ghost" id="entryCancel">取消</button>
+        </div>
+      </form>
+    </dialog>
+
+    <script type="module" src="option.js"></script>
+  </body>
+</html>

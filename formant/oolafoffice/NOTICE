@@ -1,0 +1,36 @@
+oolafOffice integration notice
+==============================
+
+This directory is formant's in-extension office suite, branded oolafOffice
+(Quire / Ledger / Lectern). It is derived from VibeOffice (Apache-2.0):
+
+  Upstream: https://github.com/tcchen2026/VibeOffice
+  Site: https://vibeoffice.work
+  License: Apache License 2.0 (full text in LICENSE)
+
+The product name in this copy is oolafOffice. Upstream URLs above are kept
+for attribution; formant does not phone vibeoffice.work.
+
+Fonts in fonts/ are SIL Open Font License 1.1 (see fonts/LICENSES.txt).
+Proofing word lists and thesaurus in common/dict/ have their own notices
+(see common/dict/LICENSES.txt).
+
+Modified for formant:
+
+* Copied from VibeOffice public/ only (quire, ledger, lectern, common, fonts,
+  icons, start page). Tauri desktop/, tests/, public/sw.js, the PWA
+  manifest, and the published updater/ tree are not included.
+* Inline <script> blocks were moved to external .js files so the pages
+  load under the Chrome extension CSP (no inline scripts).
+* common/suite.js skips remote update checks and page service-worker
+  registration on chrome-extension: origins.
+* PWA manifest links were removed; formant does not install oolafOffice
+  as a standalone web app.
+* Display name, comments, storage keys and this directory are oolafOffice
+  / oolafoffice (IndexedDB and localStorage). XML keep-urn is
+  urn:oolafoffice:keep.
+
+formant glue (feature flag, popup shortcut, context menus, option.html#features)
+lives outside this directory in office-bridge.js and related formant files.
+The editors still open and save .docx / .xlsx / .pptx on this machine;
+nothing is uploaded to mono.

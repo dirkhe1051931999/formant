@@ -1,0 +1,10 @@
+{
+  "extensionName": {
+    "message": "formant",
+    "description": "Extension name shown on the toolbar and Edge Add-ons listing."
+  },
+  "extensionDescription": {
+    "message": "Translate, New Tab, bookmarks, toolbox, and in-browser Word / Excel / PPT.",
+    "description": "Short description in the manifest (max 132 characters)."
+  }
+}

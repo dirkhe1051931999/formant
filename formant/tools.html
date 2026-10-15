@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>formant · 工具箱</title>
+    <link rel="stylesheet" href="content.css" />
+    <link rel="stylesheet" href="tools.css" />
+    <link rel="stylesheet" href="tools-panels.css" />
+  </head>
+  <body>
+    <div class="tl-shell">
+      <aside class="tl-side">
+        <div class="tl-brand">
+          <img src="icons/icon32.png" width="24" height="24" alt="" />
+          <h1>工具箱</h1>
+        </div>
+        <nav id="toolsNav" class="tl-nav" aria-label="工具列表"></nav>
+      </aside>
+      <main id="toolsMain" class="tl-main">
+        <p id="toolsEmpty" class="tl-note" hidden>工具箱已关闭。可在扩展设置 → 功能 中重新开启。</p>
+      </main>
+    </div>
+    <script src="viewer.js"></script>
+    <script type="module" src="tools-page.js"></script>
+  </body>
+</html>

@@ -1,0 +1,352 @@
+html.formant-linuxdo {
+  --fd-accent: #1f4b99;
+  --fd-accent-strong: #173a78;
+  --fd-accent-soft: #e8eef9;
+  --fd-ink: #151a22;
+  --fd-muted: #667084;
+  --fd-line: #dde3ec;
+  --fd-line-soft: #e5eaf0;
+  --fd-bg: #ffffff;
+  --fd-row-hover: #f4f6f9;
+  --fd-fill: #eef1f5;
+}
+
+html.formant-linuxdo.formant-linuxdo-dark {
+  --fd-accent-strong: #8aa4d6;
+  --fd-accent-soft: rgb(31 75 153 / 28%);
+  --fd-ink: rgb(255 255 255 / 89%);
+  --fd-muted: rgb(255 255 255 / 55%);
+  --fd-line: rgb(255 255 255 / 12%);
+  --fd-line-soft: rgb(255 255 255 / 8%);
+  --fd-bg: transparent;
+  --fd-row-hover: rgb(255 255 255 / 6%);
+  --fd-fill: rgb(255 255 255 / 6%);
+}
+
+html.formant-linuxdo .welcome-banner,
+html.formant-linuxdo .welcome-banner-wrapper,
+html.formant-linuxdo .above-main-container-outlet.welcome-link-banner-connector,
+html.formant-linuxdo .discourse-banner,
+html.formant-linuxdo .global-notice,
+html.formant-linuxdo .above-main-container-outlet .alert,
+html.formant-linuxdo #main-outlet > .alert,
+html.formant-linuxdo .d-header .header-sidebar-toggle,
+html.formant-linuxdo .d-header .title,
+html.formant-linuxdo .d-header .home-logo-wrapper,
+html.formant-linuxdo .d-header .home-logo-contents,
+html.formant-linuxdo .d-header .logo-big,
+html.formant-linuxdo .d-header .logo-small,
+html.formant-linuxdo .d-header .language-switcher,
+html.formant-linuxdo .d-header .locale-selector,
+html.formant-linuxdo .d-header .header-dropdown-toggle.language-switcher,
+html.formant-linuxdo .d-header button[data-identifier*="language"],
+html.formant-linuxdo .d-header button[data-identifier*="locale"],
+html.formant-linuxdo .d-header li:has(> button .d-icon-globe),
+html.formant-linuxdo .d-header .header-dropdown-toggle:has(.d-icon-globe),
+html.formant-linuxdo .category-breadcrumb,
+html.formant-linuxdo .navigation-container .combo-box,
+html.formant-linuxdo .list-controls .category-drop,
+html.formant-linuxdo .list-controls .tag-drop,
+html.formant-linuxdo .sidebar-footer-wrapper,
+html.formant-linuxdo .sidebar-section-wrapper[data-section-name="chat"],
+html.formant-linuxdo .sidebar-section-link-wrapper:has(a[href="/chat"]),
+html.formant-linuxdo .sidebar-section-link[href="/chat"],
+html.formant-linuxdo .formant-linuxdo-hide {
+  display: none !important;
+}
+
+html.formant-linuxdo-list .list-controls {
+  margin: 0 0 4px !important;
+}
+
+html.formant-linuxdo-list .navigation-container {
+  display: flex !important;
+  width: 100% !important;
+  min-height: 40px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border-bottom: 1px solid var(--fd-line) !important;
+  align-items: center !important;
+}
+
+html.formant-linuxdo-list .navigation-container .nav-pills {
+  display: flex !important;
+  flex: 1 1 auto !important;
+  align-items: stretch !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  list-style: none !important;
+  min-height: 40px !important;
+}
+
+html.formant-linuxdo-list .navigation-container .nav-pills > li {
+  min-height: 40px !important;
+  align-items: stretch !important;
+}
+
+html.formant-linuxdo-list .nav-pills > li > a,
+html.formant-linuxdo-list .nav-pills > li > button {
+  display: flex !important;
+  align-items: center !important;
+  min-height: 40px !important;
+  padding: 0 12px !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  color: var(--fd-muted) !important;
+  font-size: 13px !important;
+  font-weight: 550 !important;
+}
+
+html.formant-linuxdo-list .nav-pills > li > a.active,
+html.formant-linuxdo-list .nav-pills > li.active > a,
+html.formant-linuxdo-list .nav-pills > li > button.active {
+  position: relative;
+  color: var(--fd-accent) !important;
+  background: transparent !important;
+}
+
+html.formant-linuxdo-list .nav-pills > li > a.active::after,
+html.formant-linuxdo-list .nav-pills > li.active > a::after,
+html.formant-linuxdo-list .nav-pills > li > button.active::after {
+  content: "";
+  position: absolute;
+  right: 12px;
+  bottom: -1px;
+  left: 12px;
+  height: 2px;
+  border-radius: 2px 2px 0 0;
+  background: var(--fd-accent);
+}
+
+html.formant-linuxdo-list .topic-list {
+  width: 100% !important;
+  margin-top: 0 !important;
+  border-collapse: collapse !important;
+  border-spacing: 0 !important;
+  background: var(--fd-bg) !important;
+}
+
+html.formant-linuxdo-list .topic-list-header {
+  height: 36px !important;
+  color: var(--fd-muted) !important;
+  font-size: 12px !important;
+  font-weight: 400 !important;
+}
+
+html.formant-linuxdo-list .topic-list-header th {
+  height: 36px !important;
+  padding: 0 10px !important;
+  border-bottom: 1px solid var(--fd-line) !important;
+  color: var(--fd-muted) !important;
+  font-size: 0 !important;
+  font-weight: 400 !important;
+  text-align: left !important;
+  vertical-align: middle !important;
+  background: var(--fd-bg) !important;
+}
+
+html.formant-linuxdo-list .topic-list-header th .formant-linuxdo-col {
+  color: var(--fd-muted) !important;
+  font-size: 12px !important;
+  font-weight: 550 !important;
+  letter-spacing: 0.02em;
+}
+
+html.formant-linuxdo-list .topic-list-header th .d-icon {
+  margin-left: 4px;
+  font-size: 11px !important;
+}
+
+html.formant-linuxdo-list .topic-list-header th.posts,
+html.formant-linuxdo-list .topic-list-header th.views,
+html.formant-linuxdo-list .topic-list-header th.activity,
+html.formant-linuxdo-list .topic-list-header th.posters {
+  text-align: right !important;
+}
+
+html.formant-linuxdo-list .topic-list-item,
+html.formant-linuxdo-list .topic-list-body .topic-list-item {
+  height: 48px !important;
+  background: var(--fd-bg) !important;
+  border: 0 !important;
+}
+
+html.formant-linuxdo-list .topic-list-item:hover,
+html.formant-linuxdo-list .topic-list-item.selected {
+  background: var(--fd-row-hover) !important;
+}
+
+html.formant-linuxdo-list .topic-list-item > td,
+html.formant-linuxdo-list .topic-list-body .topic-list-item > td {
+  height: 48px !important;
+  padding: 6px 10px !important;
+  border-bottom: 1px solid var(--fd-line-soft) !important;
+  color: var(--fd-muted) !important;
+  vertical-align: middle !important;
+  box-sizing: border-box !important;
+}
+
+html.formant-linuxdo-list .topic-list-item .main-link {
+  position: relative;
+  box-sizing: border-box !important;
+}
+
+html.formant-linuxdo-list .topic-list-item.unread > td.main-link,
+html.formant-linuxdo-list .topic-list-item.unseen-topic > td.main-link,
+html.formant-linuxdo-list .topic-list-item.new-topic > td.main-link,
+html.formant-linuxdo-list .topic-list-item.has-unseen > td.main-link {
+  box-shadow: inset 3px 0 0 var(--fd-accent);
+}
+
+html.formant-linuxdo-list .topic-list-item .main-link .link-top-line,
+html.formant-linuxdo-list .topic-list-item .main-link .link-bottom-line {
+  display: block !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+
+html.formant-linuxdo-list .topic-list-item .main-link .link-top-line {
+  white-space: nowrap !important;
+  text-overflow: ellipsis !important;
+}
+
+html.formant-linuxdo-list .topic-list-item .title,
+html.formant-linuxdo-list .topic-list-item .title a,
+html.formant-linuxdo-list .topic-list-item .link-top-line a.title {
+  color: var(--fd-ink) !important;
+  font-size: 13px !important;
+  font-weight: 550 !important;
+  line-height: 20px !important;
+  text-decoration: none !important;
+}
+
+html.formant-linuxdo-list .topic-list-item.unread .title,
+html.formant-linuxdo-list .topic-list-item.unread .title a,
+html.formant-linuxdo-list .topic-list-item.unread .link-top-line a.title,
+html.formant-linuxdo-list .topic-list-item.unseen-topic .title,
+html.formant-linuxdo-list .topic-list-item.unseen-topic .title a,
+html.formant-linuxdo-list .topic-list-item.unseen-topic .link-top-line a.title,
+html.formant-linuxdo-list .topic-list-item.new-topic .title,
+html.formant-linuxdo-list .topic-list-item.new-topic .title a,
+html.formant-linuxdo-list .topic-list-item.new-topic .link-top-line a.title,
+html.formant-linuxdo-list .topic-list-item.has-unseen .title,
+html.formant-linuxdo-list .topic-list-item.has-unseen .title a,
+html.formant-linuxdo-list .topic-list-item.has-unseen .link-top-line a.title {
+  font-weight: 650 !important;
+}
+
+html.formant-linuxdo-list .topic-list-item .title:hover,
+html.formant-linuxdo-list .topic-list-item .title a:hover,
+html.formant-linuxdo-list .topic-list-item .link-top-line a.title:hover {
+  color: var(--fd-accent) !important;
+}
+
+html.formant-linuxdo-list .topic-list-item .badge-notification,
+html.formant-linuxdo-list .topic-list-item .badge-notification.unread-posts,
+html.formant-linuxdo-list .topic-list-item .badge-notification.new-topic {
+  background: var(--fd-accent-soft) !important;
+  color: var(--fd-accent) !important;
+  border-radius: 4px !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+}
+
+html.formant-linuxdo-list .topic-list-item .link-bottom-line {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  gap: 6px !important;
+  max-height: 16px !important;
+  color: var(--fd-muted) !important;
+  font-size: 11px !important;
+  line-height: 16px !important;
+  white-space: nowrap !important;
+}
+
+html.formant-linuxdo-list .topic-list-item .badge-wrapper {
+  flex: 0 1 auto !important;
+  min-width: 0 !important;
+  overflow: hidden !important;
+  color: var(--fd-muted) !important;
+  font-size: 11px !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+html.formant-linuxdo-list .topic-list-item .discourse-tags {
+  display: none !important;
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  overflow: hidden !important;
+  color: var(--fd-muted) !important;
+  font-size: 11px !important;
+  white-space: nowrap !important;
+  text-overflow: ellipsis !important;
+}
+
+html.formant-linuxdo-list .topic-list-item:hover .discourse-tags {
+  display: inline-flex !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  gap: 4px !important;
+}
+
+html.formant-linuxdo-list .topic-list-item .posters {
+  width: 72px !important;
+  text-align: right !important;
+}
+
+html.formant-linuxdo-list .topic-list-item .posters img {
+  width: 22px !important;
+  height: 22px !important;
+  border: 2px solid var(--fd-bg) !important;
+  border-radius: 50% !important;
+  box-sizing: border-box !important;
+}
+
+html.formant-linuxdo-list .topic-list-item .posters a:not(:first-child) {
+  margin-left: -8px !important;
+}
+
+html.formant-linuxdo-list .topic-list-item .posts,
+html.formant-linuxdo-list .topic-list-item .views,
+html.formant-linuxdo-list .topic-list-item .activity {
+  width: 64px !important;
+  color: var(--fd-muted) !important;
+  font-size: 12px !important;
+  font-weight: 400 !important;
+  font-variant-numeric: tabular-nums !important;
+  text-align: right !important;
+}
+
+html.formant-linuxdo-list .topic-list .num a {
+  color: inherit !important;
+  font-weight: 400 !important;
+}
+
+html.formant-linuxdo-list .topic-list-item.unread .posts,
+html.formant-linuxdo-list .topic-list-item.has-unseen .posts {
+  color: var(--fd-ink) !important;
+  font-weight: 550 !important;
+}
+
+html.formant-linuxdo-list .show-more.has-topics .alert {
+  width: max-content !important;
+  margin: 10px auto !important;
+  padding: 6px 14px !important;
+  border: 0 !important;
+  border-radius: 7px !important;
+  background: var(--fd-accent-soft) !important;
+  color: var(--fd-accent) !important;
+  font-size: 12px !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.formant-linuxdo-list .topic-list-item {
+    transition: none !important;
+  }
+}

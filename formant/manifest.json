@@ -1,0 +1,298 @@
+{
+  "manifest_version": 3,
+  "name": "__MSG_extensionName__",
+  "version": "1.8.153",
+  "default_locale": "zh_CN",
+  "homepage_url": "https://www.oolaf.top",
+  "description": "__MSG_extensionDescription__",
+  "permissions": [
+    "alarms",
+    "bookmarks",
+    "contextMenus",
+    "cookies",
+    "declarativeNetRequest",
+    "downloads",
+    "management",
+    "notifications",
+    "proxy",
+    "scripting",
+    "storage",
+    "webNavigation",
+    "activeTab"
+  ],
+  "host_permissions": [
+    "http://*/*",
+    "https://*/*",
+    "https://api.github.com/*",
+    "*://*.v2ex.com/*",
+    "*://*.imgur.com/*",
+    "*://*.sinaimg.cn/*"
+  ],
+  "optional_host_permissions": ["http://*/*", "https://*/*"],
+  "omnibox": {
+    "keyword": "m3u8"
+  },
+  "options_ui": {
+    "page": "option.html",
+    "open_in_tab": true
+  },
+  "chrome_url_overrides": {
+    "newtab": "newtab.html"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "formant",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "commands": {
+    "newMsg": {
+      "description": "打开 V2EX 未读消息"
+    },
+    "newV2EX": {
+      "description": "打开 V2EX"
+    }
+  },
+  "declarative_net_request": {
+    "rule_resources": [
+      {
+        "id": "v2ex_weibo_images",
+        "enabled": true,
+        "path": "v2ex-plus/rules.json"
+      }
+    ]
+  },
+  "devtools_page": "devtools.html",
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["code-format.js", "code-highlight.js", "code-viewer.js", "viewer.js", "content.js"],
+      "css": ["content.css"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["<all_urls>"],
+      "js": ["translate-content.js"],
+      "css": ["translate-content.css"],
+      "run_at": "document_idle",
+      "all_frames": false
+    },
+    {
+      "matches": ["*://*.v2ex.com/*"],
+      "js": [
+        "v2ex-plus/content/bootstrap.js",
+        "v2ex-plus/content/base64decode.js",
+        "v2ex-plus/content/dblclick-to-top.js",
+        "v2ex-plus/content/sov2ex.js",
+        "v2ex-plus/content/topic-list.js",
+        "v2ex-plus/content/topic-replies.js",
+        "v2ex-plus/content/topic-detail.js",
+        "v2ex-plus/content/userinfo.js",
+        "v2ex-plus/content/spider.js"
+      ],
+      "css": ["v2ex-plus/content/v2ex.css"],
+      "run_at": "document_idle",
+      "all_frames": false
+    },
+    {
+      "matches": ["*://github.com/*"],
+      "js": [
+        "gitzip/content/bootstrap.js",
+        "gitzip/content/github-url.js",
+        "gitzip/content/zip.js",
+        "gitzip/content/dashboard.js",
+        "gitzip/content/main.js"
+      ],
+      "css": ["gitzip/content/main.css"],
+      "run_at": "document_idle",
+      "all_frames": false
+    },
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "js": [
+        "autopagerize/content/xpath.js",
+        "autopagerize/content/messagebar.js",
+        "autopagerize/content/siteinfo-builtin.js",
+        "autopagerize/content/autopager.js",
+        "autopagerize/content/bootstrap.js"
+      ],
+      "run_at": "document_idle",
+      "all_frames": false
+    },
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "js": ["gestures/content/engine.js", "gestures/content/main.js"],
+      "run_at": "document_idle",
+      "all_frames": false
+    },
+    {
+      "matches": [
+        "https://web.telegram.org/*",
+        "https://webk.telegram.org/*",
+        "https://webz.telegram.org/*"
+      ],
+      "js": ["telegram/content/page-hook.js"],
+      "run_at": "document_start",
+      "world": "MAIN",
+      "all_frames": false
+    },
+    {
+      "matches": [
+        "https://web.telegram.org/*",
+        "https://webk.telegram.org/*",
+        "https://webz.telegram.org/*"
+      ],
+      "js": [
+        "telegram/content/bootstrap.js",
+        "telegram/content/overlay.js",
+        "telegram/content/main.js"
+      ],
+      "run_at": "document_idle",
+      "all_frames": false
+    },
+    {
+      "matches": [
+        "https://x.com/*",
+        "https://pro.x.com/*",
+        "https://twitter.com/*"
+      ],
+      "js": [
+        "x-translate/content/bootstrap.js",
+        "x-translate/content/overlay.js",
+        "x-translate/content/main.js"
+      ],
+      "run_at": "document_idle",
+      "all_frames": false
+    },
+    {
+      "matches": [
+        "https://discord.com/*",
+        "https://ptb.discord.com/*",
+        "https://canary.discord.com/*"
+      ],
+      "js": [
+        "discord/content/bootstrap.js",
+        "discord/content/overlay.js",
+        "discord/content/input-strip.js",
+        "discord/content/input.js",
+        "discord/content/main.js"
+      ],
+      "run_at": "document_idle",
+      "all_frames": false
+    },
+    {
+      "matches": [
+        "*://elitepvpers.com/*",
+        "*://www.elitepvpers.com/*"
+      ],
+      "js": [
+        "elitepvpers/content/bootstrap.js",
+        "elitepvpers/content/overlay.js",
+        "elitepvpers/content/main.js"
+      ],
+      "run_at": "document_idle",
+      "all_frames": false
+    },
+    {
+      "matches": ["https://linux.do/*"],
+      "js": ["linuxdo/content/bootstrap.js", "linuxdo/content/main.js"],
+      "css": ["linuxdo/content/list.css", "linuxdo/content/topic.css", "linuxdo/content/search.css"],
+      "run_at": "document_idle",
+      "all_frames": false
+    },
+    {
+      "matches": ["*://bbs.hupu.com/*"],
+      "js": [
+        "hupu/content/bootstrap.js",
+        "hupu/content/nav-lib.js",
+        "hupu/content/nav.js",
+        "hupu/content/main.js"
+      ],
+      "css": [
+        "hupu/content/base.css",
+        "hupu/content/thread.css",
+        "hupu/content/replies.css",
+        "hupu/content/aside.css",
+        "hupu/content/list.css"
+      ],
+      "run_at": "document_start",
+      "all_frames": false
+    },
+    {
+      "matches": ["*://freefq.com/*", "*://www.freefq.com/*"],
+      "js": ["freefq/content/bootstrap.js", "freefq/content/main.js"],
+      "run_at": "document_idle",
+      "all_frames": false
+    },
+    {
+      "matches": ["*://huavod.com/*", "*://www.huavod.com/*"],
+      "js": ["huavod/content/page-hook.js"],
+      "run_at": "document_start",
+      "world": "MAIN",
+      "all_frames": true
+    },
+    {
+      "matches": ["*://huavod.com/*", "*://www.huavod.com/*"],
+      "js": ["huavod/content/bootstrap.js", "huavod/content/main.js"],
+      "run_at": "document_start",
+      "all_frames": true
+    },
+    {
+      "matches": ["https://mail.google.com/*"],
+      "js": ["gmail/content/page-hook.js"],
+      "run_at": "document_start",
+      "world": "MAIN",
+      "all_frames": false
+    },
+    {
+      "matches": ["https://mail.google.com/*"],
+      "js": ["gmail/content/bootstrap.js", "gmail/content/main.js"],
+      "run_at": "document_idle",
+      "all_frames": false
+    },
+    {
+      "matches": ["https://gemini.google.com/*", "https://business.gemini.google/*"],
+      "js": ["gemini/content/page-hook.js"],
+      "run_at": "document_start",
+      "world": "MAIN",
+      "all_frames": false
+    },
+    {
+      "matches": ["https://gemini.google.com/*", "https://business.gemini.google/*"],
+      "js": [
+        "gemini/content/sizes.js",
+        "gemini/content/remove-math.js",
+        "gemini/content/remove.js",
+        "gemini/content/bootstrap.js"
+      ],
+      "run_at": "document_start",
+      "all_frames": false
+    },
+    {
+      "matches": ["file://*"],
+      "js": ["axure/content/main.js"],
+      "run_at": "document_end",
+      "all_frames": true
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["autopagerize/siteinfo.json"],
+      "matches": ["http://*/*", "https://*/*"]
+    }
+  ]
+}

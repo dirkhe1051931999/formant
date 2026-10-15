@@ -1,0 +1,10 @@
+{
+  "extensionName": {
+    "message": "formant",
+    "description": "Extension name shown on the toolbar and Edge Add-ons listing."
+  },
+  "extensionDescription": {
+    "message": "智能翻译、新标签页、书签同步、工具箱，以及浏览器内 Word / Excel / PPT。",
+    "description": "Short description in the manifest (max 132 characters)."
+  }
+}

@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="content.css">
+    <link rel="stylesheet" href="panel.css">
+    <title>formant</title>
+  </head>
+  <body class="oolaf-panel-body">
+    <main class="oolaf-panel">
+      <aside class="oolaf-panel-sidebar">
+        <header class="oolaf-panel-sidebar-header">
+          <strong>Responses</strong>
+          <button id="clear-list" type="button">Clear</button>
+        </header>
+        <label class="oolaf-request-search">
+          <input id="request-search" type="search" placeholder="Search requests">
+        </label>
+        <div id="request-list" class="oolaf-request-list"></div>
+      </aside>
+      <div
+        id="panel-resizer"
+        class="oolaf-panel-resizer"
+        role="separator"
+        aria-orientation="vertical"
+        aria-label="Resize request list"
+        tabindex="0"
+      ></div>
+      <section class="oolaf-panel-viewer">
+        <div id="empty-state" class="oolaf-panel-empty">
+          Select a JSON / JS / CSS request from the left.
+        </div>
+        <div id="detail-root" class="oolaf-panel-detail" hidden></div>
+        <div id="viewer-root"></div>
+      </section>
+    </main>
+    <script src="code-format.js"></script>
+    <script src="code-highlight.js"></script>
+    <script src="code-viewer.js"></script>
+    <script src="viewer.js"></script>
+    <script src="panel.js"></script>
+  </body>
+</html>

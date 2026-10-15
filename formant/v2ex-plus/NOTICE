@@ -1,0 +1,16 @@
+V2EX Plus integration notice
+============================
+
+This directory contains an integration derived from V2EX Plus 2.1.3:
+
+  Project: https://github.com/sciooga/v2ex-plus
+  Original extension ID: daeclijmnojoemooblcbfeeceopnkolo
+  Copyright: V2EX Plus contributors, including sciooga
+  License: GNU General Public License, version 3.0
+
+The original COPYING text is retained beside this notice. Modified by the
+formant integration on 2026-08-12: it adapts the upstream Manifest V3
+background behavior for an ES-module service worker and moves
+options/management into option.html.
+It intentionally does not use V2EX Plus's action click handler, so the
+formant popup remains the browser action surface.

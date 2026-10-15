@@ -1,0 +1,4 @@
+Alpha maps in alpha-48.bin and alpha-96.bin, and the white-logo alpha
+reverse blend, are derived from GargantuaX
+gemini-watermark-remover-extension 1.0.2 (MIT License).
+formant does not ship that extension's minified package.

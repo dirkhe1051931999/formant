@@ -1,0 +1,24 @@
+linux.do list restyle notice
+============================
+
+This directory implements formant's linux.do topic-list restyle. The list-as-
+file-table approach (CSS over Discourse `.topic-list`, idempotent column
+labels, MutationObserver for the Ember SPA) is derived from:
+
+  Project: https://github.com/starwingcc/linuxdo-lark-ui
+  Copyright: starwingcc (2026)
+  License: MIT (full text in LICENSE)
+
+Modified for formant on 2026-08-20:
+
+* The original userscript is not copied wholesale. Branding as 「飞书云文档」,
+  favicon replacement, Feishu blue tokens, document-file row icons, and the
+  topic-page "document editor" skin are excluded.
+* Colors and density follow formant's design tokens (`#1f4b99` accent, ~48px
+  rows). Only the topic list, compact category tabs, and welcome-banner hide
+  are in scope; sidebar structure and topic detail are unchanged.
+* Chrome MV3 isolated-world content scripts: no MAIN-world `history.pushState`
+  wrapping. SPA updates use MutationObserver and popstate.
+
+formant's overall distribution remains GPLv3 because of the V2EX Plus derived
+module; this directory retains its MIT attribution.

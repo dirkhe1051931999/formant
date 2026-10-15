@@ -1,0 +1,51 @@
+.formant-gitzip-select {
+  appearance: none;
+  display: inline-grid;
+  width: 18px;
+  height: 18px;
+  place-items: center;
+  flex: 0 0 auto;
+  margin: 0 8px 0 2px;
+  padding: 0;
+  border: 1px solid color-mix(in srgb, currentColor 30%, transparent);
+  border-radius: 4px;
+  background: transparent;
+  color: #57606a;
+  font: 700 12px/1 system-ui, sans-serif;
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+.formant-gitzip-select:hover {
+  border-color: #1f6feb;
+  color: #1f6feb;
+}
+
+.formant-gitzip-select.is-selected {
+  border-color: #1f6feb;
+  background: #1f6feb;
+  color: #fff;
+}
+
+.formant-gitzip-select[data-mode="double-click"] {
+  cursor: default;
+  opacity: 0.52;
+  pointer-events: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  .formant-gitzip-select {
+    color: #8c959f;
+  }
+
+  .formant-gitzip-select:hover {
+    border-color: #58a6ff;
+    color: #58a6ff;
+  }
+
+  .formant-gitzip-select.is-selected {
+    border-color: #1f6feb;
+    background: #1f6feb;
+    color: #fff;
+  }
+}

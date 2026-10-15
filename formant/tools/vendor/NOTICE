@@ -1,0 +1,18 @@
+formant 工具箱 第三方来源说明
+
+本目录与 tools-*.js 的设计参考 FeHelper（前端助手）2026.7.28（MIT，https://github.com/zxlie/FeHelper）
+的二维码、时间戳、JSON 格式化、JSON 对比、图片 Base64、编码转换 6 个工具的功能范围。
+界面与逻辑均为 formant 用原生 JS 重写，未包含 FeHelper 的 Vue 页面、jQuery、evalCore、AI 功能或捐赠入口。
+
+随包附带的第三方库：
+
+1. qrcode.js — QR Code Generator for JavaScript（qrcode-generator 1.4.4）
+   Copyright (c) 2009 Kazuhiko Arase
+   许可：MIT（见 qrcode.js 文件头）
+   用途：生成二维码。
+
+2. zxing.min.js — ZXing（zxing-js 浏览器构建，取自 FeHelper 2026.7.28 的 static/vendor/zxing/zxing.min.js）
+   许可：Apache License 2.0
+   用途：识别二维码（浏览器没有原生 BarcodeDetector 时的回退方案）。
+
+整个 formant 因整合 V2EX Plus（GPLv3）按 GPLv3 分发；上述库的许可与之兼容。

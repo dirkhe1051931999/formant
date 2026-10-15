@@ -1,0 +1,30 @@
+GitZip public-download integration notice
+=========================================
+
+This directory implements formant's public-repository integration based on
+the behavior and user experience of GitZip for github 1.0.5:
+
+  Project: https://github.com/KinoLien/gitzip
+  Copyright: KinoLien
+  License: MIT (full text in LICENSE)
+
+Modified for formant on 2026-08-12:
+
+* The original token storage, gitzip.org OAuth callback, key synchronization,
+  auto-save callback, popup, and action enable/disable behaviors are excluded.
+* Only anonymous requests to GitHub's public API are made. This integration
+  does not read, write, or transmit a GitHub personal access token.
+* The original JSZip and FileSaver browser globals are not included. The
+  public-mode content runtime uses browser-native Blob, download anchor,
+  CompressionStream, and a small ZIP container writer instead.
+
+For attribution completeness, the upstream GitZip 1.0.5 package also bundled
+the following MIT-licensed projects, whose code is not redistributed by this
+directory:
+
+  JSZip — Copyright (c) 2009-2014 Stuart Knightley
+  Pako — Copyright (c) 2014-2017 Vitaly Puzrin and other contributors
+  FileSaver.js — Copyright (c) 2016 Eli Grey
+
+Their upstream MIT notices are retained in THIRD_PARTY_NOTICES for distributors
+evaluating the original GitZip lineage.
