@@ -448,11 +448,171 @@
   }
 }
 
+/* 企业查询 */
+.co-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.co-engine {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.co-engine:hover {
+  border-color: rgba(31, 75, 153, 0.45);
+  background: var(--accent-soft);
+}
+
+.co-engine strong {
+  font-size: 14px;
+}
+
+.co-engine span {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.co-recent {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-height: 32px;
+}
+
+.co-chip {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #f8fafc;
+  color: inherit;
+  font: inherit;
+  font-size: 13px;
+  padding: 5px 12px;
+  cursor: pointer;
+}
+
+.co-chip:hover {
+  border-color: rgba(31, 75, 153, 0.45);
+  background: var(--accent-soft);
+}
+
+/* 象棋 */
+.xq-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 220px;
+  gap: 16px;
+  align-items: start;
+}
+
+.xq-board {
+  display: flex;
+  justify-content: center;
+  overflow: auto;
+}
+
+.xq-svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  background: #fff;
+  border-radius: 12px;
+}
+
+.xq-lines {
+  fill: none;
+  stroke: #9aa6b8;
+  stroke-width: 1.2;
+}
+
+.xq-river {
+  fill: var(--muted);
+  font-size: 14px;
+  text-anchor: middle;
+}
+
+.xq-last {
+  fill: var(--accent-soft);
+}
+
+.xq-dot {
+  fill: var(--accent);
+  pointer-events: none;
+}
+
+.xq-hit {
+  fill: transparent;
+  cursor: pointer;
+}
+
+.xq-piece {
+  cursor: pointer;
+}
+
+.xq-piece circle {
+  stroke-width: 1.6;
+}
+
+.xq-piece text {
+  font-size: 15px;
+  font-weight: 650;
+  text-anchor: middle;
+  dominant-baseline: middle;
+  pointer-events: none;
+}
+
+.xq-piece.is-red circle {
+  fill: #fff;
+  stroke: var(--danger);
+}
+
+.xq-piece.is-red text {
+  fill: var(--danger);
+}
+
+.xq-piece.is-black circle {
+  fill: var(--ink);
+  stroke: var(--ink);
+}
+
+.xq-piece.is-black text {
+  fill: #fff;
+}
+
+.xq-piece.is-on circle {
+  stroke: var(--accent);
+  stroke-width: 2.4;
+}
+
+.xq-side .tl-row {
+  flex-wrap: wrap;
+}
+
+.xq-lock {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
 @media (max-width: 860px) {
   .qr-layout,
   .js-layout,
   .df-sides,
-  .df-view {
+  .df-view,
+  .co-grid,
+  .xq-layout {
     grid-template-columns: minmax(0, 1fr);
   }
 }

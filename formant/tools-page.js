@@ -22,6 +22,8 @@ const TOOLS = [
   { id: "diff", title: "JSON 对比", gate: "tools", load: () => import("./tools-diff.js") },
   { id: "image-base64", title: "图片 Base64", gate: "tools", load: () => import("./tools-image-base64.js") },
   { id: "codec", title: "编码转换", gate: "tools", load: () => import("./tools-codec.js") },
+  { id: "company", title: "企业查询", gate: "tools", load: () => import("./tools-company.js") },
+  { id: "xiangqi", title: "象棋", gate: "tools", load: () => import("./tools-xiangqi.js") },
   { id: "image-prompt", title: "识图", gate: "imagePrompt", load: () => import("./tools-image-prompt.js") },
 ];
 

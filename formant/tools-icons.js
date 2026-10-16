@@ -12,6 +12,12 @@ export const TOOL_ICONS = {
   diff: wrap('<rect x="3.5" y="4.5" width="7.5" height="15" rx="1.5"/><rect x="13" y="4.5" width="7.5" height="15" rx="1.5"/><path d="M6 9h2.5M6 12h2.5M15.5 12H18M15.5 15H18"/>'),
   "image-base64": wrap('<rect x="3.5" y="4.5" width="17" height="15" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="m4 17 5-4.5 3.5 3L16 12l4 4.5"/>'),
   codec: wrap('<path d="M4 8h13l-3-3M20 16H7l3 3"/>'),
+  company: wrap(
+    '<path d="M4.5 20.5h15M7 20.5V6.5h6.5v14M13.5 10.5H17.5v10M9.2 9.5h1.2M9.2 12.5h1.2M9.2 15.5h1.2M15.2 13.2h1.1M15.2 16.2h1.1"/>',
+  ),
+  xiangqi: wrap(
+    '<rect x="4.5" y="4.5" width="15" height="15" rx="1.5"/><path d="M4.5 9.5h15M4.5 14.5h15M9.5 4.5v15M14.5 4.5v15"/>',
+  ),
   "image-prompt": wrap('<path d="M12 3.5 13.9 9l5.6 1.9-5.6 1.9L12 18.5l-1.9-5.7L4.5 10.9 10.1 9z"/><path d="M19 3.5v3M17.5 5h3M5 17v3M3.5 18.5h3"/>'),
 };
 

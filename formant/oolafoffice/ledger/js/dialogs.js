@@ -981,6 +981,6 @@
     ui.dialog({ title: 'Customize', width: 380, body: ui.tabs([{ label: 'Toolbars', body: box }, { label: 'Options', body: opts }]), buttons: [{ label: 'Close', primary: true }] });
   };
   D.about = () => ui.about({ name: 'Ledger', office: 'Excel', text: [
-    'A spreadsheet in the style of Microsoft Office Excel 2003 that runs entirely in your browser. Workbooks are read and written as Office Open XML (.xlsx, .xlsm), CSV and text; nothing is uploaded.',
+    'A spreadsheet in the style of Microsoft Office Excel 2003 that runs entirely in your browser. Workbooks are read as Office Open XML (.xlsx, .xlsm) or Excel 97–2003 (.xls), and written as .xlsx / .xlsm, CSV and text; nothing is uploaded.',
     'The calculation engine implements more than 450 worksheet functions, array and dynamic-array formulas, structured references and iterative calculation.'] });
 })(typeof window !== 'undefined' ? window : globalThis);

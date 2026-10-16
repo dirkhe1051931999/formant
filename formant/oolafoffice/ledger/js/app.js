@@ -110,7 +110,7 @@
 
   /* ------------------------------------------------------------ open */
   A.openDialog = async function (accept) {
-    const files = await L.pickFiles(accept || '.xlsx,.xlsm,.xltx,.xltm,.csv,.txt,.tsv,.prn,.xml', true);
+    const files = await L.pickFiles(accept || '.xlsx,.xlsm,.xltx,.xltm,.xls,.csv,.txt,.tsv,.prn,.xml', true);
     if (files.length) A.openFiles(files);
   };
   A.openFiles = async function (files) {
@@ -151,10 +151,13 @@
             if (pw == null) return;
             return A.openFile(file, pw, opts);
           }
-          if (e.code === 'xls') { ui.busy(false); if (L.xls && L.xls.read) { w = await L.xls.read(bytes); type = 'xls'; } else throw Object.assign(new Error(`'${name}' is a binary Excel 97–2003 workbook (.xls). Ledger opens .xlsx, .xlsm, .csv and XML Spreadsheet 2003 files. Open it in Excel or LibreOffice and save it as .xlsx first.`), { code: 'xls' }); }
+          if (e.code === 'xls') {
+            if (L.xls && L.xls.read) { w = await L.xls.read(bytes); type = 'xls'; }
+            else throw Object.assign(new Error(`'${name}' is a binary Excel 97–2003 workbook (.xls). Ledger opens .xlsx, .xlsm, .xls, .csv and XML Spreadsheet 2003 files.`), { code: 'xls' });
+          }
           else throw e;
         }
-        type = w.ooxmlFormat || (w.macroEnabled ? 'xlsm' : 'xlsx');
+        if (type !== 'xls') type = w.ooxmlFormat || (w.macroEnabled ? 'xlsm' : 'xlsx');
         if (w.repaired) ui.toast('This file was damaged; Ledger repaired what it could.');
       }
       A.prepare(w);

@@ -72,7 +72,7 @@ formant/                 主扩展（加载此目录为「未打包的扩展」�
   tools-image-prompt.js  识图面板（工具箱内左右布局：上传 / URL / 结果）
   tools-icons.js         工具箱列表与标题图标
   popup-tools.js         popup 顶栏「工具箱」图标：打开 tools.html（工具箱或识图任一开启即显示）
-  tools.html/css         工具箱页壳（左侧列表 + 工作区；hash 路由 #qr #timestamp #json #diff #image-base64 #codec）
+  tools.html/css         工具箱页壳（左侧列表 + 工作区；hash 路由 #qr #timestamp #json #diff #image-base64 #codec #company #xiangqi）
   tools-panels.css       工具箱各工具专属样式
   tools-page.js          工具箱路由、懒加载、按开关过滤、拖拽排序（`formantToolsOrder`）；识图是列表里的一个面板
   tools-dom.js           共用：`$`（querySelector）、`$$`（querySelectorAll）、复制 / 下载 / 粘贴 / 拖拽 / 脚本按需加载
@@ -82,6 +82,9 @@ formant/                 主扩展（加载此目录为「未打包的扩展」�
   tools-qr.js            二维码生成；tools-qr-decode.js 识别（BarcodeDetector → zxing）
   tools-json.js          JSON 美化界面；tools-json-lib.js 解析 / 排序 / 大整数无损 / 嵌套展开
   tools-diff.js          对比界面；tools-diff-core.js 行 diff + JSON 结构 diff
+  tools-company.js       企业背景查询面板；tools-company-lib.js 公开检索地址与最近记录
+  tools-xiangqi.js       中国象棋人机面板；规则 / 评估 / 搜索 / 记忆分文件，Worker 里算棋
+  xiangqi/NOTICE         chinese-chess-ai（Apache-2.0）子力与位置表出处
   tools/vendor/          qrcode-generator（MIT）、zxing（Apache-2.0）与 NOTICE
   option-image-prompt.js 识图模型设置（formantImagePrompt）
   popup-site-data.js     popup 站点数据二级视图
@@ -208,7 +211,7 @@ CI（`python pack-edge.py --zip-only`）只打 zip，不生成商店图，也不
 - **New Tab**：关闭后运行时跳转浏览器默认新标签页（manifest override 无法动态卸载）
 - **图片另存为**：分别开关 PNG / JPG；都关则隐藏右键菜单组
 - **滚动截屏**：默认开启。网页右键「formant 整页滚动截屏」或「formant 截取可见区域」拼成 PNG。关闭后隐藏该菜单。**未嵌入**第三方截屏扩展。
-- **oolafOffice**：默认开启。popup 主界面快捷条 + 网页右键「formant oolafOffice」打开起始页 / Word / Excel / PPT（独立目录 `oolafoffice/`）。本机读写 `.docx` / `.xlsx` / `.pptx`，不走 mono。关闭后隐藏快捷条和该菜单。
+- **oolafOffice**：默认开启。popup 主界面快捷条 + 网页右键「formant oolafOffice」打开起始页 / Word / Excel / PPT（独立目录 `oolafoffice/`）。本机读写 `.docx` / `.xlsx` / `.xls` / `.pptx`，不走 mono。关闭后隐藏快捷条和该菜单。
 - **V2EX Plus**：总开关关闭后停止签到、未读角标、页面增强、微博图 referer 规则与 sov2ex 菜单
 - **GitZip**：总开关关闭后停用 GitHub 页面勾选、悬浮下载面板和 `formant GitZip` 右键菜单；其选择方式和主题仍保留在 `option.html#gitzip`
 - **AutoPagerize**：总开关关闭后所有站点停止自动翻页；排除规则和状态条设置仍保留在 `option.html#autopagerize`
@@ -229,7 +232,7 @@ CI（`python pack-edge.py --zip-only`）只打 zip，不生成商店图，也不
 - **Axure 原型**：默认开启。用 `file://` 打开本地发布的 Axure HTML 时，在各框架之间转发页面已有的事件消息。没有事件节点的本地文件不挂监听。**未嵌入** Axure RP Extension。浏览器需允许扩展访问文件 URL。
 - **Vue 组件**：默认开启。DevTools 增加「Vue」面板，Vue 3 和 Vue 2 都能看组件树、props / data，以及 Pinia 或 Vuex 的当前状态，并可高亮组件。当前标签检测到 Vue 时，工具栏 formant 图标右上角加绿色 V。**未嵌入** Vue.js devtools 的打包文件，也不改工具栏 popup。
 - **HLS 播放**：默认开启。主框架打开路径以 `.m3u8` 结尾的地址时，改在扩展内用 hls.js 播放，可调倍速和旋转，左右键快进快退，并可把当前列表存成 MP4。地址栏关键字 `m3u8` 同样打开播放页。**未嵌入** Native HLS Playback，也不带它的 jQuery。
-- **工具箱**：默认开启（`features.tools.enabled`）。入口是 popup 顶栏「工具箱」图标（替换了原来的「识图」图标，图标总数不变），点击在新标签页打开 `tools.html`，左侧列表含 6 个工具和识图。详见下文「工具箱（轻量）」。
+- **工具箱**：默认开启（`features.tools.enabled`）。入口是 popup 顶栏「工具箱」图标（替换了原来的「识图」图标，图标总数不变），点击在新标签页打开 `tools.html`，左侧列表含二维码等到企业查询、象棋，以及识图。详见下文「工具箱（轻量）」。
 - **识图**：默认开启。入口收进 popup 顶栏「工具箱」页的左侧列表（也可只开识图、关掉工具箱，此时图标仍显示，列表只剩识图），识图是工具箱页内的左右布局面板（`#image-prompt`，和二维码同款），不再有独立页面，不在 popup 里做识别，也不注入网页、不加右键菜单。页内上传或填写图片 URL 后，用 `option.html#image-prompt` 里的 OpenAI 兼容视觉模型反解提示词。中文和英文各是一段按画面分区写的长提示（可见文字原样引用，圈选、打码、水印都算进画面），另附 JSON。配置存在 `chrome.storage.local.formantImagePrompt`（Base URL、API Key、Model），**不走 mono**，密钥不进仓库。换电脑时在 `option.html#sync` 导出本机钥匙 JSON。
 
 ### 智能翻译
@@ -454,20 +457,24 @@ CI（`python pack-edge.py --zip-only`）只打 zip，不生成商店图，也不
 
 ![识图：左右布局反解提示词](docs/image-prompt.gif)
 
-- 入口：popup 顶栏「工具箱」图标 → 新标签页 `tools.html`。总开关 `features.tools.enabled`（`option.html#features`，默认开启，不同步到 mono）。关闭后 6 个工具隐藏；若识图仍开启，图标与页面保留且只显示识图；两者都关则图标隐藏。**不新增权限**，不改 `action.default_popup`，不走 mono，没有密钥或本机配置 JSON。
-- **来源**：功能范围参考 FeHelper（前端助手）2026.7.28（MIT）的 6 个工具，全部用原生 JS 重写；**未带入** jQuery、Vue、evalCore、AI 功能、条形码、捐赠入口。`$` 即 `document.querySelector`，另有 `$$`（`querySelectorAll`）。第三方库只有 qrcode-generator 1.4.4（MIT）和 zxing（Apache-2.0），见 `formant/tools/vendor/NOTICE`。
+- 入口：popup 顶栏「工具箱」图标 → 新标签页 `tools.html`。总开关 `features.tools.enabled`（`option.html#features`，默认开启，不同步到 mono）。关闭后这些工具隐藏；若识图仍开启，图标与页面保留且只显示识图；两者都关则图标隐藏。**不新增权限**，不改 `action.default_popup`，不走 mono，没有密钥。
+- **来源**：功能范围参考 FeHelper（前端助手）2026.7.28（MIT）的 6 个工具，全部用原生 JS 重写；**未带入** jQuery、Vue、evalCore、AI 功能、条形码、捐赠入口。`$` 即 `document.querySelector`，另有 `$$`（`querySelectorAll`）。第三方库只有 qrcode-generator 1.4.4（MIT）和 zxing（Apache-2.0），见 `formant/tools/vendor/NOTICE`。企业查询是 formant 自研检索入口，**未嵌入**「企业背景信息查询」扩展的 Vue 打包、全站 content、DNR 或独立 popup。象棋人机参考 [chinese-chess-ai](https://github.com/shibing624/chinese-chess-ai) 的 αβ 与位置表（Apache-2.0，见 `xiangqi/NOTICE`），**未嵌入**其页面、样式和音效。
 - **二维码**：生成（UTF-8，尺寸 / 前后景色 / 纠错 L-M-Q-H / 可选中心 logo，加 logo 自动用 H）、复制 PNG、下载 PNG；识别（选文件 / 拖拽 / 粘贴截图 / 图片 URL，优先浏览器 `BarcodeDetector`，没有则用 zxing，多种白边与缩放重试）。
 - **时间戳**：当前时间可暂停；时间戳（自动判断秒 / 毫秒）↔ 日期；日期 → 时间戳；Windows FILETIME 互转；GMT-12…+12 与本机时区；世界时间表。
 - **JSON 美化**：粘贴即格式化；缩进 2 / 4 / Tab，键排序（默认 / 升 / 降），压缩，Unicode → 中文，URL 解码，展开嵌套 JSON（字符串里的 JSON），兼容 JSONP 与 BOM；超过 2^53 的整数在文本里保持原样（树视图里以字符串显示）；报错带行列。输出区有「文本」与「树视图」，树视图复用网页 JSON 查看器 `viewer.js`（折叠 / 搜索 / 复制路径）。
 - **JSON 对比**：JSON 模式先解析并（可选）忽略键顺序，给出新增 / 删除 / 修改清单（带路径与类型变化）和左右对齐行高亮；纯文本模式按行对比。
 - **图片 Base64**：图片 → DataURI（选文件 / 拖拽 / 粘贴 / URL；显示原图与 DataURI 体积；可复制 DataURI / 纯 Base64 / CSS `url()` / `<img>`）；Base64 / DataURI → 图片预览与下载（纯 Base64 自动嗅探 MIME）。
 - **编码转换**：Unicode、URL、UTF-16（`\x` / `\u`）、Base64（UTF-8 安全，识别 URL-safe）、十六进制、HTML 实体（普通 / 深度转义与解码）、URL 参数解析（表格）、JWT 解码（只解码不验签）、字符串转义 / 反转义、MD5、SHA-1、SHA-256、Gzip 压缩 / 解压（原生 `CompressionStream`，结果为 Base64）。选一种方式即转换，输入变化同步更新。未做 AI 解码与 Proto Hex。
+- **企业查询**：填企业名或 18 位统一社会信用代码，在天眼查 / 企查查 / 爱企查 / 启信宝等公开检索页打开新标签（回车默认天眼查，「常用四站」一次开四个）。可读取当前网页选区。最近关键字只存 `chrome.storage.local.formantCompanySearch`，不同步、不进 option-keys。不抓站、不注入网页、不加右键菜单。
+- **象棋**：红方对 AI。点选己子走棋，合步会过滤自杀与飞将；将死或困毙判负。AI 在 Worker 里用迭代加深 + αβ，叶子只算子力与位置表，默认约 250ms。本机记忆 `formantXiangqi`：连胜加深思考、开局档案、错题本；可锁定等级或清空记忆。不显示评分。不走 mono。
 - **边界**：只在扩展自己的页面里运行，不注入网页，不上传内容；识别 / 获取图片 URL 时由扩展页直接 `fetch`（已有 `http(s)` host 权限）。扩展页 CSP 下不使用 eval。
 
 #### 工具箱冒烟清单
 
 1. 重载 formant：popup 顶栏仍是 6 个图标不挤，其中「工具箱」图标打开新标签页；翻译、书签、站点数据、扩展管理、设置照常。
-2. 工具箱页左侧应有 6 个工具和「识图」，每项带图标、没有二级说明；拖动列表项可调整顺序，刷新后保持；点「识图」在页内左右布局里上传图片出结果。
+2. 工具箱页左侧应有二维码等到「企业查询」「象棋」以及「识图」，每项带图标、没有二级说明；拖动列表项可调整顺序，刷新后保持；点「识图」在页内左右布局里上传图片出结果。
+2c. 企业查询：输入公司名后点天眼查应新开检索页；「读当前页选区」能填入其它 http(s) 标签里选中的字。
+2e. 象棋：红方走一步后 AI 应在约 1 秒内落子；将死能结束；清空记忆后等级回到日常。
 2a. JSON 美化顶部「+」新增页、「×」关闭页，各页输入互不影响；刷新后只剩一页空白页。
 2b. 各面板按钮与输入框、拖拽区之间有正常间距，左右卡片顶部对齐。
 3. 时间戳：`1388307215` → 北京时间 `2013-12-29 16:53:35`；`1388307215000` 自动判为毫秒；日期 → 时间戳往返一致；FILETIME 往返一致。
@@ -503,7 +510,7 @@ CI（`python pack-edge.py --zip-only`）只打 zip，不生成商店图，也不
 ![oolafOffice：popup 快捷条打开 Word](docs/office.gif)
 
 - 入口：`option.html#features` 总开关（`features.office.enabled`，**默认开启**）+ popup 主界面快捷条（起始页 / Word / Excel / PPT）+ 网页右键「formant oolafOffice」。设置页说明里可打开起始页。不另开独立 popup / options 页，不增加 popup 顶栏图标，不放进工具箱面板。
-- **能力**：扩展页内编辑 Word（Quire）、Excel（Ledger）、PPT（Lectern）。打开和保存真实 `.docx` / `.xlsx` / `.pptx`，文件留在本机。最近文件存在扩展 origin 的 IndexedDB。Excel 里 Wingdings 2 空复选框（`£` / 0xA3）在画布和导出 PDF 时显示为 Unicode `□`，保存 xlsx 不改原文；中文与符号按 run 分字体绘制，避免宋体缺字变成空白框。Word 表格按 `tblGrid` 固定列宽排版，支持 `gridSpan` / `vMerge`、东亚竖排（`tbRlV`）、行级 `tblPrEx` 边框、`pctN` 底纹、百分比列宽 / 嵌套表 / `noWrap` / `gridAfter`。双栏节里宽于栏的行内图按栏宽等比缩小，不盖住邻栏。东亚文档网格（`docGrid type=lines`）对齐时按字号占格，不把 Normal 的自动倍数叠上去。Excel 自动换行按 CJK 字切行，内置 `numFmtId` 27–58 按年/月/日显示，主题东亚字体参与绘制。PPT 读取 `a:ea` / `a:cs` 与主题 `majorEa` / `minorEa`，表格单元格强制换行并支持竖排。西文主题字体（Arial / Calibri 等）缺东亚字形时回退微软雅黑 / 宋体。编辑器在窗口捕获阶段拦住浏览器抢键（F5 刷新、Ctrl+S 另存网页、Ctrl+P 打印、Ctrl+F 查找栏、Ctrl+R 刷新、Ctrl++/− 缩放、Backspace 后退等），快捷键走套件自己的命令；复制粘贴仍交给浏览器。
+- **能力**：扩展页内编辑 Word（Quire）、Excel（Ledger）、PPT（Lectern）。打开和保存真实 `.docx` / `.xlsx` / `.pptx`，Excel 还可打开 Excel 97–2003 的 `.xls`（保存走另存为 `.xlsx`），文件留在本机。最近文件存在扩展 origin 的 IndexedDB。Excel 里 Wingdings 2 空复选框（`£` / 0xA3）在画布和导出 PDF 时显示为 Unicode `□`，保存 xlsx 不改原文；中文与符号按 run 分字体绘制，避免宋体缺字变成空白框。Word 表格按 `tblGrid` 固定列宽排版，支持 `gridSpan` / `vMerge`、东亚竖排（`tbRlV`）、行级 `tblPrEx` 边框、`pctN` 底纹、百分比列宽 / 嵌套表 / `noWrap` / `gridAfter`。双栏节里宽于栏的行内图按栏宽等比缩小，不盖住邻栏。东亚文档网格（`docGrid type=lines`）对齐时按字号占格，不把 Normal 的自动倍数叠上去。Excel 自动换行按 CJK 字切行，内置 `numFmtId` 27–58 按年/月/日显示，主题东亚字体参与绘制。PPT 读取 `a:ea` / `a:cs` 与主题 `majorEa` / `minorEa`，表格单元格强制换行并支持竖排。西文主题字体（Arial / Calibri 等）缺东亚字形时回退微软雅黑 / 宋体。编辑器在窗口捕获阶段拦住浏览器抢键（F5 刷新、Ctrl+S 另存网页、Ctrl+P 打印、Ctrl+F 查找栏、Ctrl+R 刷新、Ctrl++/− 缩放、Backspace 后退等），快捷键走套件自己的命令；复制粘贴仍交给浏览器。
 - **接入方式**：把上游 VibeOffice `public/` **向量复制**到 `formant/oolafoffice/`（独立目录，产品名 oolafOffice，不覆盖现有 formant 文件）。抽掉内联脚本以符合扩展 CSP；不注册 PWA Service Worker、不请求远程 updater。界面不出现 VibeOffice / GitHub Feedback。上游 Apache-2.0，见 `oolafoffice/LICENSE` 与 `NOTICE`（NOTICE 保留 VibeOffice 出处）。
 - **边界**：不劫持系统文件关联；不把网页截图覆盖贴进桌面 Office。不新增权限。不改 `action.default_popup`，禁止 `contextMenus.removeAll()`。不走 mono。`oolafoffice/` 视为 vendor，不受单文件 500 行限制；formant 胶水 `office-bridge.js` / `popup-office.js` 仍遵守。
 
@@ -511,7 +518,7 @@ CI（`python pack-edge.py --zip-only`）只打 zip，不生成商店图，也不
 
 1. 重载 formant（默认开启）；打开 `option.html#features`，应看到「oolafOffice」说明、开关和「打开 oolafOffice 起始页」，概览含「oolafOffice」。点开 popup，主界面代理行下方应有 oolafOffice 快捷条。
 2. popup 点起始页 / Word / Excel / PPT，以及任意 https 页右键「formant oolafOffice」子项，应各开对应扩展页；Word / Excel / PPT 能打字、填格或加形状。
-3. 起始页「打开」本机 `.docx` / `.xlsx` / `.pptx`，再「另存为」下载，用桌面 Office 能打开。页面标题和关于框应写 oolafOffice，不是 VibeOffice；起始页没有 Feedback / GitHub 链接，About 与任务窗不写「2003 Web Edition」。
+3. 起始页「打开」本机 `.docx` / `.xlsx` / `.xls` / `.pptx`，再「另存为」下载，用桌面 Office 能打开。打开 `.xls` 后保存会另存为 `.xlsx`。页面标题和关于框应写 oolafOffice，不是 VibeOffice；起始页没有 Feedback / GitHub 链接，About 与任务窗不写「2003 Web Edition」。
 4. 关闭 `features.office.enabled`：popup 快捷条和右键菜单组都消失；截屏 / 图片另存为 / 翻译菜单不受影响。
 5. DevTools 控制台无 CSP 内联脚本报错；Network 无 `vibeoffice.work/updater` 请求。
 6. 打开含「绩效等级」勾选格的 xlsx（Wingdings 2 的 `£S £A £B £C`）：格子和导出 PDF 应显示 `□S □A □B □C`，不是英镑符号，也不是空白方框。另存为 xlsx 再用桌面 Excel 打开，原文与字体应仍是 Wingdings 2。

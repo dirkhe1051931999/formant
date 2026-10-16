@@ -366,6 +366,9 @@
     return cfbWrite(info, enc);
   };
 
+  /** OLE compound file reader (also used by Ledger's .xls loader) */
+  OC.cfb = cfb;
+
   /** decrypt an encrypted Office package; resolves to the inner .xlsx bytes */
   OC.decrypt = async function (u8, password) {
     if (!(root.crypto && root.crypto.subtle)) throw new Error('Opening password-protected files needs a secure (https) page.');

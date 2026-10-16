@@ -1,0 +1,9 @@
+Search values (piece material and piece-square tables) and the
+Negamax + alpha-beta structure are adapted from:
+
+  https://github.com/shibing624/chinese-chess-ai
+  Apache License 2.0
+
+formant does not ship that project's index.html, style.css, audio.js,
+or UI. Rules, legal-move filtering, Worker search, and local memory
+are formant code.

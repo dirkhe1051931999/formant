@@ -230,8 +230,8 @@ def render_tools():
     def draw(im, d, tool="二维码"):
         panel(d, (48, 176, 280, 510))
         d.text((64, 192), "工具箱", font=F_BOLD, fill=INK)
-        for i, name in enumerate(("二维码", "时间戳", "JSON 美化", "JSON 对比", "图片 Base64", "编码转换", "识图")):
-            y = 228 + i * 36
+        for i, name in enumerate(("二维码", "时间戳", "JSON 美化", "JSON 对比", "图片 Base64", "编码转换", "企业查询", "象棋", "识图")):
+            y = 220 + i * 31
             if name == tool:
                 d.rounded_rectangle((56, y - 6, 268, y + 24), 8, fill=ACCENT_SOFT)
             d.text((72, y), name, font=F_UI, fill=ACCENT if name == tool else INK)

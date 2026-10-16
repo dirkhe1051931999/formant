@@ -16,15 +16,24 @@
 
   G.sheet = () => G.wb.sheets[G.wb.active];
   /** per-sheet runtime view state (scroll / selection), kept on the sheet object */
+  function copySel(s) {
+    if (!s) return { r: 0, c: 0, ranges: [{ r1: 0, c1: 0, r2: 0, c2: 0 }], active: 0, anchor: { r: 0, c: 0 } };
+    let ranges;
+    if (Array.isArray(s.ranges) && s.ranges.length) ranges = s.ranges.map((x) => Object.assign({}, x));
+    else {
+      const r1 = s.r1 != null ? s.r1 : (s.r || 0);
+      const c1 = s.c1 != null ? s.c1 : (s.c || 0);
+      ranges = [{ r1, c1, r2: s.r2 != null ? s.r2 : r1, c2: s.c2 != null ? s.c2 : c1 }];
+    }
+    const r = s.r != null ? s.r : ranges[0].r1;
+    const c = s.c != null ? s.c : ranges[0].c1;
+    return { r, c, ranges, active: 0, anchor: { r, c } };
+  }
   G.vs = (sh) => {
     sh = sh || G.sheet();
     if (!sh._vs) {
       const top = sh.view.freeze && sh.view.freeze.top ? sh.view.freeze.top : sh.view.top || { r: 0, c: 0 };
-      const s = sh.view.sel;
-      sh._vs = {
-        scrollR: top.r || 0, scrollC: top.c || 0,
-        sel: s ? { r: s.r, c: s.c, ranges: s.ranges.map((x) => Object.assign({}, x)), active: 0, anchor: { r: s.r, c: s.c } } : { r: 0, c: 0, ranges: [{ r1: 0, c1: 0, r2: 0, c2: 0 }], active: 0, anchor: { r: 0, c: 0 } },
-      };
+      sh._vs = { scrollR: top.r || 0, scrollC: top.c || 0, sel: copySel(sh.view.sel) };
       const g = sh._vs.sel;
       g.active = Math.max(0, g.ranges.findIndex((x) => M.rangeContains(x, g.r, g.c)));
     }

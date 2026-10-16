@@ -69,7 +69,7 @@
         sec('Search for:', h('div', { class: 'tp-row' }, q, ui.button('Go', () => { P.helpQuery = q.value; TP.show('help'); }, { class: 'btn small' }))),
         sec('Open', window.VO ? VO.recentLinks(4) : null, link('open', 'More...', () => ui.exec('open')), link('new', 'Create a new workbook...', () => TP.show('new'))),
         sec('Learn', link('help', 'What Ledger can do', () => { P.helpQuery = ''; TP.show('help'); }), link('fx', 'Functions reference', () => L.dlg.insertFunction()), link('help', 'Keyboard shortcuts', () => TP.show('keys'))),
-        sec('Files', h('div', { class: 'tp-note', text: 'Opens .xlsx, .xlsm, .xltx, .csv, .txt and XML Spreadsheet 2003 files; drop a file anywhere on the window to open it. Saves .xlsx, .xlsm, .xltx, .csv, .txt, .htm, .xml and PDF.' })));
+        sec('Files', h('div', { class: 'tp-note', text: 'Opens .xlsx, .xlsm, .xltx, .xls, .csv, .txt and XML Spreadsheet 2003 files; drop a file anywhere on the window to open it. Saves .xlsx, .xlsm, .xltx, .csv, .txt, .htm, .xml and PDF. Opening .xls asks you to Save As .xlsx.' })));
     },
   });
   /* ---------- New Workbook ---------- */
@@ -77,7 +77,7 @@
     id: 'new', title: 'New Workbook',
     render(b) {
       b.append(
-        sec('New', link('new', 'Blank workbook', () => A().newWorkbook()), link('open', 'From existing workbook...', () => A().openDialog('.xlsx,.xlsm,.xltx,.xltm'))),
+        sec('New', link('new', 'Blank workbook', () => A().newWorkbook()), link('open', 'From existing workbook...', () => A().openDialog('.xlsx,.xlsm,.xltx,.xltm,.xls'))),
         sec('Templates', ...Object.keys(TPL).map((k) => link('sheetIcon', TPL[k].name, () => P.newFromTemplate(k)))),
         sec('', h('div', { class: 'tp-note', text: 'Templates open as new, unsaved workbooks.' })));
     },
@@ -96,7 +96,7 @@
     ['Names, comments and hyperlinks', 'Type a name in the Name Box to name the selection, or use Insert ▸ Name ▸ Define (Ctrl+F3). Insert ▸ Comment (Shift+F2) attaches a note; cells with comments show a red triangle. Insert ▸ Hyperlink (Ctrl+K) links to web pages, e-mail addresses or places in the workbook.'],
     ['Formula auditing', 'Tools ▸ Formula Auditing traces precedents and dependents with arrows, evaluates a formula step by step and shows a Watch Window. Ctrl+` shows formulas instead of results. Error Checking walks through cells with errors.'],
     ['Printing and PDF', 'File ▸ Page Setup sets orientation, scaling (fit to N pages), paper size, margins, centering, headers and footers (&[Page], &[Pages], &[Date], &[File], &[Tab]), print area, rows to repeat and gridlines. View ▸ Page Break Preview shows the pages; Insert ▸ Page Break adds manual breaks. File ▸ Print and Print Preview produce a PDF you can print anywhere.'],
-    ['Files and compatibility', 'Ledger reads and writes Office Open XML workbooks (.xlsx, macro-enabled .xlsm and templates), keeping formulas, styles, merged cells, comments, lists, conditional formats, validation, charts, pictures, defined names, page setup and macros. It also opens CSV and text files through the Text Import Wizard, opens password-protected workbooks and can save with a password (Save As ▸ Tools ▸ General Options). Binary .xls files must be converted to .xlsx first.'],
+    ['Files and compatibility', 'Ledger reads and writes Office Open XML workbooks (.xlsx, macro-enabled .xlsm and templates), keeping formulas, styles, merged cells, comments, lists, conditional formats, validation, charts, pictures, defined names, page setup and macros. It also opens Excel 97–2003 binary workbooks (.xls) and CSV and text files through the Text Import Wizard, opens password-protected .xlsx workbooks and can save with a password (Save As ▸ Tools ▸ General Options). Saving an opened .xls file uses Save As to write .xlsx.'],
     ['Protection', 'Tools ▸ Protection ▸ Protect Sheet locks every cell whose Locked box (Format ▸ Cells ▸ Protection) is checked; choose what users may still do, and set an optional password. Protect Workbook locks the sheet structure.'],
     ['What-if analysis', 'Tools ▸ Goal Seek finds the input that makes a formula reach a target. Data ▸ Table builds one- and two-variable data tables. Tools ▸ Scenarios stores sets of input values to compare.'],
   ];
