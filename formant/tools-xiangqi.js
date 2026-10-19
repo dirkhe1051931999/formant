@@ -1,23 +1,35 @@
-import { must, toast } from "./tools-dom.js";
+import { escapeHtml, must, toast } from "./tools-dom.js";
 import { PIECE_VALUE } from "./tools-xiangqi-eval.js";
+import { ANIM_MS, VIEW_H, VIEW_W, px, py, reduceMotion, renderBoard, wait } from "./tools-xiangqi-board.js";
+import {
+  playCapture,
+  playCheck,
+  playIllegal,
+  playLose,
+  playMove,
+  playNew,
+  playSelect,
+  playUndo,
+  playWin,
+  setSoundOn,
+} from "./tools-xiangqi-audio.js";
 import {
   BLACK,
-  FILES,
-  NAMES,
-  RANKS,
   RED,
   cloneState,
   createState,
+  findKing,
   hashState,
   inCheck,
   legalFrom,
   makeMove,
   moveKey,
   outcome,
+  sideOf,
   undoMove,
 } from "./tools-xiangqi-lib.js";
+import { explainReply, explainSelect } from "./tools-xiangqi-teach.js";
 import {
-  LEVEL_NAMES,
   applyResult,
   bannedKeys,
   clearMemoryKeepLock,
@@ -28,40 +40,56 @@ import {
   noteOpening,
   openingBonus,
   saveMemory,
+  snapshotGame,
   timeMsOf,
+  unpackBoard,
 } from "./tools-xiangqi-memory.js";
 
 /** @param {HTMLElement} root */
 export function mount(root) {
   root.innerHTML = `
     <header class="tl-head">
-      <div>
-        <h2>象棋</h2>
-      </div>
+      <div><h2>象棋</h2></div>
       <span class="tl-meta" data-status>红方先行</span>
     </header>
     <section class="tl-card xq-card">
       <div class="xq-layout">
-        <div class="xq-board" data-board></div>
+        <div class="xq-stage">
+          <div class="xq-board" data-board></div>
+          <div class="xq-bubbles" data-bubbles></div>
+        </div>
         <div class="xq-side">
-          <div class="tl-row">
+          <label class="xq-field">模式
+            <select class="xq-select" data-mode>
+              <option value="vs">人机</option><option value="teach">教学</option><option value="pvp">双人</option>
+            </select>
+          </label>
+          <label class="xq-field">难度
+            <select class="xq-select" data-level>
+              <option value="auto">自动</option><option value="0">入门</option><option value="1">日常</option>
+              <option value="2">认真</option><option value="3">加力</option>
+            </select>
+          </label>
+          <div class="xq-actions">
             <button type="button" class="tl-btn" data-new>新局</button>
             <button type="button" class="tl-btn tl-btn--ghost" data-undo>悔棋</button>
           </div>
-          <div class="tl-row">
-            <button type="button" class="tl-btn tl-btn--ghost" data-forget>清空记忆</button>
-            <label class="xq-lock"><input type="checkbox" data-lock /> 锁定等级</label>
+          <div class="xq-links">
+            <button type="button" class="xq-link" data-sound>音效开</button>
+            <button type="button" class="xq-link" data-hint>讲解提示</button>
+            <button type="button" class="xq-link" data-forget>清空记忆</button>
           </div>
-          <p class="tl-meta" data-level></p>
-          <p class="tl-meta">人机在本机算，不走 mono。越下越难是课表和记你的开局，不是训练模型。</p>
         </div>
       </div>
     </section>`;
 
   const boardEl = must("[data-board]", root);
+  const bubblesEl = must("[data-bubbles]", root);
   const statusEl = must("[data-status]", root);
-  const levelEl = must("[data-level]", root);
-  const lockEl = /** @type {HTMLInputElement} */ (must("[data-lock]", root));
+  const modeSel = /** @type {HTMLSelectElement} */ (must("[data-mode]", root));
+  const levelSel = /** @type {HTMLSelectElement} */ (must("[data-level]", root));
+  const soundBtn = must("[data-sound]", root);
+  const hintBtn = must("[data-hint]", root);
 
   let state = createState();
   /** @type {{ move: object, captured: string|null }[]} */
@@ -70,7 +98,12 @@ export function mount(root) {
   let selected = null;
   /** @type {{ fx: number, fy: number, tx: number, ty: number } | null} */
   let last = null;
+  /** @type {{ fx: number, fy: number, tx: number, ty: number } | null} */
+  let hint = null;
+  let lesson = "";
+  let lessonHidden = false;
   let thinking = false;
+  let busy = false;
   let gen = 0;
   let msgId = 0;
   /** @type {{ hash: string, key: string } | null} */
@@ -79,6 +112,9 @@ export function mount(root) {
   let redKeys = [];
   let memory = emptyMemory();
   const worker = new Worker(chrome.runtime.getURL("tools-xiangqi-worker.js"), { type: "module" });
+
+  const vsAi = () => memory.mode !== "pvp";
+  const teaching = () => memory.mode === "teach";
 
   function askAi(payload) {
     const id = ++msgId;
@@ -94,80 +130,130 @@ export function mount(root) {
     });
   }
 
-  function paintLevel() {
-    if (!memory) return;
-    lockEl.checked = memory.locked;
-    const jitter = jitterOf(memory);
-    levelEl.textContent =
-      `等级 ${LEVEL_NAMES[memory.level]} · 思考 ${timeMsOf(memory)}ms` + (jitter ? " · 让步中" : "");
+  function persist() {
+    memory.game = snapshotGame(state, { history, last, redKeys, lastAi, lesson });
+    void saveMemory(memory);
+  }
+
+  function setLesson(text) {
+    lesson = text || "";
+    lessonHidden = false;
+  }
+
+  function thinkRed() {
+    return askAi({
+      board: state.board,
+      current: RED,
+      timeMs: timeMsOf(memory),
+      banned: [],
+      bonus: {},
+      jitter: 0,
+    });
+  }
+
+  async function coach(opp, my) {
+    if (!teaching() || state.current !== RED) return;
+    const before = cloneState(state);
+    const reply = await thinkRed();
+    if (my !== gen || state.current !== RED) return;
+    if (reply) {
+      hint = reply;
+      selected = { x: reply.fx, y: reply.fy };
+    }
+    setLesson(explainReply(opp, before, reply));
+    persist();
+    paint();
+  }
+
+  function checkAt() {
+    if (!inCheck(state.board, state.current)) return null;
+    return findKing(state.board, state.current);
+  }
+
+  function bubbleSpot() {
+    if (hint) return { x: hint.tx, y: hint.ty, who: "tip" };
+    if (selected) return { x: selected.x, y: selected.y, who: "you" };
+    if (last) {
+      const black = last.piece && last.piece === last.piece.toLowerCase();
+      return { x: last.tx, y: last.ty, who: black ? "ai" : "you" };
+    }
+    return { x: 4, y: 5, who: "tip" };
+  }
+
+  function paintBubbles(hide) {
+    if (!teaching() || hide || lessonHidden || !lesson) {
+      bubblesEl.innerHTML = "";
+      return;
+    }
+    const at = bubbleSpot();
+    const cls = `xq-bubble is-${at.who}${at.x >= 5 ? " is-left" : ""}${at.y <= 1 ? " is-down" : ""}`;
+    bubblesEl.innerHTML =
+      `<div class="${cls}" style="left:${(px(at.x) / VIEW_W) * 100}%;top:${(py(at.y) / VIEW_H) * 100}%">` +
+      `<button type="button" class="xq-bubble__x" data-bubble-close aria-label="关闭">×</button>` +
+      `<p>${escapeHtml(lesson)}</p></div>`;
+  }
+
+  function paintChrome() {
+    modeSel.value = memory.mode;
+    levelSel.value = memory.locked ? String(memory.level) : "auto";
+    soundBtn.textContent = memory.sound ? "音效开" : "音效关";
+    hintBtn.hidden = !teaching();
   }
 
   function statusText() {
     if (thinking) return "AI 正在走…";
     const result = outcome(cloneState(state));
-    if (result.over) {
-      const win = result.winner === RED ? "红胜" : "黑胜";
-      return (result.mate ? "将死，" : "困毙，") + win;
-    }
+    if (result.over) return (result.mate ? "将死，" : "困毙，") + (result.winner === RED ? "红胜" : "黑胜");
     const check = inCheck(state.board, state.current) ? "，将军" : "";
+    if (!vsAi()) return (state.current === RED ? "轮到红方" : "轮到黑方") + check;
     return (state.current === RED ? "轮到你" : "轮到 AI") + check;
   }
 
-  function paint() {
-    const cell = 46;
-    const pad = 26;
-    const px = (x) => pad + x * cell;
-    const py = (y) => pad + y * cell;
-    const w = pad * 2 + cell * 8;
-    const h = pad * 2 + cell * 9;
-    const legal = selected ? legalFrom(state, selected.x, selected.y) : [];
-    let lines = "";
-    for (let y = 0; y < RANKS; y++) {
-      lines += `<line x1="${px(0)}" y1="${py(y)}" x2="${px(8)}" y2="${py(y)}" />`;
-    }
-    for (let x = 0; x < FILES; x++) {
-      lines += `<line x1="${px(x)}" y1="${py(0)}" x2="${px(x)}" y2="${py(4)}" />`;
-      lines += `<line x1="${px(x)}" y1="${py(5)}" x2="${px(x)}" y2="${py(9)}" />`;
-      if (x === 0 || x === 8) lines += `<line x1="${px(x)}" y1="${py(4)}" x2="${px(x)}" y2="${py(5)}" />`;
-    }
-    lines += `<line x1="${px(3)}" y1="${py(0)}" x2="${px(5)}" y2="${py(2)}" />`;
-    lines += `<line x1="${px(5)}" y1="${py(0)}" x2="${px(3)}" y2="${py(2)}" />`;
-    lines += `<line x1="${px(3)}" y1="${py(7)}" x2="${px(5)}" y2="${py(9)}" />`;
-    lines += `<line x1="${px(5)}" y1="${py(7)}" x2="${px(3)}" y2="${py(9)}" />`;
-    let marks = "";
-    if (last) {
-      for (const [x, y] of [
-        [last.fx, last.fy],
-        [last.tx, last.ty],
-      ]) {
-        marks += `<rect class="xq-last" x="${px(x) - 18}" y="${py(y) - 18}" width="36" height="36" rx="8" />`;
-      }
-    }
-    for (const move of legal) {
-      marks += `<circle class="xq-dot" cx="${px(move.tx)}" cy="${py(move.ty)}" r="${move.captured ? 6 : 4}" />`;
-    }
-    let pieces = "";
-    for (let y = 0; y < RANKS; y++) {
-      for (let x = 0; x < FILES; x++) {
-        const piece = state.board[y][x];
-        marks += `<circle class="xq-hit" data-pt="${x},${y}" cx="${px(x)}" cy="${py(y)}" r="20" />`;
-        if (!piece) continue;
-        const on = selected && selected.x === x && selected.y === y;
-        pieces += `<g class="xq-piece ${isUpper(piece) ? "is-red" : "is-black"}${on ? " is-on" : ""}" data-pt="${x},${y}">`;
-        pieces += `<circle cx="${px(x)}" cy="${py(y)}" r="18" /><text x="${px(x)}" y="${py(y) + 1}">${NAMES[piece]}</text></g>`;
-      }
-    }
-    boardEl.innerHTML =
-      `<svg class="xq-svg" viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" role="img" aria-label="象棋棋盘">` +
-      `<text class="xq-river" x="${px(2)}" y="${(py(4) + py(5)) / 2 + 5}">楚河</text>` +
-      `<text class="xq-river" x="${px(6)}" y="${(py(4) + py(5)) / 2 + 5}">汉界</text>` +
-      `<g class="xq-lines">${lines}</g>${marks}${pieces}</svg>`;
+  function paint(extra) {
+    const fly = extra && extra.fly;
+    boardEl.classList.toggle("is-think", thinking);
+    boardEl.innerHTML = renderBoard({
+      board: state.board,
+      selected: fly ? null : selected,
+      last,
+      legal: selected && !fly ? legalFrom(state, selected.x, selected.y) : [],
+      fly: fly || null,
+      fade: extra && extra.fade,
+      checkAt: fly ? null : checkAt(),
+      hint: fly ? null : hint,
+    });
     statusEl.textContent = statusText();
-    paintLevel();
+    paintChrome();
+    paintBubbles(Boolean(fly));
   }
 
-  function isUpper(piece) {
-    return piece === piece.toUpperCase();
+  async function paintMove(move, captured) {
+    if (reduceMotion()) {
+      paint();
+      return;
+    }
+    paint({
+      fly: { piece: move.piece, fx: move.fx, fy: move.fy, tx: move.tx, ty: move.ty },
+      fade: captured ? { piece: captured, x: move.tx, y: move.ty } : null,
+    });
+    const flyEl = boardEl.querySelector(".xq-piece.is-fly");
+    if (flyEl) {
+      flyEl.getBoundingClientRect();
+      flyEl.style.transform = `translate(${px(move.tx)}px, ${py(move.ty)}px)`;
+    }
+    await wait(ANIM_MS);
+    paint();
+  }
+
+  function cueAfterMove(captured, over, winner) {
+    if (captured) playCapture();
+    else playMove();
+    if (over) {
+      if (winner === RED) playWin();
+      else playLose();
+      return;
+    }
+    if (inCheck(state.board, state.current)) playCheck();
   }
 
   function resetGame() {
@@ -176,59 +262,72 @@ export function mount(root) {
     history = [];
     selected = null;
     last = null;
+    hint = null;
     thinking = false;
+    busy = false;
     lastAi = null;
     redKeys = [];
+    if (teaching()) setLesson("你先走。对方走完后，我会告诉你怎么应、为什么。");
+    else {
+      lesson = "";
+      lessonHidden = true;
+    }
+    playNew();
+    persist();
     paint();
   }
 
   function finishIfOver() {
     const result = outcome(cloneState(state));
-    if (!result.over || !memory) return true;
-    if (result.winner === RED && lastAi) noteBlunder(memory, lastAi.hash, lastAi.key);
-    applyResult(memory, result.winner === RED);
-    void saveMemory(memory);
+    if (!result.over) return false;
+    if (vsAi() && result.winner === RED && lastAi) noteBlunder(memory, lastAi.hash, lastAi.key);
+    if (vsAi()) applyResult(memory, result.winner === RED);
+    persist();
     paint();
     toast(result.winner === RED ? "红胜" : "黑胜");
     return true;
   }
 
   async function afterPlayer() {
+    if (!vsAi()) return;
     const my = gen;
-    paint();
-    if (outcome(cloneState(state)).over) {
-      finishIfOver();
-      return;
-    }
+    if (finishIfOver()) return;
     thinking = true;
     selected = null;
     paint();
     const hash = hashState(state);
-    const snapshot = memory;
+    const mem = memory;
     try {
       const move = await askAi({
         board: state.board,
         current: state.current,
-        timeMs: timeMsOf(snapshot),
-        banned: bannedKeys(snapshot, hash),
-        bonus: openingBonus(snapshot, redKeys),
-        jitter: jitterOf(snapshot),
+        timeMs: timeMsOf(mem),
+        banned: bannedKeys(mem, hash),
+        bonus: openingBonus(mem, redKeys),
+        jitter: jitterOf(mem),
       });
       if (my !== gen) return;
       thinking = false;
-      if (!move) {
+      if (!move || state.current !== BLACK) {
         finishIfOver();
         return;
       }
-      if (state.current !== BLACK) return;
       lastAi = { hash, key: moveKey(move) };
       const captured = makeMove(state, move);
       history.push({ move, captured });
-      last = move;
+      last = { ...move, captured };
+      hint = null;
       noteOpening(memory, redKeys, lastAi.key);
-      void saveMemory(memory);
-      if (outcome(cloneState(state)).over) finishIfOver();
-      else paint();
+      persist();
+      await paintMove(move, captured);
+      if (my !== gen) return;
+      const result = outcome(cloneState(state));
+      cueAfterMove(captured, result.over, result.winner);
+      if (result.over) finishIfOver();
+      else {
+        paint();
+        await coach({ ...move, captured }, my);
+      }
     } catch (error) {
       if (my !== gen) return;
       thinking = false;
@@ -237,23 +336,46 @@ export function mount(root) {
     }
   }
 
-  function play(move) {
-    if (thinking || state.current !== RED) return;
+  async function play(move) {
+    if (thinking || busy) return;
+    if (vsAi() && state.current !== RED) return;
+    const my = gen;
+    busy = true;
     const captured = makeMove(state, move);
     history.push({ move, captured });
     last = move;
-    redKeys.push(moveKey(move));
-    selected = null;
+    hint = selected = null;
+    if (sideOf(move.piece) === RED) redKeys.push(moveKey(move));
+    if (teaching()) lesson = "";
     if (captured && (PIECE_VALUE[captured] || 0) >= 1000 && lastAi) {
       noteBlunder(memory, lastAi.hash, lastAi.key);
-      void saveMemory(memory);
     }
-    void afterPlayer();
+    persist();
+    await paintMove(move, captured);
+    if (my !== gen) return;
+    const result = outcome(cloneState(state));
+    cueAfterMove(captured, result.over, result.winner);
+    busy = false;
+    if (result.over) finishIfOver();
+    else if (vsAi()) void afterPlayer();
+    else paint();
+  }
+
+  function restoreGame() {
+    const game = memory.game;
+    if (!game) return;
+    state = { board: unpackBoard(game.board), current: game.current };
+    history = game.history;
+    last = game.last;
+    redKeys = game.redKeys;
+    lastAi = game.lastAi;
+    lesson = game.lesson || "";
+    lessonHidden = false;
   }
 
   boardEl.addEventListener("click", (event) => {
     const hit = /** @type {HTMLElement} */ (event.target).closest("[data-pt]");
-    if (!hit || thinking || !memory) return;
+    if (!hit || thinking || busy) return;
     if (outcome(cloneState(state)).over) return;
     const [xs, ys] = (hit.getAttribute("data-pt") || "").split(",");
     const x = Number(xs);
@@ -261,54 +383,111 @@ export function mount(root) {
     if (selected) {
       const dest = legalFrom(state, selected.x, selected.y).find((m) => m.tx === x && m.ty === y);
       if (dest) {
-        play(dest);
+        void play(dest);
         return;
       }
     }
     const piece = state.board[y][x];
-    if (piece && piece === piece.toUpperCase() && state.current === RED) {
+    const mine = piece && sideOf(piece) === state.current && (vsAi() ? state.current === RED : true);
+    if (mine) {
       selected = { x, y };
+      if (teaching() && (lessonHidden || !lesson)) setLesson(explainSelect(state, x, y));
+      playSelect();
       paint();
       return;
     }
+    if (selected) playIllegal();
     selected = null;
     paint();
+  });
+
+  modeSel.addEventListener("change", () => {
+    const mode = modeSel.value || "vs";
+    if (mode === memory.mode) return;
+    gen += 1;
+    thinking = false;
+    busy = false;
+    memory.mode = mode;
+    selected = null;
+    hint = null;
+    setLesson(teaching() ? "等对方走完，我会告诉你怎么应、为什么。" : "");
+    persist();
+    paint();
+    if (vsAi() && state.current === BLACK && !outcome(cloneState(state)).over) void afterPlayer();
+    else if (teaching() && state.current === RED) {
+      void coach(last && last.piece === (last.piece || "").toLowerCase() ? last : null, gen);
+    }
+  });
+
+  levelSel.addEventListener("change", () => {
+    if (levelSel.value === "auto") {
+      memory.locked = false;
+    } else {
+      memory.level = Number(levelSel.value);
+      memory.locked = true;
+      memory.winStreak = 0;
+      memory.loseStreak = 0;
+    }
+    persist();
+    paintChrome();
   });
 
   must("[data-new]", root).addEventListener("click", () => resetGame());
   must("[data-undo]", root).addEventListener("click", () => {
-    if (thinking || history.length < 2) {
+    const steps = vsAi() ? 2 : 1;
+    if (thinking || busy || history.length < steps) {
       toast("没有可悔的棋", true);
       return;
     }
-    for (let i = 0; i < 2; i++) {
+    for (let i = 0; i < steps; i++) {
       const row = history.pop();
       if (!row) break;
       undoMove(state, row.move, row.captured);
+      if (sideOf(row.move.piece) === RED && redKeys.length) redKeys.pop();
     }
-    if (redKeys.length) redKeys.pop();
     lastAi = null;
+    hint = null;
     last = history.length ? history[history.length - 1].move : null;
     selected = null;
     thinking = false;
+    if (teaching()) setLesson("悔了一步。等对方再走，我会重新给你应着。");
+    playUndo();
+    persist();
     paint();
+  });
+  hintBtn.addEventListener("click", () => {
+    if (!teaching() || thinking || busy || state.current !== RED) return;
+    void coach(last && last.piece === (last.piece || "").toLowerCase() ? last : null, gen);
   });
   must("[data-forget]", root).addEventListener("click", () => {
     void clearMemoryKeepLock().then((next) => {
       memory = next;
-      paintLevel();
-      toast("已清空记忆");
+      setSoundOn(memory.sound);
+      paintChrome();
+      toast("已清空开局档案和错题本");
     });
   });
-  lockEl.addEventListener("change", () => {
-    if (!memory) return;
-    memory.locked = lockEl.checked;
-    void saveMemory(memory);
+  bubblesEl.addEventListener("click", (event) => {
+    if (!/** @type {HTMLElement} */ (event.target).closest("[data-bubble-close]")) return;
+    event.preventDefault();
+    event.stopPropagation();
+    lessonHidden = true;
+    paintBubbles();
   });
 
-  paint();
+  soundBtn.addEventListener("click", () => {
+    memory.sound = !memory.sound;
+    setSoundOn(memory.sound);
+    persist();
+    paintChrome();
+    if (memory.sound) playSelect();
+  });
+
   void loadMemory().then((mem) => {
     memory = mem;
-    paintLevel();
+    setSoundOn(memory.sound);
+    restoreGame();
+    paint();
+    if (vsAi() && state.current === BLACK && !outcome(cloneState(state)).over) void afterPlayer();
   });
 }

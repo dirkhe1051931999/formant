@@ -10,6 +10,7 @@ import { initNewtabPanel } from "./option-newtab.js";
 import { initProxyPanel } from "./option-proxy.js";
 import { initSyncPanel } from "./option-sync.js";
 import { initKeysTransfer } from "./option-keys.js";
+import { initPrefsTransfer } from "./option-prefs.js";
 import { initClientKeyScope } from "./option-scope.js";
 import { initTranslatePanel } from "./option-translate.js";
 import { initXTranslatePanel } from "./option-x-translate.js";
@@ -84,6 +85,14 @@ function normalizePanelId(raw) {
  * @param {{ pushHash?: boolean }} [opts]
  */
 function showPanel(panelId, opts = {}) {
+  const rawId = String(panelId || "")
+    .replace(/^#/, "")
+    .trim()
+    .toLowerCase();
+  if (rawId === "hls") {
+    location.replace(chrome.runtime.getURL("tools.html#hls"));
+    return;
+  }
   const usable = normalizePanelId(panelId);
 
   document.querySelectorAll(".shell-nav__item").forEach((btn) => {
@@ -154,3 +163,4 @@ initXTranslatePanel({ toast });
 initImagePromptPanel({ toast });
 initSyncPanel({ toast });
 initKeysTransfer({ toast });
+initPrefsTransfer({ toast });

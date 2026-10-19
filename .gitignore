@@ -10,3 +10,7 @@ formant/oolafoffice/icons/node_modules/
 # Edge / Chrome store packages and listing tiles
 dist/
 *.zip
+
+# 本机从 Tampermonkey 对照下来的油猴种子（不进仓库）
+formant/userscript/_seed/
+.tmp-tm-scripts/

@@ -1,3 +1,6 @@
+import { isChannelListUrl, parseChannelList } from "./m3u-lib.js";
+import { bindPanels, rememberFeed } from "./player-panels.js";
+
 /** @typedef {{ rate: number, rotation: number }} HlsSettings */
 
 const RATES = [0.5, 0.75, 1, 1.25, 1.5, 2, 3];
@@ -6,17 +9,19 @@ const ROTATIONS = [0, 90, 180, 270];
 /** @param {string} sel @param {ParentNode} [root] */
 const $ = (sel, root = document) => root.querySelector(sel);
 
+const playerEl = /** @type {HTMLElement} */ ($("#player"));
 const video = /** @type {HTMLVideoElement} */ ($("#video"));
-const playBtn = /** @type {HTMLButtonElement} */ ($("#play"));
-const seek = /** @type {HTMLInputElement} */ ($("#seek"));
-const timeEl = /** @type {HTMLElement} */ ($("#time"));
-const volume = /** @type {HTMLInputElement} */ ($("#volume"));
-const rateSel = /** @type {HTMLSelectElement} */ ($("#rate"));
+const stage = /** @type {HTMLElement} */ ($("#stage"));
+const titleEl = /** @type {HTMLElement} */ ($("#title"));
 const rotateBtn = /** @type {HTMLButtonElement} */ ($("#rotate"));
 const saveBtn = /** @type {HTMLButtonElement} */ ($("#save"));
+const listBtn = /** @type {HTMLButtonElement} */ ($("#listBtn"));
 const statusEl = /** @type {HTMLElement} */ ($("#status"));
 const progressEl = /** @type {HTMLElement} */ ($("#progress"));
-const stage = /** @type {HTMLElement} */ ($(".stage"));
+const loaderEl = /** @type {HTMLElement} */ ($("#loader"));
+const playlistEl = /** @type {HTMLElement} */ ($("#playlist"));
+const playlistHead = /** @type {HTMLElement} */ ($("#playlistHead"));
+const playlistList = /** @type {HTMLElement} */ ($("#playlistList"));
 
 /** @type {HlsSettings} */
 let settings = { rate: 1, rotation: 0 };
@@ -24,16 +29,18 @@ let settings = { rate: 1, rotation: 0 };
 let hls = null;
 let recoverDecodingAt = 0;
 let recoverSwapAt = 0;
-let scrubbing = false;
 /** @type {AbortController | null} */
 let saveTask = null;
-
-for (const rate of RATES) {
-  const opt = document.createElement("option");
-  opt.value = String(rate);
-  opt.textContent = `${rate}x`;
-  rateSel.appendChild(opt);
-}
+/** @type {{ title: string, url: string, group?: string, sources?: string[] }[]} */
+let playlistItems = [];
+/** @type {{ title: string, url: string, group?: string, sources?: string[] } | null} */
+let activeItem = null;
+let sourceIndex = 0;
+let playUrl = "";
+let listUrl = "";
+let playlistRaw = "";
+let loadGen = 0;
+let lastVolume = 1;
 
 /**
  * @param {string} text
@@ -52,29 +59,39 @@ function showProgress(text) {
 }
 
 /**
+ * @param {boolean} on
+ */
+function setLoading(on) {
+  loaderEl.hidden = !on;
+}
+
+/**
  * @param {number} delta
  */
 function seekBy(delta) {
   const duration = video.duration;
   if (!Number.isFinite(duration) || duration <= 0) return;
-  const next = Math.min(duration, Math.max(0, (video.currentTime || 0) + delta));
-  video.currentTime = next;
-  scrubbing = false;
-  paintTime();
+  video.currentTime = Math.min(duration, Math.max(0, (video.currentTime || 0) + delta));
 }
 
 /**
- * @param {number} sec
+ * @param {number} next
  */
-function formatTime(sec) {
-  if (!Number.isFinite(sec) || sec < 0) return "0:00";
-  const whole = Math.floor(sec);
-  const s = whole % 60;
-  const m = Math.floor(whole / 60) % 60;
-  const h = Math.floor(whole / 3600);
-  const pad = (n) => String(n).padStart(2, "0");
-  if (h > 0) return `${h}:${pad(m)}:${pad(s)}`;
-  return `${m}:${pad(s)}`;
+function setVolume(next) {
+  const value = Math.min(1, Math.max(0, next));
+  if (value > 0) lastVolume = value;
+  video.volume = value;
+  video.muted = value === 0;
+  playerEl.classList.toggle("is-muted", video.muted || value === 0);
+}
+
+function unmute() {
+  setVolume(lastVolume || 1);
+}
+
+function togglePlay() {
+  if (video.paused) void video.play();
+  else video.pause();
 }
 
 function readSource() {
@@ -91,14 +108,14 @@ function applyRate(rate) {
   const next = RATES.includes(rate) ? rate : 1;
   settings.rate = next;
   video.playbackRate = next;
-  rateSel.value = String(next);
+  const ui = /** @type {any} */ (globalThis).formantHlsUi;
+  if (ui && typeof ui.paintRate === "function") ui.paintRate(next);
 }
 
 function stepRate(dir) {
   const index = RATES.indexOf(settings.rate);
   const start = index < 0 ? RATES.indexOf(1) : index;
-  const next = RATES[Math.min(RATES.length - 1, Math.max(0, start + dir))];
-  applyRate(next);
+  applyRate(RATES[Math.min(RATES.length - 1, Math.max(0, start + dir))]);
 }
 
 function applyRotation(rotation) {
@@ -110,35 +127,28 @@ function applyRotation(rotation) {
 
 function rotateStep() {
   const index = ROTATIONS.indexOf(settings.rotation);
-  const next = ROTATIONS[(index < 0 ? 0 : index + 1) % ROTATIONS.length];
-  applyRotation(next);
+  applyRotation(ROTATIONS[(index < 0 ? 0 : index + 1) % ROTATIONS.length]);
 }
 
-/** Size the element so the rotated picture stays fully inside the stage. */
 function fit() {
   const sw = stage.clientWidth;
   const sh = stage.clientHeight;
   if (sw < 2 || sh < 2) return;
+  if (!settings.rotation) {
+    video.style.width = "100%";
+    video.style.height = "100%";
+    video.style.objectFit = "contain";
+    video.style.transform = "";
+    return;
+  }
   const vw = video.videoWidth || 16;
   const vh = video.videoHeight || 9;
   const quarter = settings.rotation % 180 !== 0;
   const ew = quarter ? Math.min(sh, (sw * vw) / vh) : Math.min(sw, (sh * vw) / vh);
-  const eh = (ew * vh) / vw;
+  video.style.objectFit = "fill";
   video.style.width = `${Math.max(1, Math.floor(ew))}px`;
-  video.style.height = `${Math.max(1, Math.floor(eh))}px`;
+  video.style.height = `${Math.max(1, Math.floor((ew * vh) / vw))}px`;
   video.style.transform = `rotate(${settings.rotation}deg)`;
-}
-
-function paintTime() {
-  const duration = video.duration;
-  const live = !Number.isFinite(duration);
-  seek.disabled = live || !duration;
-  if (!scrubbing && !live) {
-    seek.max = String(duration || 0);
-    seek.value = String(video.currentTime || 0);
-  }
-  const total = live ? "直播" : formatTime(duration);
-  timeEl.textContent = `${formatTime(video.currentTime)} / ${total}`;
 }
 
 /**
@@ -157,12 +167,136 @@ function handleMediaError(player) {
     player.recoverMediaError();
     return;
   }
+  setLoading(false);
+  if (tryNextSource()) return;
   showStatus("解码失败，无法恢复");
 }
 
-function playSource(raw) {
+function currentSources() {
+  if (activeItem && activeItem.sources && activeItem.sources.length) return activeItem.sources;
+  return playUrl ? [playUrl] : [];
+}
+
+function sourceLabel() {
+  const sources = currentSources();
+  if (sources.length < 2) return "";
+  return `切源 ${sourceIndex + 1}/${sources.length}`;
+}
+
+function hidePlaylist() {
+  playlistItems = [];
+  activeItem = null;
+  sourceIndex = 0;
+  playlistEl.hidden = true;
+  playlistEl.classList.remove("is-open");
+  playlistList.replaceChildren();
+  listBtn.hidden = true;
+}
+
+/**
+ * @param {boolean} [force]
+ */
+function togglePlaylist(force) {
+  if (!playlistItems.length) return;
+  const open = typeof force === "boolean" ? force : !playlistEl.classList.contains("is-open");
+  playlistEl.hidden = false;
+  playlistEl.classList.toggle("is-open", open);
+}
+
+function renderPlaylist() {
+  const empty = playlistItems.length === 0;
+  listBtn.hidden = empty;
+  playlistEl.hidden = empty;
+  playlistHead.textContent = `频道 ${playlistItems.length}`;
+  playlistList.replaceChildren();
+  let lastGroup = "";
+  for (const item of playlistItems) {
+    const group = item.group || "";
+    if (group && group !== lastGroup) {
+      lastGroup = group;
+      const head = document.createElement("div");
+      head.className = "playlist__group";
+      head.textContent = group;
+      playlistList.appendChild(head);
+    }
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "playlist__item";
+    if (item === activeItem) btn.classList.add("is-active");
+    const name = document.createElement("span");
+    name.className = "playlist__name";
+    name.textContent = item.title;
+    btn.appendChild(name);
+    const count = item.sources ? item.sources.length : 1;
+    if (count > 1) {
+      const badge = document.createElement("span");
+      badge.className = "playlist__badge";
+      badge.textContent = `${count}`;
+      btn.appendChild(badge);
+    }
+    btn.addEventListener("click", () => {
+      playItem(item);
+    });
+    playlistList.appendChild(btn);
+  }
+  const active = playlistList.querySelector(".is-active");
+  if (active) active.scrollIntoView({ block: "nearest" });
+  panels.paintInfo();
+}
+
+/**
+ * @param {{ title: string, url: string, sources?: string[] }} item
+ * @param {number} [index]
+ */
+function playItem(item, index = 0) {
+  activeItem = item;
+  const sources = item.sources && item.sources.length ? item.sources : [item.url];
+  sourceIndex = Math.min(Math.max(0, index), sources.length - 1);
+  playUrl = sources[sourceIndex] || "";
+  renderPlaylist();
+  playSource(playUrl, item.title);
+}
+
+/**
+ * @param {number} dir
+ */
+function stepChannel(dir) {
+  if (!playlistItems.length) return;
+  const index = playlistItems.indexOf(activeItem);
+  const start = index < 0 ? 0 : index;
+  const next = playlistItems[Math.min(playlistItems.length - 1, Math.max(0, start + dir))];
+  if (next && next !== activeItem) playItem(next);
+}
+
+/**
+ * @param {boolean} [wrap]
+ */
+function tryNextSource(wrap) {
+  const sources = currentSources();
+  if (sources.length < 2) return false;
+  if (sourceIndex + 1 >= sources.length) {
+    if (!wrap) return false;
+    sourceIndex = 0;
+  } else {
+    sourceIndex += 1;
+  }
+  playUrl = sources[sourceIndex];
+  showProgress(`切源 ${sourceIndex + 1}/${sources.length}`);
+  renderPlaylist();
+  playSource(playUrl, activeItem ? activeItem.title : "");
+  return true;
+}
+
+/**
+ * @param {string} raw
+ * @param {string} [title]
+ */
+function playSource(raw, title) {
+  playUrl = raw;
   showStatus("");
-  document.title = raw || "HLS";
+  const label = sourceLabel();
+  titleEl.textContent = label && title ? `${title} · ${label}` : title || "";
+  document.title = title || raw || "HLS";
   if (hls) {
     hls.destroy();
     hls = null;
@@ -170,14 +304,17 @@ function playSource(raw) {
   video.removeAttribute("src");
   video.load();
   if (!raw) {
+    setLoading(false);
     showStatus("没有可播放的地址");
     return;
   }
   const HlsCtor = /** @type {any} */ (globalThis).Hls;
   if (!HlsCtor || !HlsCtor.isSupported()) {
+    setLoading(false);
     showStatus("当前浏览器无法播放 HLS");
     return;
   }
+  setLoading(true);
   hls = new HlsCtor({
     xhrSetup(xhr) {
       xhr.withCredentials = true;
@@ -193,97 +330,81 @@ function playSource(raw) {
       handleMediaError(hls);
       return;
     }
-    if (data.type === HlsCtor.ErrorTypes.NETWORK_ERROR) {
-      showStatus("网络错误，无法继续加载");
-      return;
-    }
-    showStatus("无法播放这个地址");
     hls.destroy();
     hls = null;
+    if (tryNextSource()) return;
+    setLoading(false);
+    showStatus(data.type === HlsCtor.ErrorTypes.NETWORK_ERROR ? "网络错误，无法继续加载" : "无法播放这个地址");
   });
   hls.on(HlsCtor.Events.MANIFEST_PARSED, () => {
     video.playbackRate = settings.rate;
     void video.play().catch(() => {
-      playBtn.textContent = "播放";
+      setLoading(false);
     });
   });
   hls.loadSource(raw);
   hls.attachMedia(video);
 }
 
-playBtn.addEventListener("click", () => {
-  if (video.paused) {
-    void video.play();
-  } else {
-    video.pause();
-  }
-});
-
-video.addEventListener("play", () => {
-  playBtn.textContent = "暂停";
-});
-
-video.addEventListener("pause", () => {
-  playBtn.textContent = "播放";
-});
-
-video.addEventListener("timeupdate", paintTime);
-video.addEventListener("durationchange", paintTime);
-video.addEventListener("loadedmetadata", () => {
-  video.playbackRate = settings.rate;
-  fit();
-  paintTime();
-});
-
-seek.addEventListener("input", () => {
-  scrubbing = true;
-  if (!Number.isFinite(video.duration)) return;
-  video.currentTime = Number(seek.value);
-});
-
-seek.addEventListener("change", () => {
-  scrubbing = false;
-});
-
-volume.addEventListener("input", () => {
-  video.volume = Number(volume.value);
-  video.muted = video.volume === 0;
-});
-
-rateSel.addEventListener("change", () => {
-  applyRate(Number(rateSel.value));
-});
-
-rotateBtn.addEventListener("click", rotateStep);
-
-window.addEventListener("keydown", (event) => {
-  const tag = event.target instanceof HTMLElement ? event.target.tagName : "";
-  const typing = tag === "SELECT" || tag === "TEXTAREA" || event.target === volume;
-  if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
-    if (typing) return;
-    seekBy((event.key === "ArrowLeft" ? -1 : 1) * (event.shiftKey ? 30 : 5));
-    event.preventDefault();
+/**
+ * @param {string} raw
+ */
+async function openEntry(raw) {
+  const gen = ++loadGen;
+  hidePlaylist();
+  listUrl = "";
+  playlistRaw = "";
+  if (!raw) {
+    playSource("");
+    panels.paintInfo();
     return;
   }
-  if (tag === "INPUT" || tag === "SELECT" || tag === "TEXTAREA") return;
-  if (event.key === "[") {
-    stepRate(-1);
-    event.preventDefault();
-  } else if (event.key === "]") {
-    stepRate(1);
-    event.preventDefault();
-  } else if (event.key === "r" || event.key === "R") {
-    rotateStep();
-    event.preventDefault();
+  if (!isChannelListUrl(raw)) {
+    playSource(raw);
+    panels.paintInfo();
+    return;
   }
-});
+  setLoading(true);
+  showStatus("正在加载播放列表…");
+  try {
+    const res = await fetch(raw, { credentials: "include" });
+    if (gen !== loadGen) return;
+    if (!res.ok) throw new Error(`列表加载失败 ${res.status}`);
+    const text = await res.text();
+    if (gen !== loadGen) return;
+    const parsed = parseChannelList(text, raw);
+    if (parsed.kind === "hls") {
+      showStatus("");
+      playSource(raw);
+      return;
+    }
+    if (!parsed.items.length) {
+      setLoading(false);
+      showStatus("播放列表是空的，或站点拦了列表请求");
+      playSource("");
+      return;
+    }
+    showStatus("");
+    listUrl = raw;
+    playlistRaw = text;
+    playlistItems = parsed.items;
+    void rememberFeed(raw);
+    togglePlaylist(true);
+    playItem(parsed.items[0]);
+  } catch (error) {
+    if (gen !== loadGen) return;
+    setLoading(false);
+    showStatus(error instanceof Error ? error.message : String(error));
+    playSource("");
+  }
+}
 
 saveBtn.addEventListener("click", () => {
   if (saveTask) {
     saveTask.abort();
     return;
   }
-  const source = readSource();
+  const source = playUrl || readSource();
   if (!source) {
     showStatus("没有可保存的地址");
     return;
@@ -295,7 +416,7 @@ saveBtn.addEventListener("click", () => {
   }
   const controller = new AbortController();
   saveTask = controller;
-  saveBtn.textContent = "取消";
+  saveBtn.setAttribute("aria-label", "取消保存");
   showStatus("");
   showProgress("正在准备保存…");
   void save(source, {
@@ -312,12 +433,12 @@ saveBtn.addEventListener("click", () => {
     })
     .finally(() => {
       saveTask = null;
-      saveBtn.textContent = "存 MP4";
+      saveBtn.setAttribute("aria-label", "存 MP4");
     });
 });
 
 window.addEventListener("hashchange", () => {
-  playSource(readSource());
+  void openEntry(readSource());
 });
 
 window.addEventListener("resize", fit);
@@ -326,9 +447,44 @@ if (typeof ResizeObserver === "function") {
   new ResizeObserver(fit).observe(stage);
 }
 
-void chrome.storage.local.remove("formantHls");
-rateSel.value = "1";
-rotateBtn.textContent = "旋转 0°";
+const panels = bindPanels({
+  onOpenFeed(url) {
+    location.hash = encodeURIComponent(url);
+  },
+  getListUrl: () => listUrl,
+  getPlayUrl: () => playUrl,
+  getRaw: () => playlistRaw,
+  getSourceLabel: sourceLabel,
+  onNextSource: () => {
+    tryNextSource(true);
+  },
+});
+
+globalThis.formantHlsCore = {
+  playerEl,
+  video,
+  settings,
+  RATES,
+  togglePlay,
+  seekBy,
+  applyRate,
+  stepRate,
+  rotateStep,
+  setVolume,
+  unmute,
+  stepChannel,
+  togglePlaylist,
+  hasPlaylist: () => playlistItems.length > 0,
+  closePanels: () => panels.close(),
+  fit,
+};
+
+try {
+  void chrome.storage.local.remove("formantHls");
+} catch {
+  /* extension page only */
+}
 video.playbackRate = 1;
+setVolume(1);
 fit();
-playSource(readSource());
+void openEntry(readSource());

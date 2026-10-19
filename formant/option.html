@@ -45,7 +45,7 @@
             <header class="panel__head">
               <div>
                 <h2>概览</h2>
-                <p class="muted">从左侧切换模块：功能（含 Discord / freefq / huavod / elitepvpers / Gemini 去水印 / Gmail 邮箱 / HLS 播放等总开关）、New Tab、V2EX、GitZip、自动翻页、手势、代理、扩展、词库、翻译、X 推文与同步。</p>
+                <p class="muted">从左侧切换模块：功能（含 Discord / freefq / huavod / elitepvpers / Gemini 去水印 / Gmail 邮箱 / HLS 播放等总开关）、New Tab、V2EX、GitZip、自动翻页、手势、代理、扩展、词库、翻译、X 推文与同步。HLS 列表源在工具箱。</p>
               </div>
             </header>
             <div class="general-grid">
@@ -421,14 +421,17 @@
               </section>
               <section class="settings-card">
                 <h3>HLS 播放</h3>
-                <p class="muted">默认开启。主框架打开以 <code>.m3u8</code> 结尾的地址时，改在扩展内用 hls.js 播放，可调倍速和旋转，左右键快进快退，并可把当前列表存成 MP4。地址栏输入 <code>m3u8</code> 再回车也能打开播放页。关闭后这些地址回到浏览器默认下载。不另开面板，不同步到 mono。若仍装着 Native HLS Playback，请关掉其一，避免抢同一次导航。</p>
+                <p class="muted">默认开启。主框架打开以 <code>.m3u8</code>、<code>.m3u</code> 或 IPTV <code>.txt</code> 结尾的地址时，改在扩展内播放。m3u / txt 列表源在工具箱「HLS」配置，存在本机，可一键打开播放。同名频道合并，多线路失败自动切源。普通文本 <code>.txt</code> 不会被抢走。关闭后这些地址回到浏览器默认下载，工具箱也不再显示 HLS。不同步到 mono。若仍装着 Native HLS Playback，请关掉其一，避免抢同一次导航。</p>
                 <label class="feature-row">
                   <span>
                     <strong>启用 HLS 播放</strong>
-                    <small>打开 .m3u8 直链时用扩展播放器</small>
+                    <small>打开 .m3u8 / .m3u / 频道 .txt 时用扩展播放器</small>
                   </span>
                   <input type="checkbox" data-feature="hls.enabled" />
                 </label>
+                <div class="panel__actions panel__actions--start">
+                  <button type="button" class="btn" data-open-tools="hls">打开工具箱 HLS</button>
+                </div>
               </section>
               <section class="settings-card">
                 <h3>识图</h3>
@@ -443,13 +446,24 @@
               </section>
               <section class="settings-card">
                 <h3>工具箱</h3>
-                <p class="muted">默认开启。popup 顶栏「工具箱」图标打开新标签页，内含二维码、时间戳、JSON 美化、JSON 对比、图片 Base64、编码转换、企业查询、象棋，以及识图入口。全部在本机运行，不走 mono，不注入网页，不新增权限。关闭后隐藏这些工具；若识图仍开启，工具箱入口保留且只显示识图。</p>
+                <p class="muted">默认开启。popup 顶栏「工具箱」图标打开新标签页，内含二维码、时间戳、JSON 美化、JSON 对比、图片 Base64、编码转换、企业查询、象棋、油猴、Lighthouse，以及识图入口。HLS 列表源也在工具箱「休闲」里，由上面的 HLS 开关单独控制。全部在本机运行，不走 mono。关闭后隐藏这些工具；若识图或 HLS 仍开启，工具箱入口保留。</p>
                 <label class="feature-row">
                   <span>
                     <strong>启用工具箱</strong>
-                    <small>二维码 / 时间戳 / JSON / 对比 / Base64 / 编码 / 企业 / 象棋</small>
+                    <small>二维码 / 时间戳 / JSON / 对比 / Base64 / 编码 / 企业 / 象棋 / 油猴 / Lighthouse</small>
                   </span>
                   <input type="checkbox" data-feature="tools.enabled" />
+                </label>
+              </section>
+              <section class="settings-card">
+                <h3>油猴</h3>
+                <p class="muted">默认开启。入口在工具箱左侧「油猴」，右侧是脚本列表；新建 / 导入 / 搜索 Greasy Fork / 编辑在二级页。兼容常见 <code>// ==UserScript==</code> 与 GM_*。关闭后已打开页面停止注入，脚本仍留在本机。若扩展详情有「允许运行用户脚本」，请打开。不同步到 mono。若仍装着 Tampermonkey，请关掉其一，避免同一脚本跑两次。</p>
+                <label class="feature-row">
+                  <span>
+                    <strong>启用油猴</strong>
+                    <small>在匹配的网页运行已安装的用户脚本</small>
+                  </span>
+                  <input type="checkbox" data-feature="userscript.enabled" />
                 </label>
               </section>
             </form>
@@ -459,7 +473,7 @@
             <header class="panel__head">
               <div>
                 <h2>New Tab</h2>
-                <p class="muted">管理主页外观、天气城市和主页数据。「刷新数据」从当前 Client API Key 拉取；「同步主页」上传到该 Key（空主页或较旧本机不会覆盖云端）。打开 New Tab 会自动拉取较新的云端主页。</p>
+                <p class="muted">管理主页外观、天气城市和主页数据。「刷新数据」从当前 Client API Key 拉取；「同步主页」上传到该 Key（空主页或较旧本机不会覆盖云端）。打开 New Tab 会自动拉取较新的云端主页。Ctrl+Home 打开或切到已有 New Tab（当前页如 V2EX 不动）；快捷键可在扩展快捷键页改。</p>
               </div>
               <div class="panel__actions">
                 <button type="button" id="newtabRefresh" class="btn btn--ghost">刷新数据</button>
@@ -493,6 +507,13 @@
                     <small>在主页顶部显示搜索或网址输入框</small>
                   </span>
                   <input id="newtabShowSearch" type="checkbox" />
+                </label>
+                <label class="feature-row">
+                  <span>
+                    <strong>链接在新窗口打开</strong>
+                    <small>快捷图标和搜索结果在新窗口打开，当前 New Tab 保持不动</small>
+                  </span>
+                  <input id="newtabOpenLinksInNewWindow" type="checkbox" />
                 </label>
                 <div class="panel__actions panel__actions--start">
                   <button type="button" id="newtabSave" class="btn btn--ghost">保存 New Tab 设置</button>
@@ -1027,7 +1048,7 @@
               </section>
               <section class="settings-card">
                 <h3>本机钥匙</h3>
-                <p class="muted">导出一份 JSON，换电脑时再导入。可以选文件，也可以把 JSON 贴在下面。包含同步的 Base URL 与 Client API Key、识图的 Base URL / API Key / Model、V2EX 的 Imgur Client ID，以及翻译的 DeepLX API Key。New Tab、手势、词库、代理和功能开关不在这份文件里。</p>
+                <p class="muted">导出一份 JSON，换电脑时再导入。可以选文件，也可以把 JSON 贴在下面。包含同步的 Base URL 与 Client API Key、识图的 Base URL / API Key / Model、V2EX 的 Imgur Client ID，以及翻译的 DeepLX API Key。功能开关、New Tab、V2EX、HLS 源等请用下面的「本机配置」。</p>
                 <div class="panel__actions panel__actions--start">
                   <button type="button" id="optKeysExport" class="btn btn--ghost">导出 JSON</button>
                   <button type="button" id="optKeysImport" class="btn btn--ghost">导入 JSON</button>
@@ -1042,11 +1063,27 @@
                 </div>
               </section>
               <section class="settings-card">
+                <h3>本机配置</h3>
+                <p class="muted">导出一份 JSON（不含密钥）。可以选文件，也可以把 JSON 贴在下面。包含功能开关、New Tab（含链接新窗口打开、快捷方式、壁纸）、V2EX（含新标签浏览主题）、GitZip、自动翻页、手势、代理、X 推文样式、HLS 列表源地址、翻译模式与目标语言、工具箱顺序、Discord 输入翻译引擎、汇率币种。文件里没有的面板不动。词库包、油猴脚本、生词本和钥匙不在这份文件里。</p>
+                <div class="panel__actions panel__actions--start">
+                  <button type="button" id="optPrefsExport" class="btn btn--ghost">导出 JSON</button>
+                  <button type="button" id="optPrefsImport" class="btn btn--ghost">导入 JSON</button>
+                  <input id="optPrefsFile" type="file" accept="application/json,.json" hidden />
+                </div>
+                <label class="settings-field settings-field--wide">
+                  粘贴 JSON
+                  <textarea id="optPrefsPaste" rows="8" spellcheck="false" placeholder='{"version":1,"kind":"formant-prefs",...}'></textarea>
+                </label>
+                <div class="panel__actions panel__actions--start">
+                  <button type="button" id="optPrefsPasteImport" class="btn btn--ghost">导入这段 JSON</button>
+                </div>
+              </section>
+              <section class="settings-card">
                 <h3>说明</h3>
                 <ul class="settings-list">
                   <li>New Tab 主页、热点英语、鼠标手势、书签按 Client API Key 隔离：每把 Key 一份云端数据，互不可见。</li>
                   <li>换 Key 会清空本机 New Tab / 词卡 / 手势缓存，避免串数据；请到对应面板点「刷新」拉取。</li>
-                  <li>功能开关、代理、词库包、V2EX 只存在本机，不跟 Key 走。</li>
+                  <li>功能开关、代理、V2EX、HLS 源只存在本机，不跟 Key 走，可经「本机配置」JSON 带走。词库包也只在本机，但不进这份文件。</li>
                   <li>保存时会请求对应域名的 host 权限。</li>
                   <li>密钥仅保存在本机 <code>chrome.storage.local</code>，不会写入扩展包；界面只显示 Key 指纹，不展示全文。</li>
                   <li>书签同步由后台 service worker 执行，与 popup「书签」页同一通道。</li>

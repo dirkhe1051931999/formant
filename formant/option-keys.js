@@ -151,6 +151,9 @@ async function applyKeys(fileKeys) {
 function normalizeKeysFile(raw) {
   if (!raw || typeof raw !== "object") throw new Error("不是有效的钥匙文件");
   const src = /** @type {Record<string, unknown>} */ (raw);
+  if (src.kind === "formant-prefs") {
+    throw new Error("这是配置 JSON，请用下面的「本机配置」导入");
+  }
   if (src.version !== KEYS_VERSION) throw new Error("不认识的钥匙文件版本");
   /** @type {FormantKeysFile} */
   const next = { version: KEYS_VERSION };

@@ -494,6 +494,7 @@
       return;
     }
     dashboard ??= dashboardFactory.create();
+    if (!dashboard) return;
     dashboard.setTheme(config.settings.theme);
     dashboard.setHandlers({
       download: () => void download("selected").catch(() => {}),

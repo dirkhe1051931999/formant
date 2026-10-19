@@ -19,6 +19,9 @@ export const TOOL_ICONS = {
     '<rect x="4.5" y="4.5" width="15" height="15" rx="1.5"/><path d="M4.5 9.5h15M4.5 14.5h15M9.5 4.5v15M14.5 4.5v15"/>',
   ),
   "image-prompt": wrap('<path d="M12 3.5 13.9 9l5.6 1.9-5.6 1.9L12 18.5l-1.9-5.7L4.5 10.9 10.1 9z"/><path d="M19 3.5v3M17.5 5h3M5 17v3M3.5 18.5h3"/>'),
+  userscript: wrap('<path d="M8 6.5h8M8 10h5"/><rect x="5.5" y="4.5" width="13" height="15" rx="1.5"/><path d="m9 14.5 2 2 4-4"/>'),
+  lighthouse: wrap('<path d="M12 3.5 8.5 10h7L12 3.5z"/><path d="M10 10v8.5h4V10M5.5 19.5h13M8.5 13.5h7"/>'),
+  hls: wrap('<rect x="3.5" y="6" width="17" height="12" rx="2"/><path d="m11 9.5 4.5 2.5L11 14.5z"/>'),
 };
 
 export const GRIP_ICON =

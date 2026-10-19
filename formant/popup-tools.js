@@ -1,5 +1,6 @@
 import {
   FEATURES_KEY,
+  isHlsEnabled,
   isImagePromptEnabled,
   isToolsEnabled,
   loadFeatures,
@@ -8,7 +9,7 @@ import {
 
 const PAGE_URL = chrome.runtime.getURL("tools.html");
 
-/** 工具箱入口：工具箱或识图任一开启即显示（识图入口已收进工具箱）。 */
+/** 工具箱入口：工具箱、识图或 HLS 任一开启即显示。 */
 export function initPopupTools() {
   const navBtn = /** @type {HTMLButtonElement | null} */ (document.getElementById("toolsNavBtn"));
   if (!navBtn) return;
@@ -20,7 +21,7 @@ export function initPopupTools() {
 
   /** @param {import("./features.js").FormantFeatures} features */
   function applyFeature(features) {
-    navBtn.hidden = !(isToolsEnabled(features) || isImagePromptEnabled(features));
+    navBtn.hidden = !(isToolsEnabled(features) || isImagePromptEnabled(features) || isHlsEnabled(features));
   }
 
   void loadFeatures().then(applyFeature);

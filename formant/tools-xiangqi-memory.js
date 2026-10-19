@@ -13,6 +13,9 @@ export function emptyMemory() {
     level: 1,
     winStreak: 0,
     loseStreak: 0,
+    sound: true,
+    mode: "vs",
+    game: null,
     openings: {},
     bans: [],
   };
@@ -31,6 +34,9 @@ function normalize(raw) {
   base.level = clampLevel(raw.level);
   base.winStreak = Math.max(0, Number(raw.winStreak) || 0);
   base.loseStreak = Math.max(0, Number(raw.loseStreak) || 0);
+  base.sound = raw.sound !== false;
+  base.mode = raw.mode === "teach" || raw.mode === "pvp" ? raw.mode : "vs";
+  base.game = parseGame(raw.game);
   if (raw.openings && typeof raw.openings === "object") {
     for (const [key, row] of Object.entries(raw.openings)) {
       if (!row || typeof row !== "object") continue;
@@ -65,9 +71,76 @@ export function timeMsOf(memory) {
 }
 
 export function jitterOf(memory) {
+  if (memory.locked) return 0;
   if (memory.loseStreak >= 3) return 0.7;
   if (memory.loseStreak >= 2) return 0.35;
   return 0;
+}
+
+function parseGame(raw) {
+  if (!raw || typeof raw !== "object" || typeof raw.board !== "string" || raw.board.length !== 90) {
+    return null;
+  }
+  const history = Array.isArray(raw.history)
+    ? raw.history
+        .filter((row) => row && Number.isFinite(row.fx) && Number.isFinite(row.tx))
+        .map((row) => ({
+          move: {
+            fx: row.fx,
+            fy: row.fy,
+            tx: row.tx,
+            ty: row.ty,
+            piece: String(row.piece || ""),
+          },
+          captured: row.captured || null,
+        }))
+    : [];
+  return {
+    board: raw.board,
+    current: raw.current === "black" ? "black" : "red",
+    history,
+    last: raw.last && Number.isFinite(raw.last.tx) ? raw.last : null,
+    redKeys: Array.isArray(raw.redKeys) ? raw.redKeys.map(String) : [],
+    lastAi: raw.lastAi && raw.lastAi.hash ? { hash: String(raw.lastAi.hash), key: String(raw.lastAi.key || "") } : null,
+    lesson: String(raw.lesson || ""),
+  };
+}
+
+/** @param {{ board: (string|null)[][], current: string }} state */
+export function packBoard(board) {
+  let text = "";
+  for (let y = 0; y < 10; y++) {
+    for (let x = 0; x < 9; x++) text += board[y][x] || ".";
+  }
+  return text;
+}
+
+export function unpackBoard(text) {
+  const board = Array.from({ length: 10 }, () => Array(9).fill(null));
+  for (let i = 0; i < 90; i++) {
+    const ch = text[i];
+    board[Math.floor(i / 9)][i % 9] = !ch || ch === "." ? null : ch;
+  }
+  return board;
+}
+
+export function snapshotGame(state, extra) {
+  return {
+    board: packBoard(state.board),
+    current: state.current,
+    history: extra.history.map((row) => ({
+      fx: row.move.fx,
+      fy: row.move.fy,
+      tx: row.move.tx,
+      ty: row.move.ty,
+      piece: row.move.piece,
+      captured: row.captured,
+    })),
+    last: extra.last,
+    redKeys: extra.redKeys,
+    lastAi: extra.lastAi,
+    lesson: extra.lesson || "",
+  };
 }
 
 export function bannedKeys(memory, hash) {
@@ -123,6 +196,9 @@ export async function clearMemoryKeepLock() {
   const prev = await loadMemory();
   const next = emptyMemory();
   next.locked = prev.locked;
+  next.sound = prev.sound !== false;
+  next.mode = prev.mode;
+  next.game = prev.game;
   if (prev.locked) next.level = prev.level;
   return saveMemory(next);
 }

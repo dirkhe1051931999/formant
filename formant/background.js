@@ -2,9 +2,11 @@ import {
   isImageSaveJpgEnabled,
   isImageSavePngEnabled,
   isTranslateContextMenuEnabled,
+  isNewtabEnabled,
   isV2exEnabled,
   loadFeatures,
 } from "./features.js";
+import { openOrFocusNewtab } from "./newtab-tab.js";
 import {
   SCREENSHOT_MENU_IDS,
   addScreenshotContextMenus,
@@ -37,6 +39,7 @@ import { handleGeminiMessage } from "./gemini-bridge.js";
 import { initNewtabWeatherBackground } from "./newtab-weather-bridge.js";
 import { initProxyBackground } from "./proxy-bridge.js";
 import { handleSiteDataMessage } from "./site-data-bridge.js";
+import { handleUserscriptMessage, initUserscriptBackground } from "./userscript-bridge.js";
 import { saveImageAs } from "./image-save.js";
 import { ensureLexiconReady } from "./lexicon-runtime.js";
 import { syncBookmarksToMono } from "./sync.js";
@@ -74,6 +77,7 @@ void initHuavodBackground().catch((error) => {
 
 initHlsBackground();
 initVueBackground();
+initUserscriptBackground();
 
 const SYNC_DEBOUNCE_MS = 8_000;
 /** @type {ReturnType<typeof setTimeout> | null} */
@@ -469,17 +473,20 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
   if (handleAxureMessage(message, sender, sendResponse)) return true;
 
+  if (handleUserscriptMessage(message, sender, sendResponse)) return true;
+
   return false;
 });
 
 chrome.commands.onCommand.addListener((command) => {
-  void loadFeatures().then((features) => {
+  void (async () => {
+    const features = await loadFeatures();
+    if (command === "formantNewtab") {
+      if (isNewtabEnabled(features)) await openOrFocusNewtab();
+      return;
+    }
     if (!isV2exEnabled(features)) return;
-    if (command === "newV2EX") {
-      void chrome.tabs.create({ url: "https://www.v2ex.com/" });
-    }
-    if (command === "newMsg") {
-      void chrome.tabs.create({ url: "https://www.v2ex.com/notifications" });
-    }
-  });
+    if (command === "newV2EX") void chrome.tabs.create({ url: "https://www.v2ex.com/" });
+    if (command === "newMsg") void chrome.tabs.create({ url: "https://www.v2ex.com/notifications" });
+  })();
 });

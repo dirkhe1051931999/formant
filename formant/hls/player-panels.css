@@ -1,0 +1,168 @@
+.playlist {
+  width: min(320px, 90vw);
+}
+
+.playlist__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.playlist__name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.playlist__badge {
+  flex-shrink: 0;
+  padding: 0 6px;
+  border-radius: 8px;
+  background: rgba(76, 127, 212, 0.22);
+  color: #c9dbf7;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.playlist__meta {
+  flex-shrink: 0;
+  padding: 8px 12px 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.playlist__url {
+  overflow: hidden;
+  color: #9aa3af;
+  font-size: 11px;
+  line-height: 1.45;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.playlist__url strong {
+  margin-right: 6px;
+  color: #c5c9d1;
+}
+
+.playlist__acts {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.playlist__acts button,
+.sheet__form button,
+.sheet__del,
+.sheet__head button.sheet__text {
+  height: 28px;
+  padding: 0 8px;
+  border: 0;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #eee;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.playlist__acts button:hover,
+.sheet__form button:hover,
+.sheet__open:hover {
+  background: rgba(76, 127, 212, 0.28);
+}
+
+.sheet {
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+  display: flex;
+  flex-direction: column;
+  background: rgba(12, 12, 12, 0.96);
+}
+
+.sheet[hidden] {
+  display: none !important;
+}
+
+.sheet__head {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 12px;
+  color: #eee;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.sheet__form {
+  display: flex;
+  flex-shrink: 0;
+  gap: 8px;
+  padding: 0 12px 10px;
+}
+
+.sheet__form input {
+  flex: 1;
+  min-width: 0;
+  height: 32px;
+  padding: 0 10px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 4px;
+  background: #1a1a1a;
+  color: #fff;
+  font: inherit;
+  font-size: 13px;
+}
+
+.sheet__list,
+.sheet__pre {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}
+
+.sheet__empty {
+  margin: 16px;
+  color: #9aa3af;
+  font-size: 13px;
+}
+
+.sheet__row {
+  display: flex;
+  gap: 8px;
+  padding: 6px 12px;
+}
+
+.sheet__row.is-on .sheet__open {
+  color: #4c7fd4;
+}
+
+.sheet__open {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  padding: 6px 0;
+  border: 0;
+  background: transparent;
+  color: #e8eaed;
+  font: inherit;
+  font-size: 13px;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.sheet__pre {
+  margin: 0;
+  padding: 0 16px 16px;
+  color: #d7dce3;
+  font-size: 12px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-all;
+}

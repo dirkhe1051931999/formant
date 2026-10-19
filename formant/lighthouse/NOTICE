@@ -1,0 +1,6 @@
+formant Lighthouse 面板是自研的轻量测评入口。
+
+- 测评走 Google PageSpeed Insights API v5（与官方 Lighthouse 扩展 100.0.0.5 相同后端）。
+- 未复制本机 Edge 扩展 `blipmdconlkpinefehnmjammfjpmpbjk` 的 popup-bundle.js、样式、图标或公钥。
+- Lighthouse / PSI 由 Google 提供，Apache-2.0；本面板只展示分数与问题摘要。
+- 不能测 localhost 或需登录才能看的页面。

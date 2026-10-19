@@ -1,7 +1,9 @@
 import {
   FEATURES_KEY,
+  isHlsEnabled,
   isImagePromptEnabled,
   isToolsEnabled,
+  isUserscriptEnabled,
   loadFeatures,
   normalizeFeatures,
 } from "./features.js";
@@ -15,17 +17,31 @@ import { GRIP_ICON, TOOL_ICONS } from "./tools-icons.js";
 /** 本机排序，只存工具 id 顺序，不含密钥，不同步。 */
 const ORDER_KEY = "formantToolsOrder";
 
-const TOOLS = [
-  { id: "qr", title: "二维码", gate: "tools", load: () => import("./tools-qr.js") },
-  { id: "timestamp", title: "时间戳", gate: "tools", load: () => import("./tools-timestamp.js") },
-  { id: "json", title: "JSON 美化", gate: "tools", load: () => import("./tools-json.js") },
-  { id: "diff", title: "JSON 对比", gate: "tools", load: () => import("./tools-diff.js") },
-  { id: "image-base64", title: "图片 Base64", gate: "tools", load: () => import("./tools-image-base64.js") },
-  { id: "codec", title: "编码转换", gate: "tools", load: () => import("./tools-codec.js") },
-  { id: "company", title: "企业查询", gate: "tools", load: () => import("./tools-company.js") },
-  { id: "xiangqi", title: "象棋", gate: "tools", load: () => import("./tools-xiangqi.js") },
-  { id: "image-prompt", title: "识图", gate: "imagePrompt", load: () => import("./tools-image-prompt.js") },
+const TOOL_GROUPS = [
+  { id: "encode", title: "编码" },
+  { id: "lookup", title: "检索" },
+  { id: "web", title: "网页" },
+  { id: "play", title: "休闲" },
 ];
+
+const TOOLS = [
+  { id: "qr", title: "二维码", gate: "tools", group: "encode", load: () => import("./tools-qr.js") },
+  { id: "timestamp", title: "时间戳", gate: "tools", group: "encode", load: () => import("./tools-timestamp.js") },
+  { id: "json", title: "JSON 美化", gate: "tools", group: "encode", load: () => import("./tools-json.js") },
+  { id: "diff", title: "JSON 对比", gate: "tools", group: "encode", load: () => import("./tools-diff.js") },
+  { id: "image-base64", title: "图片 Base64", gate: "tools", group: "encode", load: () => import("./tools-image-base64.js") },
+  { id: "codec", title: "编码转换", gate: "tools", group: "encode", load: () => import("./tools-codec.js") },
+  { id: "company", title: "企业查询", gate: "tools", group: "lookup", load: () => import("./tools-company.js") },
+  { id: "image-prompt", title: "识图", gate: "imagePrompt", group: "lookup", load: () => import("./tools-image-prompt.js") },
+  { id: "userscript", title: "油猴", gate: "userscript", group: "web", load: () => import("./tools-userscript.js") },
+  { id: "lighthouse", title: "Lighthouse", gate: "tools", group: "web", load: () => import("./tools-lighthouse.js") },
+  { id: "hls", title: "HLS", gate: "hls", group: "play", load: () => import("./tools-hls.js") },
+  { id: "xiangqi", title: "象棋", gate: "tools", group: "play", load: () => import("./tools-xiangqi.js") },
+];
+
+function toolGroup(id) {
+  return TOOLS.find((t) => t.id === id)?.group || "";
+}
 
 const nav = /** @type {HTMLElement} */ ($("#toolsNav"));
 const main = /** @type {HTMLElement} */ ($("#toolsMain"));
@@ -35,6 +51,8 @@ const empty = /** @type {HTMLElement} */ ($("#toolsEmpty"));
 const panels = new Map();
 let toolsOn = true;
 let imagePromptOn = true;
+let userscriptOn = true;
+let hlsOn = true;
 let activeId = "";
 /** @type {string[]} */
 let order = TOOLS.map((t) => t.id);
@@ -50,25 +68,42 @@ function normalizeOrder(saved) {
 function visibleIds() {
   return order.filter((id) => {
     const tool = TOOLS.find((t) => t.id === id);
-    return tool && (tool.gate === "tools" ? toolsOn : imagePromptOn);
+    if (!tool) return false;
+    if (tool.gate === "tools") return toolsOn;
+    if (tool.gate === "imagePrompt") return imagePromptOn;
+    if (tool.gate === "userscript") return toolsOn && userscriptOn;
+    if (tool.gate === "hls") return hlsOn;
+    return false;
   });
 }
 
-const currentId = () => decodeURIComponent(location.hash.replace(/^#/, ""));
+const currentId = () => {
+  const raw = decodeURIComponent(location.hash.replace(/^#/, ""));
+  return raw.split("/")[0] || "";
+};
 
 function renderNav() {
   nav.textContent = "";
-  for (const id of visibleIds()) {
-    const tool = /** @type {(typeof TOOLS)[number]} */ (TOOLS.find((t) => t.id === id));
-    const a = document.createElement("a");
-    a.className = "tl-nav__item";
-    a.href = `#${tool.id}`;
-    a.dataset.tool = tool.id;
-    a.draggable = true;
-    a.title = "拖动可调整顺序";
-    a.innerHTML = `<span class="tl-ico">${TOOL_ICONS[/** @type {keyof typeof TOOL_ICONS} */ (tool.id)] || ""}</span><strong></strong><span class="tl-nav__grip">${GRIP_ICON}</span>`;
-    /** @type {HTMLElement} */ (a.querySelector("strong")).textContent = tool.title;
-    nav.appendChild(a);
+  const visible = visibleIds();
+  for (const group of TOOL_GROUPS) {
+    const ids = visible.filter((id) => toolGroup(id) === group.id);
+    if (!ids.length) continue;
+    const label = document.createElement("p");
+    label.className = "tl-nav__group";
+    label.textContent = group.title;
+    nav.appendChild(label);
+    for (const id of ids) {
+      const tool = /** @type {(typeof TOOLS)[number]} */ (TOOLS.find((t) => t.id === id));
+      const a = document.createElement("a");
+      a.className = "tl-nav__item";
+      a.href = `#${tool.id}`;
+      a.dataset.tool = tool.id;
+      a.draggable = true;
+      a.title = "拖动可调整本组顺序";
+      a.innerHTML = `<span class="tl-ico">${TOOL_ICONS[/** @type {keyof typeof TOOL_ICONS} */ (tool.id)] || ""}</span><strong></strong><span class="tl-nav__grip">${GRIP_ICON}</span>`;
+      /** @type {HTMLElement} */ (a.querySelector("strong")).textContent = tool.title;
+      nav.appendChild(a);
+    }
   }
   markActive();
 }
@@ -108,7 +143,7 @@ nav.addEventListener("drop", (event) => {
   event.preventDefault();
   const item = /** @type {HTMLElement | null} */ (/** @type {HTMLElement} */ (event.target).closest(".tl-nav__item"));
   const targetId = item?.dataset.tool || "";
-  if (item && targetId && targetId !== dragId) {
+  if (item && targetId && targetId !== dragId && toolGroup(dragId) === toolGroup(targetId)) {
     const rect = item.getBoundingClientRect();
     const after = event.clientY >= rect.top + rect.height / 2;
     const next = order.filter((id) => id !== dragId);
@@ -178,6 +213,8 @@ async function route() {
 function applyFeatures(features) {
   toolsOn = isToolsEnabled(features);
   imagePromptOn = isImagePromptEnabled(features);
+  userscriptOn = isUserscriptEnabled(features);
+  hlsOn = isHlsEnabled(features);
   renderNav();
   void route();
 }

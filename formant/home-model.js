@@ -12,6 +12,7 @@
  *     lang: string, useSearch: string, searchShow: boolean,
  *     wallpaperUrl: string, wallpaperMask: number,
  *     showClock: boolean, clock24h: boolean, showSearch: boolean,
+ *     openLinksInNewWindow: boolean,
  *     locationId: string, cityName: string
  *   },
  *   nav: Array<{ id: string, name: string, children: NewtabItem[] }>,
@@ -32,6 +33,7 @@ export function createDefaultHome() {
       showClock: false,
       clock24h: false,
       showSearch: false,
+      openLinksInNewWindow: false,
       locationId: "",
       cityName: "",
     },
@@ -71,6 +73,7 @@ export function normalizeHome(input) {
       showClock: false,
       clock24h: base.clock24h === true,
       showSearch: base.showSearch === true,
+      openLinksInNewWindow: base.openLinksInNewWindow === true,
       locationId: String(base.locationId || "").trim(),
       cityName: String(base.cityName || "").trim(),
     },

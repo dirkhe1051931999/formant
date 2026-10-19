@@ -67,6 +67,7 @@ export function initFeaturesPanel(api) {
       "hls.enabled": current.hls.enabled,
       "imagePrompt.enabled": current.imagePrompt.enabled,
       "tools.enabled": current.tools.enabled,
+      "userscript.enabled": current.userscript.enabled,
     };
     for (const [path, value] of Object.entries(map)) {
       const input = /** @type {HTMLInputElement | null} */ (
@@ -111,6 +112,7 @@ export function initFeaturesPanel(api) {
       if (current.hls.enabled) bits.push("HLS 播放");
       if (current.imagePrompt.enabled) bits.push("识图");
       if (current.tools.enabled) bits.push("工具箱");
+      if (current.userscript.enabled) bits.push("油猴");
       summary.textContent = bits.length ? `已启用：${bits.join(" · ")}` : "当前未启用任何可选能力";
     }
   }
@@ -156,6 +158,7 @@ export function initFeaturesPanel(api) {
     else if (path === "hls.enabled") current.hls.enabled = on;
     else if (path === "imagePrompt.enabled") current.imagePrompt.enabled = on;
     else if (path === "tools.enabled") current.tools.enabled = on;
+    else if (path === "userscript.enabled") current.userscript.enabled = on;
     else return;
 
     void (async () => {
@@ -168,6 +171,14 @@ export function initFeaturesPanel(api) {
         current = f;
         paint();
       });
+    });
+  });
+
+  root.querySelectorAll("[data-open-tools]").forEach((el) => {
+    el.addEventListener("click", () => {
+      const id = el.getAttribute("data-open-tools") || "";
+      const url = chrome.runtime.getURL(id ? `tools.html#${id}` : "tools.html");
+      void chrome.tabs.create({ url });
     });
   });
 

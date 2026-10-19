@@ -624,6 +624,9 @@ function renderTile(item, { inFolder = false, folderId = null } = {}) {
   if (isLink) {
     el.href = item.url || "#";
     el.rel = "noreferrer";
+    if (item.url && home.baseConfig.openLinksInNewWindow) {
+      el.target = "_blank";
+    }
   } else {
     el.type = "button";
   }
@@ -1199,7 +1202,12 @@ syncBtn?.addEventListener("click", () => {
 searchForm.addEventListener("submit", (event) => {
   event.preventDefault();
   const url = buildSearchUrl(home, searchInput.value);
-  if (url) window.location.href = url;
+  if (!url) return;
+  if (home.baseConfig.openLinksInNewWindow) {
+    window.open(url, "_blank", "noopener,noreferrer");
+    return;
+  }
+  window.location.href = url;
 });
 
 itemForm.addEventListener("submit", async (event) => {

@@ -1,6 +1,6 @@
 # formant
 
-`formant` 是 Oolaf 的 **Chrome MV3 扩展**：智能翻译、iTab 风格 New Tab、V2EX Plus 自动签到与页面增强、公开 GitHub 文件/目录 ZIP 下载、轻量鼠标手势、轻量代理切换、轻量扩展管理、站点 Cookie/Storage 提取、自动翻页（AutoPagerize）、Telegram Web 受限图片/视频保存、X/Twitter 时间线推文 Google 翻译、Discord 当前频道手动 Google 翻译、elitepvpers 帖子标题与回复 Google 翻译、linux.do 话题列表表格换皮、bbs.hupu.com 帖子与板块简洁版式、freefq.com 帖子一键导出 TXT、huavod.com 控制台解锁、Gemini 生成图下载去水印、mail.google.com 顶栏显示当前邮箱、本地 Axure HTML 原型、DevTools 里的 Vue 组件检查、HLS（m3u8）播放、网页滚动截屏、扩展内 Word / Excel / PPT（oolafOffice）、新标签页识图反解提示词、开发者工具箱（二维码、时间戳、JSON 美化 / 对比、图片 Base64、编码转换）、书签同步到 mono、网页图片另存为 PNG/JPG、JSON / JS / CSS 美化（DevTools + 整页查看器），以及可扩展的俚语词库包。
+`formant` 是 Oolaf 的 **Chrome MV3 扩展**：智能翻译、iTab 风格 New Tab、V2EX Plus 自动签到与页面增强、公开 GitHub 文件/目录 ZIP 下载、轻量鼠标手势、轻量代理切换、轻量扩展管理、站点 Cookie/Storage 提取、自动翻页（AutoPagerize）、Telegram Web 受限图片/视频保存、X/Twitter 时间线推文 Google 翻译、Discord 当前频道手动 Google 翻译、elitepvpers 帖子标题与回复 Google 翻译、linux.do 话题列表表格换皮、bbs.hupu.com 帖子与板块简洁版式、freefq.com 帖子一键导出 TXT、huavod.com 控制台解锁、Gemini 生成图下载去水印、mail.google.com 顶栏显示当前邮箱、本地 Axure HTML 原型、DevTools 里的 Vue 组件检查、HLS（m3u8 / m3u / txt）播放、网页滚动截屏、扩展内 Word / Excel / PPT（oolafOffice）、新标签页识图反解提示词、开发者工具箱（二维码、时间戳、JSON 美化 / 对比、图片 Base64、编码转换、油猴脚本）、书签同步到 mono、网页图片另存为 PNG/JPG、JSON / JS / CSS 美化（DevTools + 整页查看器），以及可扩展的俚语词库包。
 
 后端能力依赖 [`aphelios - mono`](../aphelios%20-%20mono) 的 Client API（`x-oolaf-client-key`）与 Admin 里的 Formant 配置组。
 
@@ -32,7 +32,7 @@ python scripts/render_readme_gifs.py
 | --- | --- |
 | 扩展 | Chrome Manifest V3、ES Module Service Worker |
 | UI | 原生 HTML / CSS / JS（popup、newtab、option、Shadow DOM 划词面板） |
-| 存储 | `chrome.storage.local`（formant 设置、翻译模式、自定义词库包、`formantGitzip`、`formantAutopagerize`、`formantProxy`、`formantGestures`、`formantXTranslate`、`formantImagePrompt`、`formantExchange`、`formantStudyWords`、`formantVocabFace`）+ `chrome.storage.sync.options`（V2EX Plus 兼容设置） |
+| 存储 | `chrome.storage.local`（formant 设置、翻译模式、自定义词库包、`formantGitzip`、`formantAutopagerize`、`formantProxy`、`formantGestures`、`formantXTranslate`、`formantImagePrompt`、`formantExchange`、`formantHlsSources`、`formantStudyWords`、`formantVocabFace`、`formantUserscripts`、`formantUsValues`）+ `chrome.storage.sync.options`（V2EX Plus 兼容设置） |
 | 后端 | mono `https://www.oolaf.top`（或本地 `http://localhost:3101`） |
 
 ## 目录结构
@@ -43,6 +43,8 @@ formant/                 主扩展（加载此目录为「未打包的扩展」�
   background.js          SW：菜单、同步、翻译消息、词库预热
   popup.*                翻译 / 书签 / 站点数据 / 扩展管理 / oolafOffice 快捷条（工具箱入口开新标签页；齿轮进 option）
   newtab.*               覆盖页 New Tab
+  newtab-tab.js          New Tab 标签记忆；Ctrl+Home 打开或切到 New Tab
+  icons/newtab.*         New Tab 页签图标（房子，非扩展 F 标）
   favicon-cache.js       New Tab 快捷图标本机缓存（newtabCacheFavicons）
   newtab-vocab.js        New Tab 热点英语卡片（可翻到生词本）
   newtab-study.js        New Tab 生词本面与分页对话框
@@ -72,9 +74,14 @@ formant/                 主扩展（加载此目录为「未打包的扩展」�
   tools-image-prompt.js  识图面板（工具箱内左右布局：上传 / URL / 结果）
   tools-icons.js         工具箱列表与标题图标
   popup-tools.js         popup 顶栏「工具箱」图标：打开 tools.html（工具箱或识图任一开启即显示）
-  tools.html/css         工具箱页壳（左侧列表 + 工作区；hash 路由 #qr #timestamp #json #diff #image-base64 #codec #company #xiangqi）
+  tools.html/css         工具箱页壳（左侧列表 + 工作区；hash 路由 #qr #timestamp #json #diff #image-base64 #codec #company #xiangqi #userscript #lighthouse #hls）
+  tools-lighthouse.js    Lighthouse：右侧报告列表；新建测评 / 报告详情为二级 hash
+  lighthouse/NOTICE      未复制官方 Lighthouse 扩展；测评走 PSI API
   tools-panels.css       工具箱各工具专属样式
-  tools-page.js          工具箱路由、懒加载、按开关过滤、拖拽排序（`formantToolsOrder`）；识图是列表里的一个面板
+  tools-page.js          工具箱路由、懒加载、按开关过滤、分组目录、组内拖拽排序（`formantToolsOrder`）；识图是列表里的一个面板
+  tools-userscript.js    油猴：右侧脚本列表；新建 / 导入 / 搜索 / 编辑为二级 hash
+  userscript/            油猴解析、匹配、存储、GM 注入（NOTICE：未复制 Tampermonkey）
+  userscript-bridge.js   油猴 SW：注册 userScripts、Greasy Fork 搜索、GM 消息
   tools-dom.js           共用：`$`（querySelector）、`$$`（querySelectorAll）、复制 / 下载 / 粘贴 / 拖拽 / 脚本按需加载
   tools-timestamp.js     时间戳转换（秒/毫秒、时区、FILETIME、世界时间表）
   tools-image-base64.js  图片 ↔ Base64 / DataURI
@@ -83,7 +90,11 @@ formant/                 主扩展（加载此目录为「未打包的扩展」�
   tools-json.js          JSON 美化界面；tools-json-lib.js 解析 / 排序 / 大整数无损 / 嵌套展开
   tools-diff.js          对比界面；tools-diff-core.js 行 diff + JSON 结构 diff
   tools-company.js       企业背景查询面板；tools-company-lib.js 公开检索地址与最近记录
+  tools-hls.js           工具箱 HLS：本机 m3u/txt 列表源，一键打开播放
   tools-xiangqi.js       中国象棋人机面板；规则 / 评估 / 搜索 / 记忆分文件，Worker 里算棋
+  tools-xiangqi-board.js 实物风格棋盘 SVG 与走子动画
+  tools-xiangqi-audio.js 本机 Web Audio 棋声（选/走/吃/将/胜负）
+  tools-xiangqi-teach.js 教学模式着法讲解（本机规则，不走 mono）
   xiangqi/NOTICE         chinese-chess-ai（Apache-2.0）子力与位置表出处
   tools/vendor/          qrcode-generator（MIT）、zxing（Apache-2.0）与 NOTICE
   option-image-prompt.js 识图模型设置（formantImagePrompt）
@@ -124,8 +135,8 @@ formant/                 主扩展（加载此目录为「未打包的扩展」�
   axure/                 file:// Axure 原型内容脚本（$ 选择器，无 jQuery）
   vue-bridge.js          按开关注册 Vue 页面 hook
   vue/                   DevTools「Vue」面板与页面 hook（$ 选择器，无 jQuery）
-  hls-bridge.js          主框架 .m3u8 导航改开扩展播放页，地址栏关键字 m3u8
-  hls/                   HLS 播放页（hls.js 1.6.10、倍速 / 旋转 / 左右键进度、存 MP4）
+  hls-bridge.js          主框架 .m3u8 / .m3u / IPTV .txt 导航改开扩展播放页，地址栏关键字 m3u8
+  hls/                   HLS 播放页（叠层控件、hls.js 1.6.10、.m3u / .txt 频道抽屉、倍速 / 旋转 / 存 MP4）
   v2ex-options.js        V2EX Plus 2.1.3 兼容 storage schema
   v2ex-bridge.js         V2EX alarms、badge、sov2ex 菜单适配
   v2ex-plus/             GPLv3 V2EX Plus 衍生模块、COPYING、NOTICE、DNR 规则
@@ -135,6 +146,7 @@ formant/                 主扩展（加载此目录为「未打包的扩展」�
   option-x-translate.js  X 推文译文颜色 / 字号
   option-sync.js         mono 连接与书签同步
   option-keys.js         本机钥匙 JSON 导出 / 导入（同步、识图、Imgur、DeepLX；可粘贴 JSON）
+  option-prefs.js        本机配置 JSON 导出 / 导入（功能开关、New Tab、V2EX、HLS 源等；可粘贴 JSON）
   option-scope.js        设置页展示当前 Client API Key 指纹与隔离说明
   features.js            功能开关（storage `formantFeatures`）
   newtab-entry.js        New Tab 入口（可按开关跳过）
@@ -231,8 +243,9 @@ CI（`python pack-edge.py --zip-only`）只打 zip，不生成商店图，也不
 - **Gmail 邮箱**：默认开启。只在 `mail.google.com` 顶栏问号和设置左边显示当前登录邮箱，点击复制。其它域名不注入。
 - **Axure 原型**：默认开启。用 `file://` 打开本地发布的 Axure HTML 时，在各框架之间转发页面已有的事件消息。没有事件节点的本地文件不挂监听。**未嵌入** Axure RP Extension。浏览器需允许扩展访问文件 URL。
 - **Vue 组件**：默认开启。DevTools 增加「Vue」面板，Vue 3 和 Vue 2 都能看组件树、props / data，以及 Pinia 或 Vuex 的当前状态，并可高亮组件。当前标签检测到 Vue 时，工具栏 formant 图标右上角加绿色 V。**未嵌入** Vue.js devtools 的打包文件，也不改工具栏 popup。
-- **HLS 播放**：默认开启。主框架打开路径以 `.m3u8` 结尾的地址时，改在扩展内用 hls.js 播放，可调倍速和旋转，左右键快进快退，并可把当前列表存成 MP4。地址栏关键字 `m3u8` 同样打开播放页。**未嵌入** Native HLS Playback，也不带它的 jQuery。
-- **工具箱**：默认开启（`features.tools.enabled`）。入口是 popup 顶栏「工具箱」图标（替换了原来的「识图」图标，图标总数不变），点击在新标签页打开 `tools.html`，左侧列表含二维码等到企业查询、象棋，以及识图。详见下文「工具箱（轻量）」。
+- **HLS 播放**：默认开启。主框架打开路径以 `.m3u8`、`.m3u` 或 IPTV `.txt` 结尾的地址时，改在扩展内播放：直链用 hls.js，同名频道合并后在右侧抽屉选台，多线路失败自动切源。列表源在工具箱 `tools.html#hls` 配置（本机 `formantHlsSources`），可一键打开播放，也可随「同步」里的本机配置 JSON 带走。总开关仍在 `option.html#features`。普通文本 `.txt` 先看内容，不像频道表就不会劫持。控件叠在画面上（点画面播停、空闲藏底栏、双击全屏）。可调倍速和旋转，左右键快进快退，并可把当前流存成 MP4。地址栏关键字 `m3u8` 同样打开播放页。**未嵌入** Native HLS Playback / DPlayer，也不带 jQuery。
+- **工具箱**：默认开启（`features.tools.enabled`）。入口是 popup 顶栏「工具箱」图标（替换了原来的「识图」图标，图标总数不变），点击在新标签页打开 `tools.html`，左侧列表含二维码等到企业查询、象棋、油猴、Lighthouse、HLS，以及识图。详见下文「工具箱（轻量）」。
+- **油猴**：默认开启（`features.userscript.enabled`）。入口在工具箱「油猴」，右侧是已安装脚本列表，可导入 / 搜索 Greasy Fork / 管理。兼容常见 UserScript 头与 GM API。**未嵌入** Tampermonkey。新增权限 `userScripts`。
 - **识图**：默认开启。入口收进 popup 顶栏「工具箱」页的左侧列表（也可只开识图、关掉工具箱，此时图标仍显示，列表只剩识图），识图是工具箱页内的左右布局面板（`#image-prompt`，和二维码同款），不再有独立页面，不在 popup 里做识别，也不注入网页、不加右键菜单。页内上传或填写图片 URL 后，用 `option.html#image-prompt` 里的 OpenAI 兼容视觉模型反解提示词。中文和英文各是一段按画面分区写的长提示（可见文字原样引用，圈选、打码、水印都算进画面），另附 JSON。配置存在 `chrome.storage.local.formantImagePrompt`（Base URL、API Key、Model），**不走 mono**，密钥不进仓库。换电脑时在 `option.html#sync` 导出本机钥匙 JSON。
 
 ### 智能翻译
@@ -439,17 +452,18 @@ CI（`python pack-edge.py --zip-only`）只打 zip，不生成商店图，也不
 
 ![HLS：主框架 .m3u8 改开播放页](docs/hls.gif)
 
-- 入口：仅 `option.html#features` 总开关（`features.hls.enabled`，**默认开启**）。不另开独立 popup / options 页。地址栏关键字 `m3u8` 输入完整地址后，在当前标签打开播放页。
-- **能力**：主框架导航到 pathname 以 `.m3u8` 结尾的 http(s) 地址（忽略 query / hash）时，`tabs.update` 到 `hls/player.html#` 编码后的原 URL。播放页用 hls.js 1.6.10，请求带 cookie。底栏有播放、进度、音量、倍速（0.5–3）、旋转（0 / 90 / 180 / 270）和「存 MP4」。`[` `]` 调倍速，`R` 旋转，`←` `→` 每次 5 秒（按住 Shift 为 30 秒）。倍速、旋转和音量不写入存储，关掉标签后回到 1x / 0°。存 MP4 会拉完整播放列表（多码率取最高带宽），MPEG-TS 用 mux.js 封装，fMP4 直接拼接；支持 AES-128。直播只保存当前已列出的分片。音视频分开的流可能没有声音。不支持 SAMPLE-AES。
-- **边界**：formant 自研播放页，附带 hls.js 1.6.10 和 mux.js 6.3.0（都是 Apache-2.0，见 `hls/NOTICE`）。不用 jQuery，不注入网页里的 `<video>`，不处理 iframe，也不处理路径里不带 `.m3u8` 的播放列表。扩展页请求不一定带原站 Referer。新增权限 `webNavigation`（拦截主框架导航）。关闭开关后 `.m3u8` 回到浏览器默认下载，关键字也不再打开播放页。不改 `action.default_popup`，禁止 `contextMenus.removeAll()`。若同时装着 Native HLS Playback，两只会抢同一次导航，关掉其一。
+- 入口：`option.html#features` 总开关（`features.hls.enabled`，**默认开启**）；列表源在工具箱 `tools.html#hls`（休闲分组），一键打开播放页。地址栏关键字 `m3u8` 输入完整地址后，在当前标签打开播放页。
+- **能力**：主框架导航到 pathname 以 `.m3u8`、`.m3u` 或 `.txt` 结尾的 http(s) 地址（忽略 query / hash）时，`tabs.update` 到 `hls/player.html#` 编码后的原 URL。`.txt` 会先拉文本嗅探：带 `#genre#` 或至少两行 `名称,http` 才当频道表，否则不劫持。`.m3u8` 直接用 hls.js 播放。`.m3u` / IPTV `.txt` 先拉文本：带 `#EXT-X-TARGETDURATION` / `#EXT-X-STREAM-INF` 的仍当 HLS；否则按 EXTINF 或 TVBox `名称,地址` / `#genre#` 解析。同名频道（`CCTV-1` / `cctv1`）合并成一条，多线路失败自动切下一条；抽屉里显示线路数。可看当前列表地址和正在播的地址，复制，或点「源码」看原始文本。工具箱 `tools.html#hls` 可添加 / 删除已保存的 m3u、txt（`chrome.storage.local.formantHlsSources`，最多 20 条，不同步 mono），点「打开播放」用默认源进播放页。播放页底栏也能改同一份列表。`N` / `P` 换台。存 MP4 保存当前正在播的那一路。播放页交互参考 DPlayer：点画面播停、移动鼠标出底栏、空闲约 3 秒藏控件、双击或 `F` 全屏、进度条拖拽与缓冲条、喇叭旁音量、齿轮里倍速 / 旋转。空格播停，`M` 静音，`↑` `↓` 音量，`←` `→` 每次 5 秒（Shift 为 30 秒），`[` `]` 倍速，`R` 旋转，`L` 开关频道列表。倍速、旋转和音量不写入存储，关掉标签后回到 1x / 0°。存 MP4 会拉完整播放列表（多码率取最高带宽），MPEG-TS 用 mux.js 封装，fMP4 直接拼接；支持 AES-128。直播只保存当前已列出的分片。音视频分开的流可能没有声音。不支持 SAMPLE-AES。
+- **边界**：formant 自研播放页，附带 hls.js 1.6.10 和 mux.js 6.3.0（都是 Apache-2.0，见 `hls/NOTICE`）。不用 jQuery，不注入网页里的 `<video>`，不处理 iframe，也不处理路径里不带 `.m3u8` / `.m3u` / `.txt` 的播放列表。普通文本 `.txt` 不会被抢走。扩展页请求不一定带原站 Referer。新增权限 `webNavigation`（拦截主框架导航）。关闭开关后 `.m3u8` / `.m3u` / 频道 `.txt` 回到浏览器默认下载，关键字也不再打开播放页。不改 `action.default_popup`，禁止 `contextMenus.removeAll()`。若同时装着 Native HLS Playback，两只会抢同一次导航，关掉其一。
 
 #### HLS 播放冒烟清单
 
-1. 重载 formant（默认开启）；打开 `option.html#features`，应看到「HLS 播放」说明和「启用 HLS 播放」，默认勾选。概览里的已启用列表含「HLS 播放」。
-2. 打开一个 `.m3u8` 直链：应进入扩展播放页并能播放。切换倍速和旋转立即生效。关掉这个标签再打开同一链接，倍速回到 1、旋转回到 0°。`[` `]`、`R` 同样可用。`←` `→` 应快退 / 快进约 5 秒，Shift 加方向键约 30 秒。
-3. 点「存 MP4」：应弹出保存框，得到的文件能用浏览器或本地播放器打开。点「取消」应停掉下载。
-4. 地址栏输入 `m3u8` 和一个地址后回车，当前标签打开播放页。
-5. 关闭 `features.hls.enabled` 后再打开同一 `.m3u8` 直链：应回到浏览器默认下载，不再进播放页。
+1. 重载 formant（默认开启）；打开 `option.html#features`，应看到「HLS 播放」说明和「启用 HLS 播放」，默认勾选。概览里的已启用列表含「HLS 播放」。打开工具箱「HLS」，添加一条 m3u/txt 后点「打开播放」，应进扩展播放页。关掉 HLS 开关后，工具箱左侧不再显示 HLS。
+2. 打开一个 `.m3u8` 直链：应进入全屏黑底播放页并能播放。点画面应播停，鼠标停下约 3 秒后底栏消失，再移动应出现。齿轮里切换倍速和旋转立即生效。关掉这个标签再打开同一链接，倍速回到 1、旋转回到 0°。空格、`F`、`M`、`[` `]`、`R`、`←` `→` 同样可用。`←` `→` 应快退 / 快进约 5 秒，Shift 加方向键约 30 秒。
+3. 打开 `result.m3u` 这类重复台名的列表：抽屉里每个台只出现一次，角标是线路数；播不了应自动切源。抽屉应显示当前列表地址和播放地址。点源码应看到原始文本。工具箱添加的源与播放页列表源是同一份本机数据。打开普通 `readme.txt` 不应进播放页。
+4. 点底栏下载图标：应弹出保存框，得到的文件能用浏览器或本地播放器打开。保存过程中再点一次应停掉下载。
+5. 地址栏输入 `m3u8` 和一个地址后回车，当前标签打开播放页。
+6. 关闭 `features.hls.enabled` 后再打开同一 `.m3u8` / `.m3u` / 频道 `.txt` 直链：应回到浏览器默认下载，不再进播放页。
 
 ### 工具箱（轻量）
 
@@ -457,7 +471,7 @@ CI（`python pack-edge.py --zip-only`）只打 zip，不生成商店图，也不
 
 ![识图：左右布局反解提示词](docs/image-prompt.gif)
 
-- 入口：popup 顶栏「工具箱」图标 → 新标签页 `tools.html`。总开关 `features.tools.enabled`（`option.html#features`，默认开启，不同步到 mono）。关闭后这些工具隐藏；若识图仍开启，图标与页面保留且只显示识图；两者都关则图标隐藏。**不新增权限**，不改 `action.default_popup`，不走 mono，没有密钥。
+- 入口：popup 顶栏「工具箱」图标 → 新标签页 `tools.html`。总开关 `features.tools.enabled`（`option.html#features`，默认开启，不同步到 mono）。关闭后这些工具隐藏；若识图或 HLS 仍开启，图标与页面保留且只显示对应项；都关则图标隐藏。不改 `action.default_popup`，不走 mono。油猴单独新增 `userScripts` 权限，见下文「油猴（轻量）」。
 - **来源**：功能范围参考 FeHelper（前端助手）2026.7.28（MIT）的 6 个工具，全部用原生 JS 重写；**未带入** jQuery、Vue、evalCore、AI 功能、条形码、捐赠入口。`$` 即 `document.querySelector`，另有 `$$`（`querySelectorAll`）。第三方库只有 qrcode-generator 1.4.4（MIT）和 zxing（Apache-2.0），见 `formant/tools/vendor/NOTICE`。企业查询是 formant 自研检索入口，**未嵌入**「企业背景信息查询」扩展的 Vue 打包、全站 content、DNR 或独立 popup。象棋人机参考 [chinese-chess-ai](https://github.com/shibing624/chinese-chess-ai) 的 αβ 与位置表（Apache-2.0，见 `xiangqi/NOTICE`），**未嵌入**其页面、样式和音效。
 - **二维码**：生成（UTF-8，尺寸 / 前后景色 / 纠错 L-M-Q-H / 可选中心 logo，加 logo 自动用 H）、复制 PNG、下载 PNG；识别（选文件 / 拖拽 / 粘贴截图 / 图片 URL，优先浏览器 `BarcodeDetector`，没有则用 zxing，多种白边与缩放重试）。
 - **时间戳**：当前时间可暂停；时间戳（自动判断秒 / 毫秒）↔ 日期；日期 → 时间戳；Windows FILETIME 互转；GMT-12…+12 与本机时区；世界时间表。
@@ -466,15 +480,20 @@ CI（`python pack-edge.py --zip-only`）只打 zip，不生成商店图，也不
 - **图片 Base64**：图片 → DataURI（选文件 / 拖拽 / 粘贴 / URL；显示原图与 DataURI 体积；可复制 DataURI / 纯 Base64 / CSS `url()` / `<img>`）；Base64 / DataURI → 图片预览与下载（纯 Base64 自动嗅探 MIME）。
 - **编码转换**：Unicode、URL、UTF-16（`\x` / `\u`）、Base64（UTF-8 安全，识别 URL-safe）、十六进制、HTML 实体（普通 / 深度转义与解码）、URL 参数解析（表格）、JWT 解码（只解码不验签）、字符串转义 / 反转义、MD5、SHA-1、SHA-256、Gzip 压缩 / 解压（原生 `CompressionStream`，结果为 Base64）。选一种方式即转换，输入变化同步更新。未做 AI 解码与 Proto Hex。
 - **企业查询**：填企业名或 18 位统一社会信用代码，在天眼查 / 企查查 / 爱企查 / 启信宝等公开检索页打开新标签（回车默认天眼查，「常用四站」一次开四个）。可读取当前网页选区。最近关键字只存 `chrome.storage.local.formantCompanySearch`，不同步、不进 option-keys。不抓站、不注入网页、不加右键菜单。
-- **象棋**：红方对 AI。点选己子走棋，合步会过滤自杀与飞将；将死或困毙判负。AI 在 Worker 里用迭代加深 + αβ，叶子只算子力与位置表，默认约 250ms。本机记忆 `formantXiangqi`：连胜加深思考、开局档案、错题本；可锁定等级或清空记忆。不显示评分。不走 mono。
-- **边界**：只在扩展自己的页面里运行，不注入网页，不上传内容；识别 / 获取图片 URL 时由扩展页直接 `fetch`（已有 `http(s)` host 权限）。扩展页 CSP 下不使用 eval。
+- **象棋**：三种模式（人机 / 教学 / 双人，侧栏下拉切换）。点选走棋，合步过滤自杀与飞将；将死或困毙判负。刷新后从 `formantXiangqi` 恢复当前局。难度用下拉（入门～加力 / 自动）。教学在对方走完后用棋盘气泡建议应着，并说明为什么、思路是什么（本机着法，不走 GPT/mono）；气泡可点 × 关掉当前条，下一步仍会再出。可点「讲解提示」。双人同一棋盘轮走。棋盘按实物；走子滑动与 Web Audio 可关。不显示评分。
+- **油猴**：右侧列表管理已安装脚本（开关、筛选、按当前页过滤、导出、删除）。新建 / 导入（粘贴、文件、URL）/ Greasy Fork 搜索 / 编辑走 `#userscript/...` 二级页。详见下文「油猴（轻量）」。
+- **Lighthouse**：右侧是本机历史报告列表。新建测评走 Google PageSpeed Insights API（手机 / 桌面，性能 / 无障碍 / 最佳实践 / SEO），详情在 `#lighthouse/view/{id}`。不能测 localhost 或需登录的页面。报告只存 `formantLighthouse`（最多 20 条）。**未嵌入**官方 Lighthouse 扩展 `blipmdconlkpinefehnmjammfjpmpbjk`。不新增权限，不走 mono。
+- **HLS**：休闲分组。添加 / 删除 / 设默认 m3u、txt 列表源，一键打开播放页。数据仍是 `formantHlsSources`。显示与播放由 `features.hls.enabled` 控制，不另开开关。关闭后左侧不再列出 HLS，打开 `.m3u8` 也不再劫持。
+- **边界**：除油猴外只在扩展自己的页面里运行，不注入网页，不上传内容；识别 / 获取图片 URL 时由扩展页直接 `fetch`（已有 `http(s)` host 权限）。扩展页 CSP 下不使用 eval。
 
 #### 工具箱冒烟清单
 
 1. 重载 formant：popup 顶栏仍是 6 个图标不挤，其中「工具箱」图标打开新标签页；翻译、书签、站点数据、扩展管理、设置照常。
-2. 工具箱页左侧应有二维码等到「企业查询」「象棋」以及「识图」，每项带图标、没有二级说明；拖动列表项可调整顺序，刷新后保持；点「识图」在页内左右布局里上传图片出结果。
+2. 工具箱页左侧按「编码 / 检索 / 网页 / 休闲」分组，含二维码等到「企业查询」「油猴」「Lighthouse」「HLS」「象棋」以及「识图」，每项带图标、没有二级说明；组内拖动可调整顺序，刷新后保持；点「识图」在页内左右布局里上传图片出结果。
+2f. 油猴：右侧是脚本列表；点「搜索」进入二级页，可按关键字或当前站查 Greasy Fork；安装后回到列表，刷新匹配页应能跑脚本。
+2g. Lighthouse：右侧是报告列表；点「新建测评」对一个公开 https 页跑完后应出现四项分数，并可打开详情。localhost 应提示不能测。
 2c. 企业查询：输入公司名后点天眼查应新开检索页；「读当前页选区」能填入其它 http(s) 标签里选中的字。
-2e. 象棋：红方走一步后 AI 应在约 1 秒内落子；将死能结束；清空记忆后等级回到日常。
+2e. 象棋：红方走一步后棋子应滑到目标格并有落子声，AI 约 1 秒内回手；刷新工具箱页应还是刚才那局；教学在对方走完后应弹出应着气泡（含为什么/思路），点 × 关掉后下一步仍可再出；双人可轮流走；点「认真」后等级保持认真。
 2a. JSON 美化顶部「+」新增页、「×」关闭页，各页输入互不影响；刷新后只剩一页空白页。
 2b. 各面板按钮与输入框、拖拽区之间有正常间距，左右卡片顶部对齐。
 3. 时间戳：`1388307215` → 北京时间 `2013-12-29 16:53:35`；`1388307215000` 自动判为毫秒；日期 → 时间戳往返一致；FILETIME 往返一致。
@@ -483,7 +502,24 @@ CI（`python pack-edge.py --zip-only`）只打 zip，不生成商店图，也不
 6. JSON：`{"id":12345678901234567890}` 格式化后数字不变；故意写错应提示行列；树视图可折叠、搜索。
 7. 对比：用示例，应列出修改 / 新增项，左右高亮对齐；纯文本模式按行对比。
 8. 图片 Base64：拖入图片得到 DataURI 和体积；粘贴 DataURI 回到图片预览并可下载。
-9. 关闭 `features.tools.enabled`：工具列表只剩识图；再关 `imagePrompt.enabled`：popup 图标隐藏。
+9. 关闭 `features.tools.enabled`：工具列表只剩识图与 HLS（若各自开启）；再关识图和 HLS：popup 图标隐藏。
+
+### 油猴（轻量）
+
+- 入口：工具箱「油猴」（`tools.html#userscript`）。总开关 `features.userscript.enabled`（`option.html#features`，默认开启，不同步到 mono）。关闭后停止注入，脚本仍留在本机。不另开 options 面板，不增加 popup 顶栏图标。
+- **来源**：formant 自研。兼容常见 `// ==UserScript==`（`@match` / `@include` / `@exclude` / `@grant` / `@require` / `@resource` / `@connect` / `@run-at` / `@noframes`）以及 `GM_*` / `GM.*`（存值、样式、XHR、开标签、通知、剪贴板、菜单、资源）。可从文件、粘贴、`.user.js` URL 或 [Greasy Fork](https://greasyfork.org/) 安装。**未复制** Tampermonkey（本机 Edge `iikmkjmpaadaobahmlepeloendndfphd`）源码、图标或公钥。见 `formant/userscript/NOTICE`。
+- **注入**：优先 `chrome.userScripts.register`（MAIN world，绕过页面 CSP）。新版 Chrome / Edge 可能要在扩展详情打开「允许运行用户脚本」。API 不可用时退回内容脚本 + `scripting.executeScript`。内容脚本匹配 `http://*/*`、`https://*/*`，`document_start`，含 iframe；`@noframes` 跳过子框。已打开的页面要刷新才套用新脚本。
+- **存储**：脚本在 `chrome.storage.local.formantUserscripts`，GM 值在 `formantUsValues`。不走 mono，不接入 `option-keys.js`。
+- **权限**：新增 `userScripts`。GM 跨域请求复用已有 `http(s)` host 权限；有 `@connect` 时限制主机。
+- **边界**：只运行用户主动安装的脚本。若仍装着 Tampermonkey，同一脚本会跑两次，关掉其一。`@grant none` 与带 GM 的脚本都在页面 MAIN world 执行。不改 `action.default_popup`，禁止 `contextMenus.removeAll()`。
+
+#### 油猴冒烟清单
+
+1. 重载 formant：工具箱左侧有「油猴」；右侧是空列表和新建 / 导入 / 搜索。
+2. 粘贴一段带 `// ==UserScript==` 与 `@match` 的脚本并保存：列表出现该项，刷新匹配页后脚本应执行。
+3. Greasy Fork 搜索一个关键字，点安装：回到列表且脚本已启用。
+4. 关掉列表开关或关掉 `features.userscript.enabled`：刷新匹配页后脚本不再运行。
+5. 若提示「允许运行用户脚本」，到扩展详情打开后再重载。
 
 ### 滚动截屏（轻量）
 
@@ -546,11 +582,14 @@ CI（`python pack-edge.py --zip-only`）只打 zip，不生成商店图，也不
 ![New Tab：天气 / 假期 / 汇率 / 热点英语四卡](docs/newtab.gif)
 
 - 覆盖浏览器新标签页；布局可同步 mono `GET/PUT /client/newtab/home`
-- 齿轮打开 `option.html#newtab`（运行时扩展 URL，不硬编码扩展 ID），集中管理壁纸、遮罩、搜索框和天气城市。
+- 页签用自绘房子图标（`icons/newtab.ico` / PNG，品牌蓝 `#1f4b99` + 青绿窗）。覆盖页必须直接挂 `newtab.html`，地址栏才是空的；若再跳到扩展 URL，标签栏能出图标，但地址栏会变成 `chrome-extension://…/newtab.html`。Chrome/Edge 对真正的新标签覆盖页往往仍画默认文档图标。
+- **Ctrl+Home**：命令 `formantNewtab`（不碰浏览器主页按钮，避免和系统主页冲突）。已有 New Tab 则激活该标签，没有则新开一页；当前页（如 V2EX）保留。New Tab 关闭时无效。可在 `chrome://extensions/shortcuts`（Edge 为 `edge://extensions/shortcuts`）改键。建议键仅在安装时写入，重载后若没绑上需在快捷键页手动设一次 Ctrl+Home。
+- 齿轮打开 `option.html#newtab`（运行时扩展 URL，不硬编码扩展 ID），集中管理壁纸、遮罩、搜索框、天气城市，以及快捷链接是否在新窗口打开。
+- **链接在新窗口打开**：写入主页 `baseConfig.openLinksInNewWindow`，随 `GET/PUT /client/newtab/home` 同步。开启后快捷图标与搜索结果在新标签打开，当前 New Tab 保持不动；默认关闭。文件夹仍在本页打开。
 - 右上角「刷新」= 从当前 Client API Key **拉取**主页 + 更新卡片；「同步」= 把本机主页 **推送**到该 Key。换电脑后先配置同一把 Key；之后每次打开 New Tab 都会对账云端（本机空或 `revision` 落后则自动拉取，与天气卡片首次打开补拉同类）。空主页、或本机 `revision` 落后于云端时，点「同步」也不会覆盖云端较新布局。设置页顶栏显示 Key 指纹（不展示全文）。
 - New Tab 图标布局存在 mono `web_newtab_home`（按 API Key），**不是** Chrome 浏览器书签；popup 书签树读的是本机 `chrome.bookmarks`。快捷图标默认用站点 `{origin}/favicon.ico`，裂图后再回退 Google `s2/favicons`；成功拉取后写入本机 `newtabCacheFavicons`（按 origin / 自定义 src，14 天内直接复用），**不同步** mono；换 Client API Key 时随其它 New Tab 缓存一并清空。已保存的 Google CDN 地址打开时仍先试站点根图标，手动填写的自定义图标仍有效。
-- mono Base URL / Client API Key 写在 `chrome.storage.local`，并尽量镜像到 `chrome.storage.sync` 以便同账号换机。`option.html#sync` 也可导出 / 导入一份本机钥匙 JSON（`version: 2`）。导入可以选文件，也可以把 JSON 贴进文本框。里面有同步的 Base URL 与 Client API Key、识图的 Base URL / API Key / Model、V2EX 的 Imgur Client ID、翻译的 DeepLX API Key。文件里没有的面板不动。`version: 1` 拒绝导入，需要重新导出。New Tab 主页、手势映射、词库、代理、翻译模式和功能开关不在这份文件里：New Tab 和手势在配上同一把 Client API Key 后从 mono 拉取；GitZip 不保存 PAT；代理没有账号密码。GPT 密钥在 mono Admin；DeepLX Key 只在本机。导入若更换 Client API Key，会清本机 New Tab / 手势缓存。保存 New Tab 设置后，已打开的新标签页会通过 local storage 自动更新。
-- **天气 / 下一个假期 / 汇率**：后台 `chrome.alarms` 每 10 分钟刷新天气接口，并在假期缓存跨天时顺带补拉假期（汇率/主页不动），分别写入 `newtabCacheWeatherAt` / `newtabCacheHolidaysAt` / `newtabCacheExchangeAt`；天气卡片展示「N 分钟前更新」，逐日预报在周几上方显示月-日（如 10-08），假期卡片常驻显示「今天 M月D日 周X」，假期与汇率在数据超过 24 小时时才追加琥珀色「N 天前更新」提示。假期进行中时，左侧只留「当前是某假期」和距下一个假期的大号天数，天数下面带该假期的日期区间（不再显示 0 天、当前假期起止和今天日期），右侧固定 3 个假期（名称、日期区间和天数）。假期内左边是下一个假期，右边是再往后的 3 个，例如国庆期间左边是元旦，右边是春节、清明节、劳动节。不是假日时，右边是最近的 3 个，包含左边正在倒计时的那个。缓存条数不够时会自动再拉。不在假期内时，左侧仍是「某假期还有 N 天」加日期和今天。打开新标签页时还有兜底：天气超过 30 分钟、假期缓存跨天或汇率超过 24 小时会自动补拉。汇率卡片是 1 USD 兑换所选币种；右上角刷新旁的编辑按钮可调显示条数（滑块 1–5），并拖拽排序、更换币种。币种下拉覆盖全球流通法币（含越南盾，按字母排在 VES 与 VUV 之间）。编辑框可搜索国家或货币：搜「美元」或 USD 会列出使用美元的国家，选中国家即选中对应货币。列表上方有一行换算：输入金额并选择币种，折合人民币；列表行距在 1–5 条时都留出空隙，5 条也不再挤成一行贴一行。偏好存在本机 `formantExchange`，不进 mono，也不进钥匙导入导出，换 Client API Key 不会清掉。需 New Tab 开启且已配置 mono。
+- mono Base URL / Client API Key 写在 `chrome.storage.local`，并尽量镜像到 `chrome.storage.sync` 以便同账号换机。`option.html#sync` 有两份本机 JSON，导入都可以选文件或把文本贴进框。**本机钥匙**（`version: 2`）含同步的 Base URL 与 Client API Key、识图的 Base URL / API Key / Model、V2EX 的 Imgur Client ID、翻译的 DeepLX API Key。文件里没有的面板不动。`version: 1` 拒绝导入，需要重新导出。导入若更换 Client API Key，会清本机 New Tab / 手势缓存。**本机配置**（`version: 1`，`kind: formant-prefs`）不含密钥，含功能开关、New Tab 主页（含链接新窗口打开）、V2EX 选项、GitZip、自动翻页、手势、代理、X 推文样式、HLS 列表源地址、翻译模式与目标语言、工具箱顺序、Discord 输入翻译引擎、汇率币种。文件里没有的面板不动。词库包、油猴脚本、生词本不在这份文件里。New Tab 导入后仍可能被同一把 Key 的云端较新 `revision` 覆盖，需要留下时到 New Tab 点「同步」推上去。GitZip 不保存 PAT；代理没有账号密码。GPT 密钥在 mono Admin；DeepLX Key 只在本机。保存 New Tab 设置后，已打开的新标签页会通过 local storage 自动更新。
+- **天气 / 下一个假期 / 汇率**：后台 `chrome.alarms` 每 10 分钟刷新天气接口，并在假期缓存跨天时顺带补拉假期（汇率/主页不动），分别写入 `newtabCacheWeatherAt` / `newtabCacheHolidaysAt` / `newtabCacheExchangeAt`；天气卡片展示「N 分钟前更新」，逐日预报在周几上方显示月-日（如 10-08），假期卡片常驻显示「今天 M月D日 周X」，假期与汇率在数据超过 24 小时时才追加琥珀色「N 天前更新」提示。假期进行中时，左侧只留「当前是某假期」和距下一个假期的大号天数，天数下面带该假期的日期区间（不再显示 0 天、当前假期起止和今天日期），右侧固定 3 个假期（名称、日期区间和天数）。假期内左边是下一个假期，右边是再往后的 3 个，例如国庆期间左边是元旦，右边是春节、清明节、劳动节。不是假日时，右边是最近的 3 个，包含左边正在倒计时的那个。缓存条数不够时会自动再拉。不在假期内时，左侧仍是「某假期还有 N 天」加日期和今天。打开新标签页时还有兜底：天气超过 30 分钟、假期缓存跨天或汇率超过 24 小时会自动补拉。汇率卡片是 1 USD 兑换所选币种；右上角刷新旁的编辑按钮可调显示条数（滑块 1–5），并拖拽排序、更换币种。币种下拉覆盖全球流通法币（含越南盾，按字母排在 VES 与 VUV 之间）。编辑框可搜索国家或货币：搜「美元」或 USD 会列出使用美元的国家，选中国家即选中对应货币。列表上方有一行换算：输入金额并选择币种，折合人民币；列表行距在 1–5 条时都留出空隙，5 条也不再挤成一行贴一行。偏好存在本机 `formantExchange`，不进 mono，不进钥匙 JSON，可随 `option.html#sync`「本机配置」导出；换 Client API Key 不会清掉。需 New Tab 开启且已配置 mono。
 - 天气 / 汇率 / 节假日等中台代理接口见 mono Formant 配置
 - **热点英语**：与天气/假期/汇率同一行（`1.35fr×4`，汇率后）；默认展示 `formant.vocab.card_size` 个词（默认 5）；美式 IPA 标在单词上方（始终可见）；释义+谐音默认马赛克，点击揭开；单词喇叭「英→中」只读一遍；「全部发音」按序读完；剔除记「已会」并补位。已会词与当前卡按 Client API Key 隔离。接口 `GET/POST /client/newtab/vocab*`；模型 `formant.vocab.model_key`。右上角可 3D 翻到「生词本」：划词译完后会马上记下（词两边的标点会去掉，句子仍不记）；翻译框要等这轮输入停住，同一轮里打出的半截词会被最后的词换掉。句子、中文和其他语言不记。it、he、if、to、on 这类功能词也不记：冠词、代词、介词、连词、疑问词，以及 be/do/have 和情态动词。aaaaaa 这种连着同一字母，或 qweadg、asdf、qwerty 这种键盘乱按、字母组合不像英文的，也不记。已经在列表里的会在打开新标签页时拿掉。最近 5 条直接显示英文、音标、译文和朗读。音标是有道英汉词典的美式音标，划词和翻译框记下单词后都会取。释义也取自有道英汉词典，带词性（n. / v. / adj. …）、每个词性最多 3 个义项、一行放下，放不下以省略号截断（悬停看全文）；词典里没有的词仍用 Google 译文。朗读中文时去掉词性标记，只读前两个义项。打开新标签页会给旧的无词性释义补查词典。不用 Google 译到中文时附带的译文拼音（如 juéding）或音节拆分（如 ˈout look）。词典里没有的词不显示音标。打开新标签页会把空的、拼音或拆分换成音标。没有单词时卡片中央显示「暂无生词」。移出只从本机删掉。超过 5 条可分页查看。列表在 `formantStudyWords`，当前哪一面在 `formantVocabFace`，都不进 mono，也不进钥匙导入导出。生词本没有刷新按钮。
 - 第一行四卡等宽，汇率内容垂直居中

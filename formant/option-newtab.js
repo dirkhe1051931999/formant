@@ -25,6 +25,9 @@ export function initNewtabPanel(api) {
     wallpaperMask: /** @type {HTMLInputElement | null} */ (document.getElementById("newtabWallpaperMask")),
     wallpaperMaskValue: document.getElementById("newtabWallpaperMaskValue"),
     showSearch: /** @type {HTMLInputElement | null} */ (document.getElementById("newtabShowSearch")),
+    openLinksInNewWindow: /** @type {HTMLInputElement | null} */ (
+      document.getElementById("newtabOpenLinksInNewWindow")
+    ),
   };
   if (
     !form ||
@@ -37,7 +40,8 @@ export function initNewtabPanel(api) {
     !fields.wallpaperUrl ||
     !fields.wallpaperMask ||
     !fields.wallpaperMaskValue ||
-    !fields.showSearch
+    !fields.showSearch ||
+    !fields.openLinksInNewWindow
   ) {
     return;
   }
@@ -66,6 +70,7 @@ export function initNewtabPanel(api) {
     fields.wallpaperMask.value = String(home.baseConfig.wallpaperMask);
     fields.wallpaperMaskValue.textContent = Number(home.baseConfig.wallpaperMask).toFixed(2);
     fields.showSearch.checked = home.baseConfig.showSearch;
+    fields.openLinksInNewWindow.checked = home.baseConfig.openLinksInNewWindow;
   }
 
   function readForm() {
@@ -78,6 +83,7 @@ export function initNewtabPanel(api) {
         wallpaperUrl: fields.wallpaperUrl.value.trim(),
         wallpaperMask: Number(fields.wallpaperMask.value),
         showSearch: fields.showSearch.checked,
+        openLinksInNewWindow: fields.openLinksInNewWindow.checked,
       },
     });
   }

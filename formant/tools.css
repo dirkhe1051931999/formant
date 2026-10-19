@@ -69,6 +69,18 @@ body {
   gap: 6px;
 }
 
+.tl-nav__group {
+  margin: 12px 2px 2px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.tl-nav__group:first-child {
+  margin-top: 2px;
+}
+
 .tl-nav__item {
   position: relative;
   display: flex;

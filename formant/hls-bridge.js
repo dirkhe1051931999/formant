@@ -1,4 +1,5 @@
 import { isHlsEnabled, loadFeatures } from "./features.js";
+import { isTxtListUrl, looksLikeChannelList } from "./hls/m3u-lib.js";
 
 const PLAYER_PATH = "hls/player.html";
 
@@ -11,15 +12,31 @@ export function hlsPlayerUrl(raw) {
 }
 
 /**
- * http(s) pathname ends with .m3u8. Query and hash are ignored.
+ * http(s) pathname ends with .m3u8 / .m3u / .txt. Query and hash are ignored.
  * @param {string} raw
  * @returns {boolean}
  */
-export function isM3u8Url(raw) {
+export function isHlsNavUrl(raw) {
   try {
     const url = new URL(raw);
     if (url.protocol !== "http:" && url.protocol !== "https:") return false;
-    return url.pathname.toLowerCase().endsWith(".m3u8");
+    const path = url.pathname.toLowerCase();
+    return path.endsWith(".m3u8") || path.endsWith(".m3u") || path.endsWith(".txt");
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * @param {string} raw
+ * @returns {Promise<boolean>}
+ */
+async function txtLooksLikePlaylist(raw) {
+  if (!isTxtListUrl(raw)) return true;
+  try {
+    const res = await fetch(raw, { credentials: "include" });
+    if (!res.ok) return false;
+    return looksLikeChannelList(await res.text());
   } catch {
     return false;
   }
@@ -38,21 +55,22 @@ async function openPlayer(tabId, raw) {
   await chrome.tabs.create({ url });
 }
 
-/** Redirect main-frame .m3u8 navigations and the m3u8 omnibox keyword. */
+/** Redirect main-frame .m3u8 / .m3u / IPTV .txt navigations and the m3u8 omnibox keyword. */
 export function initHlsBackground() {
   chrome.webNavigation.onBeforeNavigate.addListener(
     async (details) => {
       try {
         if (details.frameId !== 0) return;
-        if (!isM3u8Url(details.url)) return;
+        if (!isHlsNavUrl(details.url)) return;
         const features = await loadFeatures();
         if (!isHlsEnabled(features)) return;
+        if (!(await txtLooksLikePlaylist(details.url))) return;
         await openPlayer(details.tabId, details.url);
       } catch (error) {
         console.warn("[formant] HLS redirect failed", error);
       }
     },
-    { url: [{ urlMatches: ".*\\.m3u8.*" }] }
+    { url: [{ urlMatches: ".*\\.m3u8?.*" }, { urlMatches: ".*\\.txt.*" }] }
   );
 
   chrome.omnibox.setDefaultSuggestion({

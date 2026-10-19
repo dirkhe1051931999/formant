@@ -167,10 +167,9 @@ export async function ensureFaviconCached(item) {
       }
     }
 
-    // Keep stale entry on refresh failure.
+    // Keep stale entry on refresh failure. 404 / empty icon is normal; use text placeholder.
     const stale = getCached(key);
     if (stale?.dataUrl) return stale.dataUrl;
-    if (lastError) console.warn("[formant] favicon cache miss", key, lastError);
     return "";
   })().finally(() => {
     inflight.delete(key);

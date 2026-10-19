@@ -1,4 +1,12 @@
 import { isNewtabEnabled, loadFeatures } from "./features.js";
+import { bindRememberNewtabTab } from "./newtab-tab.js";
+
+const favicon = document.createElement("link");
+favicon.rel = "icon";
+favicon.type = "image/png";
+favicon.href = chrome.runtime.getURL("icons/newtab-32.png");
+document.querySelectorAll("link[rel~='icon']").forEach((node) => node.remove());
+document.head.appendChild(favicon);
 
 const features = await loadFeatures();
 if (!isNewtabEnabled(features)) {
@@ -32,5 +40,6 @@ if (!isNewtabEnabled(features)) {
   });
   goNtp();
 } else {
+  bindRememberNewtabTab();
   await import("./newtab.js");
 }

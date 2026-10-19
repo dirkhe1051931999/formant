@@ -1,0 +1,7 @@
+formant 油猴（userscript）是自研的轻量 UserScript 管理器。
+
+- 兼容常见 `// ==UserScript==` 元数据和 Greasy Fork / `.user.js` 源码。
+- 未复制 Tampermonkey（专有软件，本机 Edge 扩展目录
+  `iikmkjmpaadaobahmlepeloendndfphd`）的源码、图标、公钥或扩展 ID。
+- 未整包嵌入 Violentmonkey / ScriptCat / Stay。
+- Greasy Fork 只作为公开搜索与安装源，脚本版权归各作者。

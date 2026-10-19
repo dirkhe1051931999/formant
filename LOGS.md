@@ -1034,3 +1034,131 @@
 2. 搜索数值参考 shibing624/chinese-chess-ai（Apache-2.0，`xiangqi/NOTICE`）。**未嵌入**其页面、样式、音效。不新增权限，不改 `action.default_popup`，不走 mono。
 3. 版本升到 1.8.161。重载后打开工具箱，左侧应有「象棋」；走一步后 AI 应在约 1 秒内回手。
 
+2026-10-19 09:20:00
+
+1. 象棋盘面改成更接近实物：木色底、双线边框、炮位/兵林角标、九宫斜线、楚河汉界，棋子为浅色双圈楷体（红黑字）。走子滑动、吃子淡出、选子脉动、将军震动；选子/走子/吃子/将军/胜负/悔棋/新局用本机 Web Audio，可关，尊重 `prefers-reduced-motion`。
+2. 渲染与音效拆到 `tools-xiangqi-board.js` / `tools-xiangqi-audio.js`，未拷 chinese-chess-ai 的 `audio.js`。音效开关存在 `formantXiangqi.sound`。
+3. 版本升到 1.8.162。重载后打开象棋：走一步应看到棋子滑过去并听到落子声。
+
+2026-10-19 09:28:00
+
+1. 象棋对局写入 `formantXiangqi.game`，刷新工具箱页接着下。侧栏加人机 / 教学 / 双人，以及入门～加力与「自动」难度。教学模式用本机着法讲解（怎么走、为什么），可点「讲解提示」；双人同一棋盘轮走，悔一步。去掉「不走 mono…」说明文案。
+2. 讲解在 `tools-xiangqi-teach.js`，不调用 GPT/mono。版本升到 1.8.163。
+
+2026-10-19 09:35:00
+
+1. 象棋侧栏收成两个下拉（模式、难度）+ 新局/悔棋，音效和清空记忆改成文字链，去掉右侧讲解框。
+2. 教学文案改到棋盘气泡上，句子改成白话。版本升到 1.8.164。
+
+2026-10-19 09:50:00
+
+1. 象棋教学改为对战讲解：对方走完后，本机再算一步红方应着，气泡说明对方走了什么、建议你走哪步、为什么、思路是什么（不走 GPT/mono）。
+2. 气泡右上角加 ×，只关掉当前条；对方再走、点「讲解提示」或关掉后再点棋，仍会出新气泡。版本升到 1.8.165。
+
+2026-10-19 10:05:00
+
+1. New Tab 设置增加「链接在新窗口打开」（`option.html#newtab`），写入主页 `baseConfig.openLinksInNewWindow`，随布局同步到 mono。
+2. 开启后快捷图标用 `target="_blank"`，搜索提交也新开标签；关闭时仍替换当前 New Tab。默认关闭。版本升到 1.8.166。
+
+2026-10-19 10:20:00
+
+1. New Tab 页签换成自绘房子 ico（`icons/newtab.ico` / SVG / 16–48 PNG）：品牌蓝底、白屋、青绿窗，不再用浏览器默认文档图标。
+2. 用 `chrome_settings_overrides.homepage` 接到 `newtab-home.html`：点浏览器主页按钮时，已有 New Tab 则激活该标签并后退回到当前页（如 V2EX）；没有则打开 New Tab。不新增 permissions。版本升到 1.8.167。
+
+2026-10-19 10:25:00
+
+1. 修主页按钮跳转：`tabs.get` / `goBack` / `update` 改回调并读掉 `runtime.lastError`，过期 tab id 不再刷「No tab with id」。
+2. 去掉与已有 `host_permissions` 重复的 `optional_host_permissions`（`http://*/*` / `https://*/*`）。GitZip 在 dashboard 未就绪时不再 `setTheme`。版本升到 1.8.168。
+
+2026-10-19 10:30:00
+
+1. 去掉 `chrome_settings_overrides.homepage: newtab-home.html`：Chrome/Edge 只接受 http(s) 主页，相对路径会「无法加载扩展」。
+2. 主页按钮改为：浏览器主页设成「新标签页」后，进覆盖页时若已有 New Tab 则激活并后退。删除 `newtab-home.html/js`。版本升到 1.8.169。
+
+2026-10-19 10:35:00
+
+1. 修 New Tab 蓝屏：主页跳转在 `goBack` 失败时仍 `return`，`newtab.js` 没跑，只剩默认浅蓝底和右上角按钮。
+2. 改为先渲染主页，再尝试切到已打开的 New Tab。版本升到 1.8.170。
+
+2026-10-19 10:40:00
+
+1. 不再劫持浏览器主页按钮。改为快捷键 Ctrl+Home（命令 `formantNewtab`）：已有 New Tab 则切过去，没有则新开，当前页不动。
+2. 去掉覆盖页里的主页跳转逻辑，避免再把页面渲成蓝屏。重载后若快捷键没绑上，到扩展快捷键页手动设 Ctrl+Home。版本升到 1.8.171。
+
+2026-10-19 10:50:00
+
+1. New Tab 页签没有房子图标：Chrome/Edge 把覆盖页当成 `chrome://newtab`，不读页面 `<link rel="icon">`。
+2. 覆盖入口改为 `newtab-boot.html`，立刻跳到 `newtab.html`，并用绝对 PNG 地址写入 favicon。版本升到 1.8.172。
+
+2026-10-19 10:55:00
+
+1. New Tab 快捷图标拉站点 `/favicon.ico` 得到 404 时不再 `console.warn`。没有图标就用文字占位，属正常 miss。版本升到 1.8.173。
+
+2026-10-19 11:00:00
+
+1. 去掉 `newtab-boot.html` 跳转：覆盖页改回直接 `newtab.html`，新标签地址栏重新为空。Ctrl+Home 新开时用 `chrome://newtab/`，不再 `tabs.create` 扩展 URL。
+2. 页签房子图标在真正的新标签覆盖页上，Chrome/Edge 仍可能显示默认文档图标。版本升到 1.8.174。
+
+2026-10-19 12:05:00
+
+1. 工具箱增加「油猴」：右侧 panel 管理已安装脚本（开关 / 筛选 / 当前页 / 导出 / 删除）；新建、导入（粘贴 / 文件 / URL）、Greasy Fork 搜索、编辑走 `#userscript/...` 二级页。兼容常见 UserScript 头与 `GM_*` / `GM.*`。
+2. **未嵌入** Tampermonkey 5.5.1（本机 Edge `iikmkjmpaadaobahmlepeloendndfphd`）源码。注入优先 `chrome.userScripts`（新增权限 `userScripts`），不可用时退回内容脚本。总开关 `features.userscript.enabled`。不走 mono。
+3. 版本升到 1.8.175。重载后打开工具箱应有「油猴」；安装一段 `@match` 脚本并刷新匹配页应能执行。新版浏览器若提示，需在扩展详情开启「允许运行用户脚本」。
+
+2026-10-19 13:55:00
+
+1. 对照本机 Tampermonkey 里已启用的 3 条脚本，从 Greasy Fork 拉源码放进本机 `userscript/_seed/`（gitignore，不进仓库）。扩展启动时若列表里还没有同名脚本就自动写入。
+2. 版本升到 1.8.176。重载 formant 后打开工具箱 → 油猴，应看到这 3 条。若 Tampermonkey 仍开着，同一页会跑两遍，关掉其一。
+
+2026-10-19 14:05:00
+
+1. 工具箱增加 Lighthouse：右侧是历史报告列表，新建测评 / 报告详情走 `#lighthouse/new` 与 `#lighthouse/view/{id}`。测评走 Google PSI v5（与官方扩展 100.0.0.5 同一后端），可选手机/桌面与四类分数。
+2. **未嵌入**本机 Edge `blipmdconlkpinefehnmjammfjpmpbjk` 的 popup-bundle。不能测 localhost 或需登录页。报告最多 20 条，存 `formantLighthouse`。不新增权限，不走 mono。
+3. 版本升到 1.8.177。重载后工具箱左侧应有 Lighthouse；对一个公开站点测评后列表应出现分数。
+
+2026-10-19 14:08:00
+
+1. Lighthouse「PSI 请求太频繁」是 Google 免费 `runPagespeed` 接口没 API Key、配额很小。官方扩展并不调这个接口，只打开 `pagespeed.web.dev`。
+2. 开始测评改为先开网页版；接口有额度才把分数写入列表，429 不再当成失败卡死。版本升到 1.8.178。
+
+2026-10-19 14:12:00
+
+1. 工具箱左侧目录按「编码 / 检索 / 网页 / 休闲」分组：编码含二维码到编码转换，检索含企业查询与识图，网页含油猴与 Lighthouse，休闲含象棋。
+2. 仍只存 `formantToolsOrder`；拖拽只在同一组内生效。版本升到 1.8.179。
+
+2026-10-19 14:22:00
+
+1. HLS 播放页支持 `.m3u` 频道列表：主框架打开 `.m3u` 与 `.m3u8` 一样改到扩展播放页。列表按 EXTINF 解析，左侧选台，上下键换台；条目再走 hls.js。「存 MP4」保存当前频道。
+2. 带 `#EXT-X-TARGETDURATION` / `#EXT-X-STREAM-INF` 的 `.m3u` 仍当单路 HLS。未嵌入第三方播放扩展。版本升到 1.8.180。
+
+2026-10-19 14:36:00
+
+1. HLS 播放页改成叠层控件（交互参考 DPlayer，未嵌入其源码）：点画面播停、空闲藏底栏、进度条带缓冲、音量条、齿轮倍速 / 旋转、双击全屏。`.m3u` 频道改到右侧抽屉。
+2. 快捷键：空格播停，`F` 全屏，`M` 静音，`↑` `↓` 音量，`N` / `P` 换台。倍速旋转音量仍不写存储。版本升到 1.8.181。
+
+2026-10-19 14:42:00
+
+1. HLS 支持 TVBox `.txt` 频道表（`名称,地址` / `#genre#`，`#` 分隔的多线路只播第一条）。右侧抽屉按分组列出。
+2. 主框架打开 `.txt` 时先嗅内容，不像频道表就不劫持，避免抢走普通文本。版本升到 1.8.182。
+
+2026-10-19 15:08:00
+
+1. IPTV 列表按台名合并（`CCTV-1` / `cctv1` 算同一个），多线路失败自动切源；更新时间那一行不进列表。
+2. 抽屉显示当前 m3u/txt 与正在播的地址，可复制。底栏可管理已保存的列表源，并可查看列表源码。版本升到 1.8.183。
+
+2026-10-19 15:14:00
+
+1. `option.html#hls` 可添加 / 删除 / 设默认 m3u、txt 列表源，点「打开播放」进播放页。数据在本机 `formantHlsSources`，与播放页共用，不同步 mono。
+2. 总开关仍在「功能」。版本升到 1.8.184。
+
+2026-10-19 15:28:00
+
+1. `option.html#sync` 增加「本机配置」JSON：导出 / 选文件导入 / 粘贴导入。含功能开关、New Tab（含链接新窗口打开）、V2EX、GitZip、自动翻页、手势、代理、X 推文样式、HLS 列表源、翻译模式、工具箱顺序、Discord 输入翻译、汇率币种。不含密钥、词库包、油猴与生词本。
+2. 钥匙与配置两份文件用 `version` / `kind` 区分，互相导入会提示走错卡片。文件里没有的面板不动。版本升到 1.8.185。
+
+2026-10-19 15:42:00
+
+1. HLS 列表源从 `option.html#hls` 挪到工具箱「休闲」`tools.html#hls`：添加 / 删除 / 设默认 / 打开播放，数据仍是 `formantHlsSources`。
+2. 总开关仍是设置 → 功能的 `features.hls.enabled`；关掉后工具箱不再列出 HLS，也不再劫持 .m3u8。旧的 `#hls` 设置页会跳到工具箱。版本升到 1.8.186。
+
+

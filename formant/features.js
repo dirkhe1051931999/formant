@@ -36,6 +36,7 @@ export const FEATURES_KEY = "formantFeatures";
  *   hls: { enabled: boolean },
  *   imagePrompt: { enabled: boolean },
  *   tools: { enabled: boolean },
+ *   userscript: { enabled: boolean },
  * }} FormantFeatures
  */
 
@@ -126,6 +127,9 @@ export const DEFAULT_FEATURES = {
   tools: {
     enabled: true,
   },
+  userscript: {
+    enabled: true,
+  },
 };
 
 /**
@@ -170,6 +174,7 @@ export function normalizeFeatures(raw) {
   const hls = src.hls && typeof src.hls === "object" ? src.hls : {};
   const imagePrompt = src.imagePrompt && typeof src.imagePrompt === "object" ? src.imagePrompt : {};
   const tools = src.tools && typeof src.tools === "object" ? src.tools : {};
+  const userscript = src.userscript && typeof src.userscript === "object" ? src.userscript : {};
 
   return {
     translate: {
@@ -256,6 +261,9 @@ export function normalizeFeatures(raw) {
     },
     tools: {
       enabled: asBool(tools.enabled, DEFAULT_FEATURES.tools.enabled),
+    },
+    userscript: {
+      enabled: asBool(userscript.enabled, DEFAULT_FEATURES.userscript.enabled),
     },
   };
 }
@@ -424,4 +432,8 @@ export function isImagePromptEnabled(f) {
 
 export function isToolsEnabled(f) {
   return f.tools.enabled;
+}
+
+export function isUserscriptEnabled(f) {
+  return f.userscript.enabled;
 }
