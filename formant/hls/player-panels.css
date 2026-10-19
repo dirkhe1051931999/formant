@@ -33,23 +33,57 @@
 }
 
 .playlist__url {
-  overflow: hidden;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
   color: #9aa3af;
   font-size: 11px;
   line-height: 1.45;
+}
+
+.playlist__url strong {
+  flex: 0 0 auto;
+  color: #c5c9d1;
+}
+
+.playlist__url span {
+  min-width: 0;
+  flex: 1 1 auto;
+  overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.playlist__url strong {
-  margin-right: 6px;
+.playlist__copy.icon-btn {
+  width: 22px;
+  height: 22px;
+  flex: 0 0 auto;
   color: #c5c9d1;
+}
+
+.playlist__copy.icon-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+.playlist__copy.icon-btn:hover {
+  color: #fff;
+}
+
+.playlist__copy.icon-btn:disabled {
+  opacity: 0.35;
+  cursor: default;
 }
 
 .playlist__acts {
   display: flex;
   gap: 6px;
   margin-top: 8px;
+}
+
+.playlist__acts:not(:has(button:not([hidden]))) {
+  display: none;
 }
 
 .playlist__acts button,

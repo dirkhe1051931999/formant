@@ -1,7 +1,7 @@
 import { FEATURES_KEY, isHlsEnabled, loadFeatures, normalizeFeatures } from "./features.js";
 import { isChannelListUrl, parseChannelList } from "./hls/m3u-lib.js";
 import { HLS_SESSION_KEY, loadHlsSession, saveHlsSession } from "./hls/session-store.js";
-import { hlsPlayerPageUrl, loadSourceStore } from "./hls/sources-store.js";
+import { HLS_SOURCES_KEY, hlsPlayerPageUrl, loadSourceStore } from "./hls/sources-store.js";
 
 const PREV_ICON = `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M15.5 5.5 8 12l7.5 6.5V5.5z"/></svg>`;
 const NEXT_ICON = `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8.5 5.5v13L16 12 8.5 5.5z"/></svg>`;
@@ -25,6 +25,17 @@ let sourceIndex = 0;
 let feedUrl = "";
 let lastPlayId = 0;
 const DEFAULT_VOLUME = 0.8;
+
+/**
+ * @param {{ defaultId?: string, items?: { id: string, name: string, url: string }[] }} store
+ */
+function pickStartUrl(store) {
+  const items = Array.isArray(store.items) ? store.items : [];
+  const named = items.find((item) => /result\.m3u8?/i.test(`${item.name} ${item.url}`));
+  if (named) return named.url;
+  const selected = items.find((item) => item.id === store.defaultId || item.url === store.defaultId);
+  return (selected || items[0] || {}).url || "";
+}
 
 function ensureHlsLib() {
   if (globalThis.Hls) return Promise.resolve(globalThis.Hls);
@@ -57,6 +68,9 @@ export function renderHlsWidget() {
   card.innerHTML = `
     <div class="widget__head">
       <h2 class="widget__title">HLS</h2>
+      <div class="widget__tools">
+        <button type="button" class="widget__refresh" data-play title="播放" aria-label="播放">${PLAY_ICON}</button>
+      </div>
     </div>
     <p class="empty-status" data-ph>暂无播放</p>
     <div class="hls-mini" data-root>
@@ -94,6 +108,7 @@ function bindHlsWidget(card) {
   const muteBtn = /** @type {HTMLButtonElement} */ (card.querySelector("[data-mute]"));
   const openBtn = /** @type {HTMLButtonElement} */ (card.querySelector("[data-open]"));
   const volEl = /** @type {HTMLInputElement} */ (card.querySelector("[data-vol]"));
+  const playBtn = /** @type {HTMLButtonElement} */ (card.querySelector("[data-play]"));
 
   function paintIdle(text) {
     destroyHls();
@@ -208,19 +223,39 @@ function bindHlsWidget(card) {
     const [session, features] = await Promise.all([loadHlsSession(), loadFeatures()]);
     if (!isHlsEnabled(features)) {
       lastPlayId = session.playId;
+      playBtn.disabled = true;
       paintIdle("HLS 播放已关闭");
       return;
     }
+    playBtn.disabled = true;
     if (session.pendingUrl && session.playId !== lastPlayId) {
       lastPlayId = session.playId;
       void saveHlsSession({ pendingUrl: "" });
       await startFeed(session.pendingUrl);
       return;
     }
-    if (session.playId === lastPlayId && lastPlayId !== 0) return;
+    if (card.classList.contains("is-on")) return;
     lastPlayId = session.playId;
     const store = await loadSourceStore();
-    paintIdle(store.items.length ? "暂无播放" : "暂无播放源");
+    const url = pickStartUrl(store);
+    playBtn.disabled = !url;
+    paintIdle(url ? "暂无播放" : "暂无播放源");
+  }
+
+  async function playSavedFeed() {
+    const [features, store] = await Promise.all([loadFeatures(), loadSourceStore()]);
+    if (!isHlsEnabled(features)) {
+      playBtn.disabled = true;
+      paintIdle("HLS 播放已关闭");
+      return;
+    }
+    const url = pickStartUrl(store);
+    playBtn.disabled = !url;
+    if (!url) {
+      paintIdle("暂无播放源");
+      return;
+    }
+    await startFeed(url);
   }
 
   /**
@@ -234,6 +269,9 @@ function bindHlsWidget(card) {
     paintHud();
   }
 
+  playBtn.addEventListener("click", () => {
+    void playSavedFeed();
+  });
   prevBtn.addEventListener("click", () => stepChannel(-1));
   nextBtn.addEventListener("click", () => stepChannel(1));
   toggleBtn.addEventListener("click", () => {
@@ -260,8 +298,9 @@ function bindHlsWidget(card) {
 
   chrome.storage.onChanged.addListener((changes, area) => {
     if (area !== "local") return;
-    if (changes[HLS_SESSION_KEY] || changes[FEATURES_KEY]) {
+    if (changes[HLS_SESSION_KEY] || changes[FEATURES_KEY] || changes[HLS_SOURCES_KEY]) {
       if (changes[FEATURES_KEY] && !isHlsEnabled(normalizeFeatures(changes[FEATURES_KEY].newValue))) {
+        playBtn.disabled = true;
         paintIdle("HLS 播放已关闭");
         return;
       }

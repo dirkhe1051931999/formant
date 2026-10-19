@@ -215,6 +215,12 @@ body {
 .widget__refresh svg {
   width: 13px;
   height: 13px;
+}
+
+.widget--hls .widget__refresh svg {
+  width: 14px;
+  height: 14px;
+}
   display: block;
 }
 

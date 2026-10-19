@@ -9,12 +9,26 @@ const $ = (sel, root = document) => root.querySelector(sel);
  * @param {string} text
  */
 async function copyText(text) {
-  if (!text) return;
+  if (!text) return false;
   try {
     await navigator.clipboard.writeText(text);
+    return true;
   } catch {
-    /* ignore */
+    return false;
   }
+}
+
+/**
+ * @param {HTMLButtonElement} btn
+ * @param {string} label
+ */
+function markCopied(btn, label) {
+  btn.title = "已复制";
+  btn.setAttribute("aria-label", "已复制");
+  window.setTimeout(() => {
+    btn.title = label;
+    btn.setAttribute("aria-label", label);
+  }, 1200);
 }
 
 /**
@@ -57,6 +71,8 @@ export function bindPanels(hooks) {
     listUrlEl.title = listUrl;
     playUrlEl.textContent = playUrl || "没有播放地址";
     playUrlEl.title = playUrl;
+    listCopy.disabled = !listUrl;
+    playCopy.disabled = !playUrl;
     nextSrcBtn.hidden = !hooks.getSourceLabel();
     nextSrcBtn.textContent = hooks.getSourceLabel() || "切源";
     rawBtn.hidden = !hooks.getRaw();
@@ -132,11 +148,11 @@ export function bindPanels(hooks) {
   nextSrcBtn.addEventListener("click", () => {
     hooks.onNextSource();
   });
-  listCopy.addEventListener("click", () => {
-    void copyText(hooks.getListUrl());
+  listCopy.addEventListener("click", async () => {
+    if (await copyText(hooks.getListUrl())) markCopied(listCopy, "复制列表");
   });
-  playCopy.addEventListener("click", () => {
-    void copyText(hooks.getPlayUrl());
+  playCopy.addEventListener("click", async () => {
+    if (await copyText(hooks.getPlayUrl())) markCopied(playCopy, "复制播放");
   });
 
   return { paintInfo, paintFeeds, close, rememberFeed };
