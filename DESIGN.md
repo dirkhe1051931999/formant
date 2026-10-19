@@ -101,6 +101,7 @@ formant 的气质是 **桌面效率工具**：窄 popup（固定约 380px 宽）
 - 齿轮直接打开 `option.html#newtab`；New Tab 页不再承载侧滑设置表单，popup 内也不嵌套 mono 连接表单
 - 右上「刷新」「同步」使用带文字的紧凑按钮，主同步按钮复用 accent 实心样式；运行状态以按钮下方短消息反馈
 - 热点英语：IPA 约 9px muted，叠在单词正上方；释义/谐音仍与单词齐底，默认马赛克揭开
+- 第一行四卡等宽（天气 / 假期·汇率 / 热点英语 / HLS）。空闲时 HLS 卡与其它卡同玻璃底，标题 + `empty-status`；播放中才铺满深底 `#101826`。无完整播放条；hover / focus 才出半透明 HUD（切台、音量、打开播放页）
 - 添加/编辑链接 dialog：保存、删除（及文件夹打散）请求 mono 时盖半透明 loading，期间锁表单与关闭
 
 ### AutoPagerize 状态条（`autopagerize/content/messagebar.js` Shadow DOM）

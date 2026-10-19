@@ -32,15 +32,25 @@ function holidayItems(data) {
   return data.next ? [data.next] : [];
 }
 
-export function widgetHead(title, kind, toolsHtml = "") {
+export const WIDGET_FLIP_ICON = `<svg viewBox="0 0 16 16" fill="none" aria-hidden="true" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"><path d="M3.25 6.25h7.2L8.2 4"/><path d="M12.75 9.75H5.55L7.8 12"/></svg>`;
+
+export function widgetHead(title, kind, toolsHtml = "", afterHtml = "") {
   return `<div class="widget__head">
     <h4 class="widget__title">${title}</h4>
     <div class="widget__tools">${toolsHtml}<button type="button" class="widget__refresh" data-widget="${kind}" title="刷新${title}" aria-label="刷新${title}">
       <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
         <path d="M3 3V8M3 8H8M3 8L6 5.29168C7.59227 3.86656 9.69494 3 12 3C16.9706 3 21 7.02944 21 12C21 16.9706 16.9706 21 12 21C7.71683 21 4.13247 18.008 3.22302 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
       </svg>
-    </button></div>
+    </button>${afterHtml}</div>
   </div>`;
+}
+
+/**
+ * @param {string} title
+ */
+export function widgetFlipButton(title) {
+  const label = escapeHtml(title);
+  return `<button type="button" class="widget__refresh widget-flip-btn" title="${label}" aria-label="${label}">${WIDGET_FLIP_ICON}</button>`;
 }
 
 function formatWeatherAge(iso) {
@@ -121,8 +131,8 @@ export { formatWeatherAge };
  * @param {{ holidaysAt?: string }} [meta]
  */
 export function renderHolidayWidget(data, meta = {}) {
-  const card = document.createElement("article");
-  card.className = "widget widget--holiday";
+  const card = document.createElement("div");
+  card.className = "hx-flip__face hx-flip__face--holidays widget--holiday";
   card.dataset.widget = "holidays";
   const items = holidayItems(data);
   const head = items[0] || null;
@@ -161,7 +171,7 @@ export function renderHolidayWidget(data, meta = {}) {
       ? `<div class="holiday-today">${staleNote.replace(/^ · /, "")}</div>`
       : ""
     : `<div class="holiday-today">${todayLine}</div>`;
-  card.innerHTML = `${widgetHead("下一个假期", "holidays")}
+  card.innerHTML = `${widgetHead("下一个假期", "holidays", "", widgetFlipButton("切换到汇率"))}
     <div class="holiday-layout${ongoing ? " is-ongoing" : ""}">
       <div class="holiday-next${ongoing ? " is-ongoing" : ""}">
         ${primary}

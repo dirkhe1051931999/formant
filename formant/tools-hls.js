@@ -1,8 +1,8 @@
 import { FEATURES_KEY, isHlsEnabled, loadFeatures } from "./features.js";
+import { choosePlayTarget, playHlsFeed } from "./hls/play-target.js";
 import {
   HLS_SOURCES_MAX,
   feedName,
-  hlsPlayerPageUrl,
   loadSourceStore,
   rememberFeed,
   saveSourceStore,
@@ -34,7 +34,7 @@ export function mount(root) {
           <button type="submit" class="tl-btn">添加源</button>
         </div>
       </form>
-      <p class="tl-note">保存 m3u / txt 到本机（formantHlsSources），不同步 mono。开关在设置 → 功能。</p>
+      <p class="tl-note">保存 m3u / txt 到本机（formantHlsSources），不同步 mono。点播放可选 New Tab 卡片或独立播放页。开关在设置 → 功能。</p>
       <div class="hls-feeds" data-list></div>
     </section>
   `;
@@ -47,15 +47,19 @@ export function mount(root) {
   const playBtn = /** @type {HTMLButtonElement} */ (must("[data-play-default]", root));
 
   /**
+   * @param {HTMLElement} anchor
    * @param {string} url
    */
-  async function openPlayer(url) {
+  async function openPlayer(anchor, url) {
     const features = await loadFeatures();
     if (!isHlsEnabled(features)) {
       toast("请先在设置 → 功能 里打开 HLS 播放");
       return;
     }
-    await chrome.tabs.create({ url: hlsPlayerPageUrl(url) });
+    const target = await choosePlayTarget(anchor);
+    if (!target) return;
+    await playHlsFeed(url, target);
+    toast(target === "newtab" ? "已送到 New Tab 卡片" : "已打开播放页");
   }
 
   async function paint() {
@@ -88,7 +92,7 @@ export function mount(root) {
       main.title = "设为默认并播放";
       main.addEventListener("click", async () => {
         await setDefaultFeed(item.id);
-        await openPlayer(item.url);
+        await openPlayer(main, item.url);
         void paint();
       });
       const actions = document.createElement("div");
@@ -99,7 +103,7 @@ export function mount(root) {
       play.textContent = "播放";
       play.disabled = !on;
       play.addEventListener("click", () => {
-        void openPlayer(item.url);
+        void openPlayer(play, item.url);
       });
       const makeDefault = document.createElement("button");
       makeDefault.type = "button";
@@ -155,7 +159,7 @@ export function mount(root) {
       toast("先添加一条列表源");
       return;
     }
-    await openPlayer(current.url);
+    await openPlayer(playBtn, current.url);
   });
 
   chrome.storage.onChanged.addListener((changes, area) => {

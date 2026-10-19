@@ -38,18 +38,15 @@ import {
   loadFaviconCache,
   reconcileFaviconCache,
 } from "./favicon-cache.js";
-import {
-  renderHolidayWidget,
-  renderWeatherWidget,
-  tickWeatherAgeLabels,
-} from "./newtab-widgets.js";
+import { renderWeatherWidget, tickWeatherAgeLabels } from "./newtab-widgets.js";
 import {
   exchangeCacheMatches,
   getExchangePrefs,
   isExchangeEditing,
   loadExchangePrefs,
-  renderExchangeWidget,
 } from "./newtab-exchange.js";
+import { loadHxFace, renderHolidayExchangeWidget } from "./newtab-hx.js";
+import { renderHlsWidget } from "./newtab-hls.js";
 import { renderVocabWidget } from "./newtab-vocab.js";
 import { loadStudyWords, loadVocabFace } from "./study-words.js";
 
@@ -725,39 +722,46 @@ function paintWidgets(cache = {}) {
     let face = "hot";
     /** @type {import("./study-words.js").StudyWord[]} */
     let words = [];
+    /** @type {"holidays" | "exchange"} */
+    let hxFace = "holidays";
     try {
-      [face, words] = await Promise.all([loadVocabFace(), loadStudyWords()]);
+      [face, words, hxFace] = await Promise.all([loadVocabFace(), loadStudyWords(), loadHxFace()]);
     } catch (error) {
       console.warn("[formant] study words load failed", error);
     }
     if (seq !== widgetPaintSeq) return;
-    paintWidgetsNow(cache, { face, words });
+    paintWidgetsNow(cache, { face, words }, hxFace);
   })();
 }
 
 /**
  * @param {{ weather?: unknown, exchange?: unknown, holidays?: unknown, vocab?: unknown, weatherAt?: string, widgetsAt?: string }} [cache]
  * @param {{ face: "hot" | "study", words: import("./study-words.js").StudyWord[] }} study
+ * @param {"holidays" | "exchange"} [hxFace]
  */
-function paintWidgetsNow(cache = {}, study) {
+function paintWidgetsNow(cache = {}, study, hxFace = "holidays") {
   const weatherAt = cache.weatherAt || cache.widgetsAt || "";
   if (!widgetRow) return;
+  const hlsCard = widgetRow.querySelector('[data-widget="hls"]') || renderHlsWidget();
   widgetRow.replaceChildren(
     renderWeatherWidget(cache.weather || null, {
       weatherAt,
       widgetsAt: cache.widgetsAt || "",
     }),
-    renderHolidayWidget(cache.holidays || null, {
-      holidaysAt: cache.holidaysAt || cache.widgetsAt || "",
-    }),
-    renderExchangeWidget(cache.exchange || null, {
-      exchangeAt: cache.exchangeAt || cache.widgetsAt || "",
-      onCommit: () => {
-        void handleExchangeCommit();
+    renderHolidayExchangeWidget({
+      holidays: cache.holidays || null,
+      holidaysMeta: { holidaysAt: cache.holidaysAt || cache.widgetsAt || "" },
+      exchange: cache.exchange || null,
+      exchangeMeta: {
+        exchangeAt: cache.exchangeAt || cache.widgetsAt || "",
+        onCommit: () => {
+          void handleExchangeCommit();
+        },
+        onClose: () => {
+          void handleExchangeClose();
+        },
       },
-      onClose: () => {
-        void handleExchangeClose();
-      },
+      face: hxFace,
     }),
     renderVocabWidget(cache.vocab || null, {
       onRefresh: async () => {
@@ -779,6 +783,7 @@ function paintWidgetsNow(cache = {}, study) {
         }
       },
     }, study),
+    hlsCard,
   );
   widgetRow.querySelectorAll(".widget__refresh[data-widget]:not([data-widget='vocab'])").forEach((btn) => {
     btn.addEventListener("click", () => {

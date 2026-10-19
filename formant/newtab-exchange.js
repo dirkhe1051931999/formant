@@ -1,4 +1,4 @@
-import { formatWeatherAge, widgetHead } from "./newtab-widgets.js";
+import { formatWeatherAge, widgetFlipButton, widgetHead } from "./newtab-widgets.js";
 import { EXCHANGE_CURRENCIES } from "./newtab-exchange-currencies.js";
 import { searchExchangePlaces } from "./newtab-exchange-countries.js";
 
@@ -223,12 +223,12 @@ function buildConverter(rates) {
  * @param {{ exchangeAt?: string, onCommit?: (prefs: { count: number, codes: string[] }) => void, onClose?: () => void }} [meta]
  */
 export function renderExchangeWidget(data, meta = {}) {
-  const card = document.createElement("article");
-  card.className = "widget widget--exchange";
+  const card = document.createElement("div");
+  card.className = "hx-flip__face hx-flip__face--exchange widget--exchange";
   if (editing) card.classList.add("is-editing");
   card.dataset.widget = "exchange";
   card.dataset.fxCount = String(prefsCache.count);
-  card.innerHTML = `${widgetHead("汇率", "exchange", EDIT_BUTTON)}<div class="fx-body"></div>`;
+  card.innerHTML = `${widgetHead("汇率", "exchange", EDIT_BUTTON, widgetFlipButton("切换到下一个假期"))}<div class="fx-body"></div>`;
   const body = /** @type {HTMLElement} */ (card.querySelector(".fx-body"));
   const editBtn = /** @type {HTMLButtonElement} */ (card.querySelector("[data-fx-edit]"));
   if (editing) {
