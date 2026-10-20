@@ -227,7 +227,7 @@ CI（`python pack-edge.py --zip-only`）只打 zip，不生成商店图，也不
 - **New Tab**：关闭后运行时跳转浏览器默认新标签页（manifest override 无法动态卸载）
 - **图片另存为**：分别开关 PNG / JPG；都关则隐藏右键菜单组
 - **滚动截屏**：默认开启。网页右键「formant 整页滚动截屏」或「formant 截取可见区域」拼成 PNG。关闭后隐藏该菜单。**未嵌入**第三方截屏扩展。
-- **oolafOffice**：默认开启。popup 主界面快捷条 + 网页右键「formant oolafOffice」打开起始页 / Word / Excel / PPT（独立目录 `oolafoffice/`）。本机读写 `.docx` / `.xlsx` / `.xls` / `.pptx`，不走 mono。关闭后隐藏快捷条和该菜单。
+- **oolafOffice**：默认开启。popup 主界面快捷条 + 网页右键「formant oolafOffice」打开起始页 / Word / Excel / PPT（独立目录 `oolafoffice/`）。本机读写 `.docx` / `.doc` / `.xlsx` / `.xls` / `.pptx`，不走 mono。关闭后隐藏快捷条和该菜单。
 - **V2EX Plus**：总开关关闭后停止签到、未读角标、页面增强、微博图 referer 规则与 sov2ex 菜单
 - **GitZip**：总开关关闭后停用 GitHub 页面勾选、悬浮下载面板和 `formant GitZip` 右键菜单；其选择方式和主题仍保留在 `option.html#gitzip`
 - **AutoPagerize**：总开关关闭后所有站点停止自动翻页；排除规则和状态条设置仍保留在 `option.html#autopagerize`
@@ -551,7 +551,7 @@ CI（`python pack-edge.py --zip-only`）只打 zip，不生成商店图，也不
 ![oolafOffice：popup 快捷条打开 Word](docs/office.gif)
 
 - 入口：`option.html#features` 总开关（`features.office.enabled`，**默认开启**）+ popup 主界面快捷条（起始页 / Word / Excel / PPT）+ 网页右键「formant oolafOffice」。设置页说明里可打开起始页。不另开独立 popup / options 页，不增加 popup 顶栏图标，不放进工具箱面板。
-- **能力**：扩展页内编辑 Word（Quire）、Excel（Ledger）、PPT（Lectern）。打开和保存真实 `.docx` / `.xlsx` / `.pptx`，Excel 还可打开 Excel 97–2003 的 `.xls`（保存走另存为 `.xlsx`），文件留在本机。最近文件存在扩展 origin 的 IndexedDB。Excel 里 Wingdings 2 空复选框（`£` / 0xA3）在画布和导出 PDF 时显示为 Unicode `□`，保存 xlsx 不改原文；中文与符号按 run 分字体绘制，避免宋体缺字变成空白框。Word 表格按 `tblGrid` 固定列宽排版，支持 `gridSpan` / `vMerge`、东亚竖排（`tbRlV`）、行级 `tblPrEx` 边框、`pctN` 底纹、百分比列宽 / 嵌套表 / `noWrap` / `gridAfter`。双栏节里宽于栏的行内图按栏宽等比缩小，不盖住邻栏。东亚文档网格（`docGrid type=lines`）对齐时按字号占格，不把 Normal 的自动倍数叠上去。Excel 自动换行按 CJK 字切行，内置 `numFmtId` 27–58 按年/月/日显示，主题东亚字体参与绘制。PPT 读取 `a:ea` / `a:cs` 与主题 `majorEa` / `minorEa`，表格单元格强制换行并支持竖排。西文主题字体（Arial / Calibri 等）缺东亚字形时回退微软雅黑 / 宋体。编辑器在窗口捕获阶段拦住浏览器抢键（F5 刷新、Ctrl+S 另存网页、Ctrl+P 打印、Ctrl+F 查找栏、Ctrl+R 刷新、Ctrl++/− 缩放、Backspace 后退等），快捷键走套件自己的命令；复制粘贴仍交给浏览器。
+- **能力**：扩展页内编辑 Word（Quire）、Excel（Ledger）、PPT（Lectern）。打开和保存真实 `.docx` / `.xlsx` / `.pptx`，Word 还可打开 Word 97–2003 的 `.doc`（保存走另存为 `.docx`），Excel 还可打开 Excel 97–2003 的 `.xls`（保存走另存为 `.xlsx`），文件留在本机。最近文件存在扩展 origin 的 IndexedDB。Excel 里 Wingdings 2 空复选框（`£` / 0xA3）在画布和导出 PDF 时显示为 Unicode `□`，保存 xlsx 不改原文；中文与符号按 run 分字体绘制，避免宋体缺字变成空白框。Word 表格按 `tblGrid` 固定列宽排版，支持 `gridSpan` / `vMerge`、东亚竖排（`tbRlV`）、行级 `tblPrEx` 边框、`pctN` 底纹、百分比列宽 / 嵌套表 / `noWrap` / `gridAfter`。双栏节里宽于栏的行内图按栏宽等比缩小，不盖住邻栏。东亚文档网格（`docGrid type=lines`）对齐时按字号占格，不把 Normal 的自动倍数叠上去。Excel 自动换行按 CJK 字切行，内置 `numFmtId` 27–58 按年/月/日显示，主题东亚字体参与绘制。PPT 读取 `a:ea` / `a:cs` 与主题 `majorEa` / `minorEa`，表格单元格强制换行并支持竖排。西文主题字体（Arial / Calibri 等）缺东亚字形时回退微软雅黑 / 宋体。编辑器在窗口捕获阶段拦住浏览器抢键（F5 刷新、Ctrl+S 另存网页、Ctrl+P 打印、Ctrl+F 查找栏、Ctrl+R 刷新、Ctrl++/− 缩放、Backspace 后退等），快捷键走套件自己的命令；复制粘贴仍交给浏览器。
 - **接入方式**：把上游 VibeOffice `public/` **向量复制**到 `formant/oolafoffice/`（独立目录，产品名 oolafOffice，不覆盖现有 formant 文件）。抽掉内联脚本以符合扩展 CSP；不注册 PWA Service Worker、不请求远程 updater。界面不出现 VibeOffice / GitHub Feedback。上游 Apache-2.0，见 `oolafoffice/LICENSE` 与 `NOTICE`（NOTICE 保留 VibeOffice 出处）。
 - **边界**：不劫持系统文件关联；不把网页截图覆盖贴进桌面 Office。不新增权限。不改 `action.default_popup`，禁止 `contextMenus.removeAll()`。不走 mono。`oolafoffice/` 视为 vendor，不受单文件 500 行限制；formant 胶水 `office-bridge.js` / `popup-office.js` 仍遵守。
 
@@ -559,7 +559,7 @@ CI（`python pack-edge.py --zip-only`）只打 zip，不生成商店图，也不
 
 1. 重载 formant（默认开启）；打开 `option.html#features`，应看到「oolafOffice」说明、开关和「打开 oolafOffice 起始页」，概览含「oolafOffice」。点开 popup，主界面代理行下方应有 oolafOffice 快捷条。
 2. popup 点起始页 / Word / Excel / PPT，以及任意 https 页右键「formant oolafOffice」子项，应各开对应扩展页；Word / Excel / PPT 能打字、填格或加形状。
-3. 起始页「打开」本机 `.docx` / `.xlsx` / `.xls` / `.pptx`，再「另存为」下载，用桌面 Office 能打开。打开 `.xls` 后保存会另存为 `.xlsx`。页面标题和关于框应写 oolafOffice，不是 VibeOffice；起始页没有 Feedback / GitHub 链接，About 与任务窗不写「2003 Web Edition」。
+3. 起始页「打开」本机 `.docx` / `.doc` / `.xlsx` / `.xls` / `.pptx`，再「另存为」下载，用桌面 Office 能打开。打开 `.doc` 后保存会另存为 `.docx`；打开 `.xls` 后保存会另存为 `.xlsx`。页面标题和关于框应写 oolafOffice，不是 VibeOffice；起始页没有 Feedback / GitHub 链接，About 与任务窗不写「2003 Web Edition」。
 4. 关闭 `features.office.enabled`：popup 快捷条和右键菜单组都消失；截屏 / 图片另存为 / 翻译菜单不受影响。
 5. DevTools 控制台无 CSP 内联脚本报错；Network 无 `vibeoffice.work/updater` 请求。
 6. 打开含「绩效等级」勾选格的 xlsx（Wingdings 2 的 `£S £A £B £C`）：格子和导出 PDF 应显示 `□S □A □B □C`，不是英镑符号，也不是空白方框。另存为 xlsx 再用桌面 Excel 打开，原文与字体应仍是 Wingdings 2。

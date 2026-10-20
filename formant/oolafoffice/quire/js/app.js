@@ -737,6 +737,7 @@
       ui.busy(false);
       if (d.isTemplate) A.status('Opened a template. Save keeps its template format.');
       if (d.wasEncrypted) A.status('This document is protected with a password to open; saving keeps the protection (Tools ▸ Options ▸ Security).');
+      if (d.wasBinary) A.status('Opened a Word 97–2003 (.doc) file. Save As writes .docx.');
       if (warnings.length) ui.msg(warnings.join('\n'), { icon: 'warn' });
       if (type === 'md') { const n = L.mdio.missingPictures(d); if (n) A.status(`${n === 1 ? 'A picture is' : n + ' pictures are'} not in the .md file and show${n === 1 ? 's' : ''} as a box. Open a .zip holding the file and its pictures to see them.`); }
       if (d.settings.protect && d.settings.protect.on) A.status('This document is protected: ' + ({ readOnly: 'no changes (read only)', comments: 'comments only', tracked: 'tracked changes', forms: 'filling in forms' }[d.settings.protect.kind] || 'restricted'));
@@ -1264,10 +1265,10 @@
     d.props.title = 'Welcome to Quire 2003';
     d.props.creator = 'Quire';
     bl.push(P('Welcome to Quire 2003', { style: 'Title' }));
-    bl.push(P('A word processor in the spirit of Word 2003 — it opens and saves real .docx files.', { style: 'Subtitle' }, { i: true }));
+    bl.push(P('A word processor in the spirit of Word 2003 — it opens .docx and Word 97–2003 .doc, and saves .docx.', { style: 'Subtitle' }, { i: true }));
     bl.push(P('Getting around', { style: 'Heading1' }));
     bl.push(D.para([D.text('Type anywhere on this page. Everything works the way you remember: '), D.text('bold', { b: true }), D.text(', '), D.text('italic', { i: true }), D.text(', '), D.text('underline', { u: 'single' }), D.text(', '), D.text('highlighting', { hl: 'yellow' }), D.text(', '), D.text('colors', { color: 'C00000' }), D.text(', styles, bullets, numbering, tables, headers and footers, footnotes, comments, tracked changes, fields and more.')], { jc: 'both' }));
-    bl.push(P('Open a document with File ▸ Open, or drop a .docx onto the window. Save with File ▸ Save (Ctrl+S); File ▸ Save As offers Word Document, Word Template, Web Page, Plain Text, Markdown and PDF.', { num: { id: '1', lvl: 0 } }));
+    bl.push(P('Open a document with File ▸ Open, or drop a .docx or .doc onto the window. Save with File ▸ Save (Ctrl+S); File ▸ Save As offers Word Document, Word Template, Web Page, Plain Text, Markdown and PDF. A .doc saves as .docx.', { num: { id: '1', lvl: 0 } }));
     bl.push(P('Switch views with the buttons in the lower-left corner: Normal, Web Layout, Print Layout, Outline and Reading Layout.', { num: { id: '1', lvl: 0 } }));
     bl.push(P('Right-click for the shortcut menu; the task pane (Ctrl+F1) holds Styles and Formatting, Reveal Formatting, Clip Art and the Mail Merge wizard.', { num: { id: '1', lvl: 0 } }));
     bl.push(P('A small table', { style: 'Heading2' }));

@@ -744,7 +744,7 @@
     } }, { label: 'Cancel' }] });
   };
   G.about = () => ui.about({ name: 'Quire', office: 'Word', text: [
-    'A word processor in the style of Microsoft Office Word 2003 that runs entirely in your browser. Documents are read and written as Office Open XML (.docx, .docm), RTF, HTML, text and Markdown; nothing is uploaded.',
+    'A word processor in the style of Microsoft Office Word 2003 that runs entirely in your browser. Documents are read as Office Open XML (.docx, .docm) or Word 97–2003 (.doc), and written as .docx / .docm, RTF, HTML, text and Markdown; nothing is uploaded.',
     'Spelling, AutoCorrect and the thesaurus work offline, in English (U.S.) and English (U.K.).'] });
   G.newFromTemplate = function () {
     const cats = L.templates.categories();

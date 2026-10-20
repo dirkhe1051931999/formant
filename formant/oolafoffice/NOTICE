@@ -31,9 +31,12 @@ Modified for formant:
   urn:oolafoffice:keep.
 * Ledger opens Excel 97–2003 binary workbooks (.xls, BIFF8) in
   ledger/js/xls.js; saving those files uses Save As .xlsx.
+* Quire opens Word 97–2003 binary documents (.doc, MS-DOC) in
+  quire/js/docbin.js; saving those files uses Save As .docx.
 
 formant glue (feature flag, popup shortcut, context menus, option.html#features)
 lives outside this directory in office-bridge.js and related formant files.
 The editors still open and save .docx / .xlsx / .pptx on this machine
-(Excel also opens Excel 97–2003 .xls, then Save As .xlsx);
+(Word also opens Word 97–2003 .doc, then Save As .docx;
+Excel also opens Excel 97–2003 .xls, then Save As .xlsx);
 nothing is uploaded to mono.

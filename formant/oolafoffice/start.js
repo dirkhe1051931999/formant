@@ -40,7 +40,7 @@
   async function openFile(file) {
     status('');
     if (!file) return;
-    if (!(await VO.handoff(file))) status(`oolafOffice can't open “${file.name}”. It opens documents (.docx, .rtf), spreadsheets (.xlsx, .xls, .csv) and presentations (.pptx).`);
+    if (!(await VO.handoff(file))) status(`oolafOffice can't open “${file.name}”. It opens documents (.docx, .doc, .rtf), spreadsheets (.xlsx, .xls, .csv) and presentations (.pptx).`);
   }
   $('picker').accept = VO.accept();
   $('open').addEventListener('click', () => { $('picker').value = ''; $('picker').click(); });

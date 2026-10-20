@@ -520,22 +520,27 @@
     let total = 0;
     let grid = t.grid && t.grid.length ? t.grid.slice() : [ctx.width ? ctx.width / PX : 432];
     const avail = ctx.width ? ctx.width / PX : null;
+    const compat = (d.settings.compat || 11) < 15;
+    let ind = (tp.ind || 0) - (compat ? tp.cellMar.l || 0 : 0);
+    /* .pg-col clips overflow. Keep both outer borders inside the column. */
+    if (ind < 0) ind = 0;
+    const leftJc = !tp.jc || tp.jc === 'left' || tp.jc === 'start';
+    const hang = leftJc ? Math.max(ind, 0.5) : 0;
+    const fit = avail != null ? Math.max(12, avail - hang - 0.5) : null;
     const sum = grid.reduce((a, b) => a + b, 0) || 0;
     if (sum) {
       let target = null;
       if (tp.w && tp.w.type === 'pct' && tp.w.v > 0 && avail) target = avail * (Math.min(tp.w.v, 5000) / 5000);
       else if (tp.w && tp.w.type === 'dxa' && tp.w.v > 0) target = tp.w.v;
-      else if (tp.layout !== 'fixed' && avail && sum > avail + 1) target = avail;
+      else if (tp.layout !== 'fixed' && fit && sum > fit + 1) target = fit;
       /* Word draws a too-wide table into the margins; .pg-col clips at the body edge, so
          shrink to the column (fixed and autofit) instead of cutting off the last cells */
-      if (avail && (target != null ? target : sum) > avail + 1) target = avail;
+      if (fit && (target != null ? target : sum) > fit + 1) target = fit;
       if (target && Math.abs(sum - target) > 0.5) grid = grid.map((w) => L.round(w * (target / sum), 2));
     }
     for (const w of grid) { const c = el('col'); c.style.width = px(w) + 'px'; cg.appendChild(c); total += w; }
     tbl.appendChild(cg);
     tbl.style.width = px(total) + 'px';
-    const compat = (d.settings.compat || 11) < 15;
-    const ind = (tp.ind || 0) - (compat ? tp.cellMar.l || 0 : 0);
     /* CSS margin:auto does not center a table wider than the text area (auto margins become 0);
        Word/Google overflow equally into both page margins, so use a negative left indent */
     if (tp.jc === 'center') {
@@ -544,7 +549,7 @@
     } else if (tp.jc === 'right' || tp.jc === 'end') {
       if (avail && total > avail + 0.5) tbl.style.marginLeft = px(avail - total) + 'px';
       else tbl.style.marginLeft = 'auto';
-    } else if (ind) tbl.style.marginLeft = px(ind) + 'px';
+    } else tbl.style.marginLeft = px(hang) + 'px';
     if (tp.shd) tbl.style.backgroundColor = R.shadeCSS(tp.shd);
     const tb = el('tbody');
     tbl.appendChild(tb);

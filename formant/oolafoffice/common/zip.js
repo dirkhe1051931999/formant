@@ -279,7 +279,7 @@
     if (u8.length < 22) throw new Error('This file is not a valid Office Open XML (ZIP) package.');
     if (dv.getUint32(0, true) !== 0x04034b50) {
       if (dv.getUint32(0, true) === 0xe011cfd0) {
-        /* OLE compound file: an encrypted OOXML package or a legacy binary .ppt */
+        /* OLE compound file: encrypted OOXML, or a legacy binary .doc / .xls / .ppt */
         const probe = new TextDecoder('utf-16le').decode(u8.subarray(0, Math.min(u8.length, 1 << 20)));
         const enc = /EncryptedPackage/.test(probe);
         const err = new Error(enc
