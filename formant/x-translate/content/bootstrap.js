@@ -11,7 +11,7 @@
    */
   function isEnabled(raw) {
     const features = raw && typeof raw === "object" ? raw : {};
-    return features.xTranslate?.enabled !== false;
+    return features.xTranslate?.enabled === true;
   }
 
   /**

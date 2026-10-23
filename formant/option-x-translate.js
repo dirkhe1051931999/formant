@@ -39,8 +39,8 @@ export function initXTranslatePanel(api) {
     sizeEl.value = String(current.textSize);
     paintPreview();
     state.textContent = featureEnabled
-      ? "默认开启。时间线走 Google 直连，不扣 Client API Key。目标语言跟「翻译」面板。"
-      : "X 推文翻译总开关当前关闭；可在「功能」面板重新启用，颜色和字号会保留。";
+      ? "已开启。时间线上可见的他人推文正文会发给 Google 翻译，不扣 Client API Key。目标语言跟「翻译」面板。可在「功能」里关闭，关闭后立即停止。"
+      : "默认关闭。打开后，时间线上可见的他人推文正文会发给 Google 翻译。可在「功能」面板启用，颜色和字号会保留。";
   }
 
   async function reload() {

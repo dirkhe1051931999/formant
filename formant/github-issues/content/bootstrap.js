@@ -10,7 +10,7 @@
    */
   function isEnabled(raw) {
     const features = raw && typeof raw === "object" ? raw : {};
-    return features.githubIssues?.enabled !== false;
+    return features.githubIssues?.enabled === true;
   }
 
   /**

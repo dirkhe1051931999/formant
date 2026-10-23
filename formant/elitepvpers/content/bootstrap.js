@@ -11,7 +11,7 @@
    */
   function isEnabled(raw) {
     const features = raw && typeof raw === "object" ? raw : {};
-    return features.elitepvpers?.enabled !== false;
+    return features.elitepvpers?.enabled === true;
   }
 
   /**

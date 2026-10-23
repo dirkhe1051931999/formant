@@ -238,10 +238,10 @@ CI（`python pack-edge.py --zip-only`）只打 zip，不生成商店图，也不
 - **站点数据**：总开关关闭后隐藏 popup 提取入口；开启后可对当前页读 Cookie / localStorage / sessionStorage
 - **鼠标手势**：默认关闭。开启后网页右键划动执行固定行为（后退 / 前进 / 强刷 / 关标签 / 到顶 / 到底）；支持方向序列、宽松圆圈、两笔 ✕。映射在 `option.html#gestures` 增删改查，预览图按 Client API Key 存 S3。可同步 `GET/PUT /client/gestures`。**未嵌入** smartUp 源码。`edge://` / `chrome://` / 扩展商店无法注入。
 - **Telegram 下载**：默认开启。仅在 Telegram Web 受限群组/私密频道为已能看到的图片与视频补保存按钮；**未嵌入**第三方下载器源码，也不走其云端站点。
-- **X 推文翻译**：默认开启。在 `x.com` / `pro.x.com` / `twitter.com` 为可见推文补 Google 直连译文；颜色和字号在 `option.html#x-translate`。**不走 mono**，不扣 Client API Key。**未嵌入** Post Translator 源码。
+- **X 推文翻译**：默认关闭。在设置里打开后，才在 `x.com` / `pro.x.com` / `twitter.com` 把可见的他人推文正文发给 Google 翻译；颜色和字号在 `option.html#x-translate`。**不走 mono**，不扣 Client API Key。**未嵌入** Post Translator 源码。
 - **Discord 翻译**：默认开启。在 `discord.com` 聊天页右下角手动翻译当前频道已加载的这一页消息；上滚加载的更早历史不自动翻。颜色和字号共用 `option.html#x-translate`。**不走 mono**。刷新后记录清空。
-- **elitepvpers 翻译**：默认开启。在 `www.elitepvpers.com` 只翻译帖子标题和楼层正文（列表标题、帖子页标题、每楼标题与 `post_message`），不翻整页。颜色和字号共用 `option.html#x-translate`。**不走 mono**。
-- **GitHub issues 翻译**：默认开启。在 `github.com` 只给 issues 列表标题、详情标题和评论正文补中文译文；纯外文才翻，中文或中外夹杂不翻。颜色和字号共用 `option.html#x-translate`。**不走 mono**。
+- **elitepvpers 翻译**：默认关闭。在设置里打开后，才在 `www.elitepvpers.com` 把可见的他人帖子标题和楼层正文发给 Google 翻译（列表标题、帖子页标题、每楼标题与 `post_message`），不翻整页。颜色和字号共用 `option.html#x-translate`。**不走 mono**。
+- **GitHub issues 翻译**：默认关闭。在设置里打开后，才在 `github.com` 把可见的他人 issues 标题和评论正文发给 Google 翻译成中文；纯外文才翻，中文或中外夹杂不翻。颜色和字号共用 `option.html#x-translate`。**不走 mono**。
 - **linux.do 列表**：默认开启。把 `linux.do` 话题列表换成 formant 风格的文件表格；不改品牌/侧栏，不碰帖子详情。列表手法参考 [linuxdo-lark-ui](https://github.com/starwingcc/linuxdo-lark-ui)（MIT），**未拷贝**整份油猴脚本。
 - **虎扑简洁版式**：默认开启。`bbs.hupu.com` 顶栏改白底两层导航（去掉 App 推广与游戏中心）、帖子页改单张白卡、回帖区去灰底粗框并收紧行距，帖子里的表情包统一高度、大图限制最大边。帖子详情可按板块列表翻上一帖 / 下一帖（直接打开详情也会自己去列表里找邻居）。只改样式与翻帖，**不走 mono、不新增权限**。
 - **freefq 导出**：默认开启。在 `freefq.com` 帖子详情解除禁复制，并一键导出 UTF-8 TXT（正文已在 DOM，不走 mono）。**未嵌入**第三方解除复制/文章下载扩展。
@@ -275,7 +275,7 @@ CI（`python pack-edge.py --zip-only`）只打 zip，不生成商店图，也不
 
 ![X 推文翻译：时间线正文下补灰色译文](docs/x-translate.gif)
 
-- 入口：`option.html#features` 总开关（`features.xTranslate.enabled`，**默认开启**）+ `option.html#x-translate` 颜色 / 色号 / 字号。不另开独立 popup / options 页。
+- 入口：`option.html#features` 总开关（`features.xTranslate.enabled`，**默认关闭**）+ `option.html#x-translate` 颜色 / 色号 / 字号。不另开独立 popup / options 页。打开后，可见的他人推文正文自动发给 `translate-pa.googleapis.com`，只用于当页译文；关闭后立即停止。
 - **能力**：在 X/Twitter 时间线为可见推文正文（`div[data-testid='tweetText']`）串行补译文。目标语言共用「翻译」面板的 `translateTarget`。译文与原文相同时不展示。
 - **样式**：默认颜色 `#8c8c8c`、字号 `14px`；Shadow DOM 挂在推文正文旁。改颜色/字号后已插入的译文立刻变。
 - **翻译路径**：只走浏览器直连 `translate-pa.googleapis.com`（gtx）。失败静默跳过该条，稍后重试。**禁止**走 mono / GPT / DeepLX，避免花 Client API Key。popup / 划词的 Google 仍可走原有 mono 兜底。
@@ -283,7 +283,7 @@ CI（`python pack-edge.py --zip-only`）只打 zip，不生成商店图，也不
 
 #### X 推文翻译冒烟清单
 
-1. 重载 formant（默认开启）；打开 `https://x.com/` 时间线：可见外文推文下方应出现灰色小字译文。popup / 划词翻译不受影响。
+1. 重载 formant。新安装时开关是关的，时间线没有译文、也没有发往 Google 的翻译请求。在 `option.html#features` 打开「启用 X 推文翻译」后刷新 `https://x.com/`：可见外文推文下方应出现灰色小字译文。popup / 划词翻译不受影响。
 2. `option.html#x-translate` 改颜色或字号：已显示的译文立即换样式，不必刷新。
 3. 关闭 `features.xTranslate.enabled` 后刷新 X：译文消失。
 4. 未填 Client API Key 时时间线仍应能出译文；划词/popup 的 Google 失败兜底仍可走 mono。
@@ -314,7 +314,7 @@ CI（`python pack-edge.py --zip-only`）只打 zip，不生成商店图，也不
 
 ![elitepvpers：标题和楼层正文补译文](docs/elitepvpers.gif)
 
-- 入口：仅 `option.html#features` 总开关（`features.elitepvpers.enabled`，**默认开启**）。不另开独立 popup / options 页。
+- 入口：仅 `option.html#features` 总开关（`features.elitepvpers.enabled`，**默认关闭**）。不另开独立 popup / options 页。打开后，可见的他人标题和楼层正文自动发给 `translate-pa.googleapis.com`，只用于当页译文；关闭后立即停止。
 - **能力**：在 `elitepvpers.com` / `www.elitepvpers.com` 为可见的帖子标题和楼层正文串行补译文。列表用 `a[id^="thread_title_"]`；帖子页标题用 `h1[itemprop="headline"]`（没有时用较短的 `div.cwhead`）；每楼标题用 `td[id^="td_post_"] > div.smallfont`；正文用 `div[id^="post_message_"]`。导航、用户名、签名不翻。目标语言共用「翻译」面板的 `translateTarget`。译文与原文相同时不展示。
 - **样式**：Shadow DOM 挂在对应节点后面。颜色和字号复用 `option.html#x-translate`（默认 `#8c8c8c` / `14px`）。
 - **翻译路径**：只走浏览器直连 `translate-pa.googleapis.com`（gtx），长楼按约 1200 字分段再拼回。失败静默跳过该条，稍后重试。**禁止**走 mono / GPT / DeepLX。
@@ -322,14 +322,14 @@ CI（`python pack-edge.py --zip-only`）只打 zip，不生成商店图，也不
 
 #### elitepvpers 翻译冒烟清单
 
-1. 重载 formant（默认开启）；打开 `https://www.elitepvpers.com/forum/` 的版块列表：可见外文帖子标题下应出现灰色小字译文。导航和用户名保持原文。
+1. 重载 formant。新安装时开关是关的，列表没有译文。在 `option.html#features` 打开「启用 elitepvpers 帖子翻译」后刷新 `https://www.elitepvpers.com/forum/`：可见外文帖子标题下应出现灰色小字译文。导航和用户名保持原文。
 2. 打开一帖：帖子标题和每一楼正文下应有译文；签名不翻译。
 3. `option.html#x-translate` 改颜色或字号：已显示的 elitepvpers 译文立即换样式。
 4. 关闭 `features.elitepvpers.enabled` 后刷新页面：译文消失。X 推文翻译开关互不影响。
 
 ### GitHub issues 翻译（轻量）
 
-- 入口：仅 `option.html#features` 总开关（`features.githubIssues.enabled`，**默认开启**）。不另开独立 popup / options 页。
+- 入口：仅 `option.html#features` 总开关（`features.githubIssues.enabled`，**默认关闭**）。不另开独立 popup / options 页。打开后，可见的他人纯外文标题和评论自动发给 `translate-pa.googleapis.com` 译成中文，只用于当页译文；关闭后立即停止。
 - **能力**：在 `github.com` 的 issues 列表、详情页为可见的纯外文标题和评论正文串行补**中文**译文。新 UI：列表 `[data-testid="issue-listitem-title-link"]`；详情标题 `[data-testid="issue-title"]`；正文 `[data-testid="markdown-body"]`（只取 `issue-body-viewer` 与 `comment-viewer-outer-box-*`）。经典 UI：`.js-issue-title` / `a[id^="issue_"]` / `.js-comment-body`。导航、用户名、标签、代码块不翻。含汉字的中文或中外夹杂（如「[Feature] 支持只读模式」）不翻。
 - **样式**：Shadow DOM 挂在对应节点后面。颜色和字号复用 `option.html#x-translate`（默认 `#8c8c8c` / `14px`）。
 - **翻译路径**：只走浏览器直连 `translate-pa.googleapis.com`（gtx），固定 `zh-CN`，长评论按约 1200 字分段再拼回。失败静默跳过该条，稍后重试。**禁止**走 mono / GPT / DeepLX。
@@ -337,7 +337,7 @@ CI（`python pack-edge.py --zip-only`）只打 zip，不生成商店图，也不
 
 #### GitHub issues 翻译冒烟清单
 
-1. 重载 formant（默认开启）；打开 `https://github.com/tcchen2026/VibeOffice/issues`：纯英文标题（如 #25）下应出现灰色中文译文；「工作表标签卡颜色」等中文、以及「[Feature Request] 支持只读模式」等中外夹杂标题保持原文。
+1. 重载 formant。新安装时开关是关的，issues 没有译文。在 `option.html#features` 打开「启用 GitHub issues 翻译」后刷新 `https://github.com/tcchen2026/VibeOffice/issues`：纯英文标题（如 #25）下应出现灰色中文译文；「工作表标签卡颜色」等中文、以及「[Feature Request] 支持只读模式」等中外夹杂标题保持原文。
 2. 打开 `https://github.com/tcchen2026/VibeOffice/issues/25`：标题和正文下应有中文译文；用户名和侧栏不翻。
 3. `option.html#x-translate` 改颜色或字号：已显示的 GitHub issues 译文立即换样式。
 4. 关闭 `features.githubIssues.enabled` 后刷新页面：译文消失。X 推文翻译 / GitZip 开关互不影响。

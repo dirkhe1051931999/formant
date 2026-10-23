@@ -101,7 +101,7 @@
               </article>
               <article class="general-card">
                 <h3>X 推文</h3>
-                <p class="ui-clamp-2" data-tooltip-clamp>x.com 时间线自动译推文；用颜色和字号与原文区分。走 Google 直连，不扣 Client API Key。</p>
+                <p class="ui-clamp-2" data-tooltip-clamp>默认关闭。打开后，时间线上可见的他人推文正文会发给 Google 翻译。颜色和字号在此设置。</p>
                 <button type="button" class="btn" data-go-panel="x-translate">打开 X 推文</button>
               </article>
               <article class="general-card">
@@ -300,11 +300,11 @@
               </section>
               <section class="settings-card">
                 <h3>X 推文翻译</h3>
-                <p class="muted">默认开启。在 x.com / Twitter 时间线为可见推文补译文（Google 直连，不走 mono）。颜色和字号在「X 推文」面板。关闭后立即停用。</p>
+                <p class="muted">默认关闭。打开后，x.com / Twitter 时间线上已经显示的他人推文正文会自动发给 Google 翻译（translate-pa.googleapis.com），只用于在推文下显示译文，不另存到 formant 或 Oolaf。不走 mono。颜色和字号在「X 推文」面板。关闭后立即停止发送并卸掉译文。</p>
                 <label class="feature-row">
                   <span>
                     <strong>启用 X 推文翻译</strong>
-                    <small>x.com / pro.x.com / twitter.com 时间线自动翻译</small>
+                    <small>打开后把可见推文正文发给 Google 翻译</small>
                   </span>
                   <input type="checkbox" data-feature="xTranslate.enabled" />
                 </label>
@@ -322,22 +322,22 @@
               </section>
               <section class="settings-card">
                 <h3>elitepvpers 翻译</h3>
-                <p class="muted">默认开启。只给 www.elitepvpers.com 的帖子标题和楼层正文补译文（列表标题、帖子页标题、每楼标题与正文），不翻导航、用户名和签名。Google 直连，不走 mono。颜色和字号与「X 推文」面板共用。关闭后立即停用。</p>
+                <p class="muted">默认关闭。打开后，www.elitepvpers.com 上已经显示的他人帖子标题和楼层正文会自动发给 Google 翻译（translate-pa.googleapis.com），只用于当页译文，不另存。不翻导航、用户名和签名。不走 mono。颜色和字号与「X 推文」面板共用。关闭后立即停止发送。</p>
                 <label class="feature-row">
                   <span>
                     <strong>启用 elitepvpers 帖子翻译</strong>
-                    <small>elitepvpers.com 帖子标题与回复正文</small>
+                    <small>打开后把可见标题和正文发给 Google 翻译</small>
                   </span>
                   <input type="checkbox" data-feature="elitepvpers.enabled" />
                 </label>
               </section>
               <section class="settings-card">
                 <h3>GitHub issues 翻译</h3>
-                <p class="muted">默认开启。只给 github.com 的 issues 列表标题、详情标题和评论正文补中文译文。纯外文才翻，中文或中外夹杂不翻。不翻导航、用户名、标签和代码块。Google 直连，不走 mono。颜色和字号与「X 推文」面板共用。关闭后立即停用。</p>
+                <p class="muted">默认关闭。打开后，github.com issues 上已经显示的他人标题和评论正文（仅纯外文）会自动发给 Google 翻译（translate-pa.googleapis.com）译成中文，只用于当页译文，不另存。中文或中外夹杂不翻。不翻导航、用户名、标签和代码块。不走 mono。颜色和字号与「X 推文」面板共用。关闭后立即停止发送。</p>
                 <label class="feature-row">
                   <span>
                     <strong>启用 GitHub issues 翻译</strong>
-                    <small>github.com issues 纯外文标题与评论</small>
+                    <small>打开后把可见纯外文标题和评论发给 Google 翻译</small>
                   </span>
                   <input type="checkbox" data-feature="githubIssues.enabled" />
                 </label>

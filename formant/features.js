@@ -87,16 +87,16 @@ export const DEFAULT_FEATURES = {
     enabled: true,
   },
   xTranslate: {
-    enabled: true,
+    enabled: false,
   },
   discord: {
     enabled: true,
   },
   elitepvpers: {
-    enabled: true,
+    enabled: false,
   },
   githubIssues: {
-    enabled: true,
+    enabled: false,
   },
   linuxdo: {
     enabled: true,
