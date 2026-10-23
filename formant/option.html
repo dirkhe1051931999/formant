@@ -45,13 +45,13 @@
             <header class="panel__head">
               <div>
                 <h2>概览</h2>
-                <p class="muted">从左侧切换模块：功能（含 Discord / freefq / huavod / elitepvpers / Gemini 去水印 / Gmail 邮箱 / HLS 播放等总开关）、New Tab、V2EX、GitZip、自动翻页、手势、代理、扩展、词库、翻译、X 推文与同步。HLS 列表源在工具箱。</p>
+                <p class="muted">从左侧切换模块：功能（含 Discord / freefq / huavod / elitepvpers / GitHub issues / Gemini 去水印 / Gmail 邮箱 / HLS 播放等总开关）、New Tab、V2EX、GitZip、自动翻页、手势、代理、扩展、词库、翻译、X 推文与同步。HLS 列表源在工具箱。</p>
               </div>
             </header>
             <div class="general-grid">
               <article class="general-card">
                 <h3>功能</h3>
-                <p class="ui-clamp-2" data-tooltip-clamp>翻译 / New Tab / Discord 聊天翻译 / elitepvpers 帖子翻译 / freefq 导出 / huavod 控制台 / Gemini 去水印 / Gmail 邮箱 / HLS 播放等能力的总开关与细分开关。</p>
+                <p class="ui-clamp-2" data-tooltip-clamp>翻译 / New Tab / Discord 聊天翻译 / elitepvpers 帖子翻译 / GitHub issues 翻译 / freefq 导出 / huavod 控制台 / Gemini 去水印 / Gmail 邮箱 / HLS 播放等能力的总开关与细分开关。</p>
                 <button type="button" class="btn" data-go-panel="features">打开功能</button>
               </article>
               <article class="general-card">
@@ -329,6 +329,17 @@
                     <small>elitepvpers.com 帖子标题与回复正文</small>
                   </span>
                   <input type="checkbox" data-feature="elitepvpers.enabled" />
+                </label>
+              </section>
+              <section class="settings-card">
+                <h3>GitHub issues 翻译</h3>
+                <p class="muted">默认开启。只给 github.com 的 issues 列表标题、详情标题和评论正文补中文译文。纯外文才翻，中文或中外夹杂不翻。不翻导航、用户名、标签和代码块。Google 直连，不走 mono。颜色和字号与「X 推文」面板共用。关闭后立即停用。</p>
+                <label class="feature-row">
+                  <span>
+                    <strong>启用 GitHub issues 翻译</strong>
+                    <small>github.com issues 纯外文标题与评论</small>
+                  </span>
+                  <input type="checkbox" data-feature="githubIssues.enabled" />
                 </label>
               </section>
               <section class="settings-card">
@@ -953,7 +964,7 @@
             <form id="xTranslateForm" class="settings-stack" onsubmit="return false">
               <section class="settings-card">
                 <h3>译文样式</h3>
-                <p class="muted">用来和原文区分。默认灰色 14px，接近常见推文翻译扩展。Discord 聊天译文和 elitepvpers 帖子译文共用这组颜色和字号。</p>
+                <p class="muted">用来和原文区分。默认灰色 14px，接近常见推文翻译扩展。Discord 聊天译文、elitepvpers 帖子译文和 GitHub issues 译文共用这组颜色和字号。</p>
                 <div class="settings-grid">
                   <label class="settings-field">
                     颜色

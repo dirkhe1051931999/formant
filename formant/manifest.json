@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "__MSG_extensionName__",
-    "version": "1.8.195",
+    "version": "1.8.196",
   "default_locale": "zh_CN",
   "homepage_url": "https://www.oolaf.top",
   "description": "__MSG_extensionDescription__",
@@ -216,6 +216,16 @@
         "elitepvpers/content/bootstrap.js",
         "elitepvpers/content/overlay.js",
         "elitepvpers/content/main.js"
+      ],
+      "run_at": "document_idle",
+      "all_frames": false
+    },
+    {
+      "matches": ["https://github.com/*"],
+      "js": [
+        "github-issues/content/bootstrap.js",
+        "github-issues/content/overlay.js",
+        "github-issues/content/main.js"
       ],
       "run_at": "document_idle",
       "all_frames": false

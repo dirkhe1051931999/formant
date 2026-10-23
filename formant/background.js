@@ -35,6 +35,7 @@ import { initVueBackground } from "./vue-bridge.js";
 import { handleXTranslateMessage } from "./x-translate-bridge.js";
 import { handleDiscordTranslateMessage } from "./discord-bridge.js";
 import { handleElitepvpersTranslateMessage } from "./elitepvpers-bridge.js";
+import { handleGithubIssuesTranslateMessage } from "./github-issues-bridge.js";
 import { handleGeminiMessage } from "./gemini-bridge.js";
 import { initNewtabWeatherBackground } from "./newtab-weather-bridge.js";
 import { initProxyBackground } from "./proxy-bridge.js";
@@ -468,6 +469,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (handleDiscordTranslateMessage(message, sender, sendResponse)) return true;
 
   if (handleElitepvpersTranslateMessage(message, sender, sendResponse)) return true;
+
+  if (handleGithubIssuesTranslateMessage(message, sender, sendResponse)) return true;
 
   if (handleGeminiMessage(message, sender, sendResponse)) return true;
 

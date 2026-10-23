@@ -124,6 +124,8 @@ formant/                 主扩展（加载此目录为「未打包的扩展」�
   discord/               Discord 聊天手动翻译（右下角按钮）+ 输入框译英文图标（Google / GPT），均 Shadow DOM
   elitepvpers-bridge.js  elitepvpers 标题/楼层 Google PA 翻译消息（不走 mono）
   elitepvpers/           elitepvpers 帖子标题与回复内容脚本（bootstrap / Shadow DOM）
+  github-issues-bridge.js GitHub issues 纯外文标题/评论 Google PA 翻译（不走 mono）
+  github-issues/         GitHub issues 内容脚本（bootstrap / Shadow DOM）
   linuxdo/               linux.do 列表表格换皮（MIT 归属 linuxdo-lark-ui）
   hupu/                  bbs.hupu.com 顶栏 / 帖子 / 板块列表简洁版式（纯 CSS + 图片尺寸归一）
   freefq-bridge.js       freefq 帖子 TXT 经 chrome.downloads 导出
@@ -239,6 +241,7 @@ CI（`python pack-edge.py --zip-only`）只打 zip，不生成商店图，也不
 - **X 推文翻译**：默认开启。在 `x.com` / `pro.x.com` / `twitter.com` 为可见推文补 Google 直连译文；颜色和字号在 `option.html#x-translate`。**不走 mono**，不扣 Client API Key。**未嵌入** Post Translator 源码。
 - **Discord 翻译**：默认开启。在 `discord.com` 聊天页右下角手动翻译当前频道已加载的这一页消息；上滚加载的更早历史不自动翻。颜色和字号共用 `option.html#x-translate`。**不走 mono**。刷新后记录清空。
 - **elitepvpers 翻译**：默认开启。在 `www.elitepvpers.com` 只翻译帖子标题和楼层正文（列表标题、帖子页标题、每楼标题与 `post_message`），不翻整页。颜色和字号共用 `option.html#x-translate`。**不走 mono**。
+- **GitHub issues 翻译**：默认开启。在 `github.com` 只给 issues 列表标题、详情标题和评论正文补中文译文；纯外文才翻，中文或中外夹杂不翻。颜色和字号共用 `option.html#x-translate`。**不走 mono**。
 - **linux.do 列表**：默认开启。把 `linux.do` 话题列表换成 formant 风格的文件表格；不改品牌/侧栏，不碰帖子详情。列表手法参考 [linuxdo-lark-ui](https://github.com/starwingcc/linuxdo-lark-ui)（MIT），**未拷贝**整份油猴脚本。
 - **虎扑简洁版式**：默认开启。`bbs.hupu.com` 顶栏改白底两层导航（去掉 App 推广与游戏中心）、帖子页改单张白卡、回帖区去灰底粗框并收紧行距，帖子里的表情包统一高度、大图限制最大边。帖子详情可按板块列表翻上一帖 / 下一帖（直接打开详情也会自己去列表里找邻居）。只改样式与翻帖，**不走 mono、不新增权限**。
 - **freefq 导出**：默认开启。在 `freefq.com` 帖子详情解除禁复制，并一键导出 UTF-8 TXT（正文已在 DOM，不走 mono）。**未嵌入**第三方解除复制/文章下载扩展。
@@ -323,6 +326,21 @@ CI（`python pack-edge.py --zip-only`）只打 zip，不生成商店图，也不
 2. 打开一帖：帖子标题和每一楼正文下应有译文；签名不翻译。
 3. `option.html#x-translate` 改颜色或字号：已显示的 elitepvpers 译文立即换样式。
 4. 关闭 `features.elitepvpers.enabled` 后刷新页面：译文消失。X 推文翻译开关互不影响。
+
+### GitHub issues 翻译（轻量）
+
+- 入口：仅 `option.html#features` 总开关（`features.githubIssues.enabled`，**默认开启**）。不另开独立 popup / options 页。
+- **能力**：在 `github.com` 的 issues 列表、详情页为可见的纯外文标题和评论正文串行补**中文**译文。新 UI：列表 `[data-testid="issue-listitem-title-link"]`；详情标题 `[data-testid="issue-title"]`；正文 `[data-testid="markdown-body"]`（只取 `issue-body-viewer` 与 `comment-viewer-outer-box-*`）。经典 UI：`.js-issue-title` / `a[id^="issue_"]` / `.js-comment-body`。导航、用户名、标签、代码块不翻。含汉字的中文或中外夹杂（如「[Feature] 支持只读模式」）不翻。
+- **样式**：Shadow DOM 挂在对应节点后面。颜色和字号复用 `option.html#x-translate`（默认 `#8c8c8c` / `14px`）。
+- **翻译路径**：只走浏览器直连 `translate-pa.googleapis.com`（gtx），固定 `zh-CN`，长评论按约 1200 字分段再拼回。失败静默跳过该条，稍后重试。**禁止**走 mono / GPT / DeepLX。
+- **边界**：formant 自研。不改 `action.default_popup`，不新增权限，不碰 GitZip 菜单。
+
+#### GitHub issues 翻译冒烟清单
+
+1. 重载 formant（默认开启）；打开 `https://github.com/tcchen2026/VibeOffice/issues`：纯英文标题（如 #25）下应出现灰色中文译文；「工作表标签卡颜色」等中文、以及「[Feature Request] 支持只读模式」等中外夹杂标题保持原文。
+2. 打开 `https://github.com/tcchen2026/VibeOffice/issues/25`：标题和正文下应有中文译文；用户名和侧栏不翻。
+3. `option.html#x-translate` 改颜色或字号：已显示的 GitHub issues 译文立即换样式。
+4. 关闭 `features.githubIssues.enabled` 后刷新页面：译文消失。X 推文翻译 / GitZip 开关互不影响。
 
 ### linux.do 列表（轻量）
 

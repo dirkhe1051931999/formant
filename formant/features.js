@@ -25,6 +25,7 @@ export const FEATURES_KEY = "formantFeatures";
  *   xTranslate: { enabled: boolean },
  *   discord: { enabled: boolean },
  *   elitepvpers: { enabled: boolean },
+ *   githubIssues: { enabled: boolean },
  *   linuxdo: { enabled: boolean },
  *   hupu: { enabled: boolean },
  *   freefq: { enabled: boolean },
@@ -92,6 +93,9 @@ export const DEFAULT_FEATURES = {
     enabled: true,
   },
   elitepvpers: {
+    enabled: true,
+  },
+  githubIssues: {
     enabled: true,
   },
   linuxdo: {
@@ -163,6 +167,7 @@ export function normalizeFeatures(raw) {
   const xTranslate = src.xTranslate && typeof src.xTranslate === "object" ? src.xTranslate : {};
   const discord = src.discord && typeof src.discord === "object" ? src.discord : {};
   const elitepvpers = src.elitepvpers && typeof src.elitepvpers === "object" ? src.elitepvpers : {};
+  const githubIssues = src.githubIssues && typeof src.githubIssues === "object" ? src.githubIssues : {};
   const linuxdo = src.linuxdo && typeof src.linuxdo === "object" ? src.linuxdo : {};
   const hupu = src.hupu && typeof src.hupu === "object" ? src.hupu : {};
   const freefq = src.freefq && typeof src.freefq === "object" ? src.freefq : {};
@@ -228,6 +233,9 @@ export function normalizeFeatures(raw) {
     },
     elitepvpers: {
       enabled: asBool(elitepvpers.enabled, DEFAULT_FEATURES.elitepvpers.enabled),
+    },
+    githubIssues: {
+      enabled: asBool(githubIssues.enabled, DEFAULT_FEATURES.githubIssues.enabled),
     },
     linuxdo: {
       enabled: asBool(linuxdo.enabled, DEFAULT_FEATURES.linuxdo.enabled),
@@ -388,6 +396,10 @@ export function isDiscordEnabled(f) {
 
 export function isElitepvpersEnabled(f) {
   return f.elitepvpers.enabled;
+}
+
+export function isGithubIssuesEnabled(f) {
+  return f.githubIssues.enabled;
 }
 
 export function isLinuxdoEnabled(f) {

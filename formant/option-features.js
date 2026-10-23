@@ -56,6 +56,7 @@ export function initFeaturesPanel(api) {
       "xTranslate.enabled": current.xTranslate.enabled,
       "discord.enabled": current.discord.enabled,
       "elitepvpers.enabled": current.elitepvpers.enabled,
+      "githubIssues.enabled": current.githubIssues.enabled,
       "linuxdo.enabled": current.linuxdo.enabled,
       "hupu.enabled": current.hupu.enabled,
       "freefq.enabled": current.freefq.enabled,
@@ -101,6 +102,7 @@ export function initFeaturesPanel(api) {
       if (current.xTranslate.enabled) bits.push("X 推文翻译");
       if (current.discord.enabled) bits.push("Discord 翻译");
       if (current.elitepvpers.enabled) bits.push("elitepvpers 翻译");
+      if (current.githubIssues.enabled) bits.push("GitHub issues 翻译");
       if (current.linuxdo.enabled) bits.push("linux.do 列表");
       if (current.hupu.enabled) bits.push("虎扑帖子");
       if (current.freefq.enabled) bits.push("freefq 导出");
@@ -147,6 +149,7 @@ export function initFeaturesPanel(api) {
     else if (path === "xTranslate.enabled") current.xTranslate.enabled = on;
     else if (path === "discord.enabled") current.discord.enabled = on;
     else if (path === "elitepvpers.enabled") current.elitepvpers.enabled = on;
+    else if (path === "githubIssues.enabled") current.githubIssues.enabled = on;
     else if (path === "linuxdo.enabled") current.linuxdo.enabled = on;
     else if (path === "hupu.enabled") current.hupu.enabled = on;
     else if (path === "freefq.enabled") current.freefq.enabled = on;
