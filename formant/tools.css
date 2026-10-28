@@ -22,9 +22,14 @@
   display: none !important;
 }
 
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+}
+
 body {
   margin: 0;
-  min-height: 100vh;
   background:
     radial-gradient(circle at top left, rgba(31, 75, 153, 0.08), transparent 42%),
     var(--bg);
@@ -35,19 +40,24 @@ body {
   grid-template-columns: 232px minmax(0, 1fr);
   gap: 20px;
   max-width: 1280px;
-  min-height: 100vh;
+  height: 100%;
+  min-height: 0;
   margin: 0 auto;
-  padding: 24px 20px 40px;
+  padding: 16px 20px;
+  overflow: hidden;
 }
 
 .tl-side {
-  position: sticky;
-  top: 24px;
-  align-self: start;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: 100%;
+  overflow: hidden;
 }
 
 .tl-brand {
   display: flex;
+  flex-shrink: 0;
   align-items: center;
   gap: 10px;
   margin-bottom: 16px;
@@ -65,8 +75,12 @@ body {
 
 .tl-nav {
   display: flex;
+  flex: 1;
   flex-direction: column;
   gap: 6px;
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
 }
 
 .tl-nav__group {
@@ -169,15 +183,94 @@ body {
 }
 
 .tl-main {
+  display: flex;
+  flex-direction: column;
   min-width: 0;
+  min-height: 0;
+  height: 100%;
+  overflow: hidden;
 }
 
 .tl-panel {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
   min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.tl-panel:not(:has(.tl-head)) {
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+.tl-panel__body {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+.tl-panel:fullscreen {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  height: 100%;
+  padding: 16px 20px;
+  background:
+    radial-gradient(circle at top left, rgba(31, 75, 153, 0.08), transparent 42%),
+    var(--bg);
+}
+
+/* 工具箱内滚动条：细轨、圆角滑块，不用系统默认样式 */
+.tl-shell,
+.tl-shell * {
+  scrollbar-width: thin;
+  scrollbar-color: #b7c0ce transparent;
+}
+
+.tl-shell::-webkit-scrollbar,
+.tl-shell *::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.tl-shell::-webkit-scrollbar-track,
+.tl-shell *::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.tl-shell::-webkit-scrollbar-thumb,
+.tl-shell *::-webkit-scrollbar-thumb {
+  border: 2px solid transparent;
+  border-radius: 99px;
+  background: #c5ceda;
+  background-clip: padding-box;
+}
+
+.tl-shell::-webkit-scrollbar-thumb:hover,
+.tl-shell *::-webkit-scrollbar-thumb:hover {
+  border: 2px solid transparent;
+  background: #8b97ab;
+  background-clip: padding-box;
+}
+
+.tl-shell::-webkit-scrollbar-corner,
+.tl-shell *::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+.tl-shell::-webkit-scrollbar-button,
+.tl-shell *::-webkit-scrollbar-button {
+  display: none;
+  width: 0;
+  height: 0;
 }
 
 .tl-head {
   display: flex;
+  flex-shrink: 0;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
@@ -411,15 +504,17 @@ body {
 @media (max-width: 860px) {
   .tl-shell {
     grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(0, 38%) minmax(0, 1fr);
   }
 
   .tl-side {
-    position: static;
+    height: auto;
   }
 
   .tl-nav {
     flex-direction: row;
     flex-wrap: wrap;
+    align-content: flex-start;
   }
 
   .tl-grid {

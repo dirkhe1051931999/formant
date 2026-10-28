@@ -29,6 +29,7 @@ const TOOLS = [
   { id: "timestamp", title: "时间戳", gate: "tools", group: "encode", load: () => import("./tools-timestamp.js") },
   { id: "json", title: "JSON 美化", gate: "tools", group: "encode", load: () => import("./tools-json.js") },
   { id: "diff", title: "JSON 对比", gate: "tools", group: "encode", load: () => import("./tools-diff.js") },
+  { id: "compare", title: "文件对比", gate: "tools", group: "encode", load: () => import("./tools-compare.js") },
   { id: "image-base64", title: "图片 Base64", gate: "tools", group: "encode", load: () => import("./tools-image-base64.js") },
   { id: "codec", title: "编码转换", gate: "tools", group: "encode", load: () => import("./tools-codec.js") },
   { id: "company", title: "企业查询", gate: "tools", group: "lookup", load: () => import("./tools-company.js") },
@@ -162,6 +163,21 @@ nav.addEventListener("dragend", () => {
   clearDropMarks();
 });
 
+/** 标题栏留在面板顶部，下面的内容单独上下滚动。 */
+function pinHead(section) {
+  const head = section.querySelector(":scope > .tl-head");
+  if (!(head instanceof HTMLElement) || section.querySelector(":scope > .tl-panel__body")) return;
+  const body = document.createElement("div");
+  body.className = "tl-panel__body";
+  let next = head.nextSibling;
+  while (next) {
+    const node = next;
+    next = next.nextSibling;
+    body.append(node);
+  }
+  section.append(body);
+}
+
 /** @param {string} id */
 async function ensurePanel(id) {
   const existing = panels.get(id);
@@ -184,6 +200,7 @@ async function ensurePanel(id) {
       ico.innerHTML = TOOL_ICONS[/** @type {keyof typeof TOOL_ICONS} */ (id)] || "";
       heading.prepend(ico);
     }
+    pinHead(section);
   } catch (error) {
     console.warn("[formant] tool mount failed", id, error);
     const msg = document.createElement("p");

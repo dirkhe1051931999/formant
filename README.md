@@ -1,6 +1,6 @@
 # formant
 
-`formant` 是 Oolaf 的 **Chrome MV3 扩展**：智能翻译、iTab 风格 New Tab、V2EX Plus 自动签到与页面增强、公开 GitHub 文件/目录 ZIP 下载、轻量鼠标手势、轻量代理切换、轻量扩展管理、站点 Cookie/Storage 提取、自动翻页（AutoPagerize）、Telegram Web 受限图片/视频保存、X/Twitter 时间线推文 Google 翻译、Discord 当前频道手动 Google 翻译、elitepvpers 帖子标题与回复 Google 翻译、linux.do 话题列表表格换皮、bbs.hupu.com 帖子与板块简洁版式、freefq.com 帖子一键导出 TXT、huavod.com 控制台解锁、Gemini 生成图下载去水印、mail.google.com 顶栏显示当前邮箱、本地 Axure HTML 原型、DevTools 里的 Vue 组件检查、HLS（m3u8 / m3u / txt）播放、网页滚动截屏、扩展内 Word / Excel / PPT（oolafOffice）、新标签页识图反解提示词、开发者工具箱（二维码、时间戳、JSON 美化 / 对比、图片 Base64、编码转换、油猴脚本）、书签同步到 mono、网页图片另存为 PNG/JPG、JSON / JS / CSS 美化（DevTools + 整页查看器），以及可扩展的俚语词库包。
+`formant` 是 Oolaf 的 **Chrome MV3 扩展**：智能翻译、iTab 风格 New Tab、V2EX Plus 自动签到与页面增强、公开 GitHub 文件/目录 ZIP 下载、轻量鼠标手势、轻量代理切换、轻量扩展管理、站点 Cookie/Storage 提取、自动翻页（AutoPagerize）、Telegram Web 受限图片/视频保存、X/Twitter 时间线推文 Google 翻译、Discord 当前频道手动 Google 翻译、elitepvpers 帖子标题与回复 Google 翻译、linux.do 话题列表表格换皮、bbs.hupu.com 帖子与板块简洁版式、freefq.com 帖子一键导出 TXT、huavod.com 控制台解锁、Gemini 生成图下载去水印、mail.google.com 顶栏显示当前邮箱、本地 Axure HTML 原型、DevTools 里的 Vue 组件检查、HLS（m3u8 / m3u / txt）播放、网页滚动截屏、扩展内 Word / Excel / PPT（oolafOffice）、新标签页识图反解提示词、开发者工具箱（二维码、时间戳、JSON 美化 / 对比、文件对比、图片 Base64、编码转换、油猴脚本）、书签同步到 mono、网页图片另存为 PNG/JPG、JSON / JS / CSS 美化（DevTools + 整页查看器），以及可扩展的俚语词库包。
 
 后端能力依赖 [`aphelios - mono`](../aphelios%20-%20mono) 的 Client API（`x-oolaf-client-key`）与 Admin 里的 Formant 配置组。
 
@@ -76,7 +76,7 @@ formant/                 主扩展（加载此目录为「未打包的扩展」�
   tools-image-prompt.js  识图面板（工具箱内左右布局：上传 / URL / 结果）
   tools-icons.js         工具箱列表与标题图标
   popup-tools.js         popup 顶栏「工具箱」图标：打开 tools.html（工具箱或识图任一开启即显示）
-  tools.html/css         工具箱页壳（左侧列表 + 工作区；hash 路由 #qr #timestamp #json #diff #image-base64 #codec #company #xiangqi #userscript #lighthouse #hls）
+  tools.html/css         工具箱页壳（左侧列表 + 工作区；hash 路由 #qr #timestamp #json #diff #compare #image-base64 #codec #company #xiangqi #userscript #lighthouse #hls）
   tools-lighthouse.js    Lighthouse：右侧报告列表；新建测评 / 报告详情为二级 hash
   lighthouse/NOTICE      未复制官方 Lighthouse 扩展；测评走 PSI API
   tools-panels.css       工具箱各工具专属样式
@@ -91,6 +91,10 @@ formant/                 主扩展（加载此目录为「未打包的扩展」�
   tools-qr.js            二维码生成；tools-qr-decode.js 识别（BarcodeDetector → zxing）
   tools-json.js          JSON 美化界面；tools-json-lib.js 解析 / 排序 / 大整数无损 / 嵌套展开
   tools-diff.js          对比界面；tools-diff-core.js 行 diff + JSON 结构 diff
+  tools-compare.js       文件对比：文件夹 / 单文件 / 图片，拖拽或选择
+  tools-compare-core.js  行 diff、目录配对、像素差异、差异跳转
+  tools-compare-shell.js 对比页骨架与左右拖放
+  tools-compare-history.js 最近对比（IndexedDB 文件句柄，不进配置 JSON）
   tools-company.js       企业背景查询面板；tools-company-lib.js 公开检索地址与最近记录
   tools-hls.js           工具箱 HLS：本机 m3u/txt 列表源，点播放可选 New Tab 卡片或播放页
   tools-xiangqi.js       中国象棋人机面板；规则 / 评估 / 搜索 / 记忆分文件，Worker 里算棋
@@ -251,7 +255,7 @@ CI（`python pack-edge.py --zip-only`）只打 zip，不生成商店图，也不
 - **Axure 原型**：默认开启。用 `file://` 打开本地发布的 Axure HTML 时，在各框架之间转发页面已有的事件消息。没有事件节点的本地文件不挂监听。**未嵌入** Axure RP Extension。浏览器需允许扩展访问文件 URL。
 - **Vue 组件**：默认开启。DevTools 增加「Vue」面板，Vue 3 和 Vue 2 都能看组件树、props / data，以及 Pinia 或 Vuex 的当前状态，并可高亮组件。当前标签检测到 Vue 时，工具栏 formant 图标右上角加绿色 V。**未嵌入** Vue.js devtools 的打包文件，也不改工具栏 popup。
 - **HLS 播放**：默认开启。主框架打开路径以 `.m3u8`、`.m3u` 或 IPTV `.txt` 结尾的地址时，改在扩展内播放：直链用 hls.js，同名频道合并后在右侧抽屉选台，多线路失败自动切源。列表源在工具箱 `tools.html#hls` 配置（本机 `formantHlsSources`），点播放可选 New Tab 第四卡或独立播放页，也可随「同步」里的本机配置 JSON 带走。总开关仍在 `option.html#features`。普通文本 `.txt` 先看内容，不像频道表就不会劫持。控件叠在画面上（点画面播停、空闲藏底栏、双击全屏）。可调倍速和旋转，左右键快进快退，并可把当前流存成 MP4。地址栏关键字 `m3u8` 同样打开播放页。**未嵌入** Native HLS Playback / DPlayer，也不带 jQuery。
-- **工具箱**：默认开启（`features.tools.enabled`）。入口是 popup 顶栏「工具箱」图标（替换了原来的「识图」图标，图标总数不变），点击在新标签页打开 `tools.html`，左侧列表含二维码等到企业查询、象棋、油猴、Lighthouse、HLS，以及识图。详见下文「工具箱（轻量）」。
+- **工具箱**：默认开启（`features.tools.enabled`）。入口是 popup 顶栏「工具箱」图标（替换了原来的「识图」图标，图标总数不变），点击在新标签页打开 `tools.html`，左侧列表含二维码、文件对比，再到企业查询、象棋、油猴、Lighthouse、HLS，以及识图。详见下文「工具箱（轻量）」。
 - **油猴**：默认开启（`features.userscript.enabled`）。入口在工具箱「油猴」，右侧是已安装脚本列表，可导入 / 搜索 Greasy Fork / 管理。兼容常见 UserScript 头与 GM API。**未嵌入** Tampermonkey。新增权限 `userScripts`。
 - **识图**：默认开启。入口收进 popup 顶栏「工具箱」页的左侧列表（也可只开识图、关掉工具箱，此时图标仍显示，列表只剩识图），识图是工具箱页内的左右布局面板（`#image-prompt`，和二维码同款），不再有独立页面，不在 popup 里做识别，也不注入网页、不加右键菜单。页内上传或填写图片 URL 后，用 `option.html#image-prompt` 里的 OpenAI 兼容视觉模型反解提示词。中文和英文各是一段按画面分区写的长提示（可见文字原样引用，圈选、打码、水印都算进画面），另附 JSON。配置存在 `chrome.storage.local.formantImagePrompt`（Base URL、API Key、Model），**不走 mono**，密钥不进仓库。换电脑时在 `option.html#sync` 导出本机钥匙 JSON。
 
@@ -494,12 +498,13 @@ CI（`python pack-edge.py --zip-only`）只打 zip，不生成商店图，也不
 
 ![识图：左右布局反解提示词](docs/image-prompt.gif)
 
-- 入口：popup 顶栏「工具箱」图标 → 新标签页 `tools.html`。总开关 `features.tools.enabled`（`option.html#features`，默认开启，不同步到 mono）。关闭后这些工具隐藏；若识图或 HLS 仍开启，图标与页面保留且只显示对应项；都关则图标隐藏。不改 `action.default_popup`，不走 mono。油猴单独新增 `userScripts` 权限，见下文「油猴（轻量）」。
+- 入口：popup 顶栏「工具箱」图标 → 新标签页 `tools.html`。页面外壳不滚动：左侧目录滚动；右侧标题栏固定在顶部，标题下面的内容上下滚动。总开关 `features.tools.enabled`（`option.html#features`，默认开启，不同步到 mono）。关闭后这些工具隐藏；若识图或 HLS 仍开启，图标与页面保留且只显示对应项；都关则图标隐藏。不改 `action.default_popup`，不走 mono。油猴单独新增 `userScripts` 权限，见下文「油猴（轻量）」。
 - **来源**：功能范围参考 FeHelper（前端助手）2026.7.28（MIT）的 6 个工具，全部用原生 JS 重写；**未带入** jQuery、Vue、evalCore、AI 功能、条形码、捐赠入口。`$` 即 `document.querySelector`，另有 `$$`（`querySelectorAll`）。第三方库只有 qrcode-generator 1.4.4（MIT）和 zxing（Apache-2.0），见 `formant/tools/vendor/NOTICE`。企业查询是 formant 自研检索入口，**未嵌入**「企业背景信息查询」扩展的 Vue 打包、全站 content、DNR 或独立 popup。象棋人机参考 [chinese-chess-ai](https://github.com/shibing624/chinese-chess-ai) 的 αβ 与位置表（Apache-2.0，见 `xiangqi/NOTICE`），**未嵌入**其页面、样式和音效。
 - **二维码**：生成（UTF-8，尺寸 / 前后景色 / 纠错 L-M-Q-H / 可选中心 logo，加 logo 自动用 H）、复制 PNG、下载 PNG；识别（选文件 / 拖拽 / 粘贴截图 / 图片 URL，优先浏览器 `BarcodeDetector`，没有则用 zxing，多种白边与缩放重试）。
 - **时间戳**：当前时间可暂停；时间戳（自动判断秒 / 毫秒）↔ 日期；日期 → 时间戳；Windows FILETIME 互转；GMT-12…+12 与本机时区；世界时间表。
 - **JSON 美化**：粘贴即格式化；缩进 2 / 4 / Tab，键排序（默认 / 升 / 降），压缩，Unicode → 中文，URL 解码，展开嵌套 JSON（字符串里的 JSON），兼容 JSONP 与 BOM；超过 2^53 的整数在文本里保持原样（树视图里以字符串显示）；报错带行列。输出区有「文本」与「树视图」，树视图复用网页 JSON 查看器 `viewer.js`（折叠 / 搜索 / 复制路径）。
 - **JSON 对比**：JSON 模式先解析并（可选）忽略键顺序，给出新增 / 删除 / 修改清单（带路径与类型变化）和左右对齐行高亮；纯文本模式按行对比。
+- **文件对比**：左右各放一个文件或一个文件夹（拖入，或点「文件 / 文件夹」）。文件夹是左右两列，每列有名称、大小、日期，同一行是同一个相对路径，缺的一侧留空；点一行看该文件。文本按行对齐，可忽略空白；大文件在后台逐行对比，只画可见行，不按体积截断。「隐藏相同」会藏起相同的行和相同的文件。「交换」对调左右，「刷新」按磁盘上的最新内容重读。上下箭头在文本里跳到上一处 / 下一处不同的行，在文件夹列表里跳到上一个 / 下一个不同的文件（只定位，不打开），快捷键是 Alt+↑ / Alt+↓。从文件回到文件夹列表按 Esc；全屏时 Esc 仍先退出全屏。文件夹列表可按文件名筛选，不改变「全部 / 有差异 / 仅一侧」。「复制差异」把当前列表里不同、仅左、仅右的路径复制成文本。排除默认跳过 `node_modules`、`.git`、`dist`，还可以再写 `*.log` 或目录名，用逗号或空格分隔；这些开关记在本机 `chrome.storage.local`（`formantCompareExclude`），不进配置 JSON。取消排除后，没有文件夹句柄时需要重新拖入才会读到那些目录。文本对比可选手动编码：自动、UTF-8、GBK。标题栏「全屏」铺满屏幕，再点或按 Esc 退出。差异色用 GitHub gist 的红删绿增。拖入或用按钮选择过的对比会出现在「最近」，点击直接打开，记录在本机 IndexedDB，不进配置 JSON，不同步。图片可并排、看差异像素、滑动对照。二进制只比较大小和内容摘要。一次最多 4000 个文件。只在本机读取，不上传。**未嵌入** WinMerge / Beyond Compare。
 - **图片 Base64**：图片 → DataURI（选文件 / 拖拽 / 粘贴 / URL；显示原图与 DataURI 体积；可复制 DataURI / 纯 Base64 / CSS `url()` / `<img>`）；Base64 / DataURI → 图片预览与下载（纯 Base64 自动嗅探 MIME）。
 - **编码转换**：Unicode、URL、UTF-16（`\x` / `\u`）、Base64（UTF-8 安全，识别 URL-safe）、十六进制、HTML 实体（普通 / 深度转义与解码）、URL 参数解析（表格）、JWT 解码（只解码不验签）、字符串转义 / 反转义、MD5、SHA-1、SHA-256、Gzip 压缩 / 解压（原生 `CompressionStream`，结果为 Base64）。选一种方式即转换，输入变化同步更新。未做 AI 解码与 Proto Hex。
 - **企业查询**：填企业名或 18 位统一社会信用代码，在天眼查 / 企查查 / 爱企查 / 启信宝等公开检索页打开新标签（回车默认天眼查，「常用四站」一次开四个）。可读取当前网页选区。最近关键字只存 `chrome.storage.local.formantCompanySearch`，不同步、不进 option-keys。不抓站、不注入网页、不加右键菜单。
@@ -512,7 +517,8 @@ CI（`python pack-edge.py --zip-only`）只打 zip，不生成商店图，也不
 #### 工具箱冒烟清单
 
 1. 重载 formant：popup 顶栏仍是 6 个图标不挤，其中「工具箱」图标打开新标签页；翻译、书签、站点数据、扩展管理、设置照常。
-2. 工具箱页左侧按「编码 / 检索 / 网页 / 休闲」分组，含二维码等到「企业查询」「油猴」「Lighthouse」「HLS」「象棋」以及「识图」，每项带图标、没有二级说明；组内拖动可调整顺序，刷新后保持；点「识图」在页内左右布局里上传图片出结果。
+2. 工具箱页左侧按「编码 / 检索 / 网页 / 休闲」分组，含二维码、文件对比，再到「企业查询」「油猴」「Lighthouse」「HLS」「象棋」以及「识图」，每项带图标、没有二级说明；组内拖动可调整顺序，刷新后保持；点「识图」在页内左右布局里上传图片出结果。
+2h. 文件对比：左右拖入两个文本应出现左右对齐的行，删改是浅红、新增是浅绿；「隐藏相同」只留有差异的行和文件；上下箭头或 Alt+↑ / Alt+↓ 跳到上一处 / 下一处差异，从文件回到列表按 Esc；编码可选自动、UTF-8、GBK；「交换」对调左右；「刷新」重读磁盘；标题栏「全屏」铺满屏幕，再点或按 Esc 退出；「最近」里点一条应直接打开。两张图片可切换并排、差异、滑动；两个文件夹应分成左右两列（名称、大小、日期），同一行对同一个相对路径，仅一侧的行另一边是空的，默认不列出 `node_modules`、`.git`、`dist`；文件名框只缩小当前列表；「复制差异」复制当前列表里的差异路径；额外排除如 `*.log` 回车后生效。
 2f. 油猴：右侧是脚本列表；点「搜索」进入二级页，可按关键字或当前站查 Greasy Fork；安装后回到列表，刷新匹配页应能跑脚本。
 2g. Lighthouse：右侧是报告列表；点「新建测评」对一个公开 https 页跑完后应出现四项分数，并可打开详情。localhost 应提示不能测。
 2c. 企业查询：输入公司名后点天眼查应新开检索页；「读当前页选区」能填入其它 http(s) 标签里选中的字。
