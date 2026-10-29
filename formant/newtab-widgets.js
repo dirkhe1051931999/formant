@@ -1,3 +1,4 @@
+import { mountPug } from "./newtab-pet.js";
 import { weatherIconSvg } from "./weather-icons.js";
 
 function weekdayLabel(dateStr) {
@@ -71,12 +72,12 @@ function formatWeatherAge(iso) {
  * @param {{ weatherAt?: string, widgetsAt?: string }} [meta]
  */
 export function renderWeatherWidget(data, meta = {}) {
-  const card = document.createElement("article");
-  card.className = "widget";
-  card.dataset.widget = "weather";
-  card.innerHTML = widgetHead("天气", "weather");
+  const card = document.createElement("div");
+  card.className = "wx-flip__face wx-flip__face--weather";
+  card.innerHTML = widgetHead("天气", "weather", "", widgetFlipButton("切换到万年历"));
   if (!data || typeof data !== "object") {
     card.innerHTML += `<div class="widget-empty">暂无数据</div>`;
+    appendPug(card, null);
     return card;
   }
   const w = /** @type {Record<string, any>} */ (data);
@@ -113,7 +114,19 @@ export function renderWeatherWidget(data, meta = {}) {
         })
         .join("")}
     </div>`;
+  appendPug(card, w);
   return card;
+}
+
+/**
+ * @param {HTMLElement} card
+ * @param {Record<string, unknown> | null} weather
+ */
+function appendPug(card, weather) {
+  const yard = document.createElement("div");
+  yard.className = "weather-pet";
+  card.append(yard);
+  mountPug(yard, weather);
 }
 
 /** Update only the relative age label without re-fetching. */

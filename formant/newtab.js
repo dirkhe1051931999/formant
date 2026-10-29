@@ -38,7 +38,8 @@ import {
   loadFaviconCache,
   reconcileFaviconCache,
 } from "./favicon-cache.js";
-import { renderWeatherWidget, tickWeatherAgeLabels } from "./newtab-widgets.js";
+import { tickWeatherAgeLabels } from "./newtab-widgets.js";
+import { loadWxFace, renderWeatherCalendarWidget } from "./newtab-wx.js";
 import {
   exchangeCacheMatches,
   getExchangePrefs,
@@ -91,6 +92,7 @@ const itemFaviconPreview = /** @type {HTMLImageElement} */ (document.getElementB
 const itemFormError = document.getElementById("itemFormError");
 const itemDialogBusyEl = document.getElementById("itemDialogBusy");
 const itemDialogBusyLabel = document.getElementById("itemDialogBusyLabel");
+const TILE_EXT_ICON = `<svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M6.25 3.5H4.25A1.75 1.75 0 0 0 2.5 5.25v6.5A1.75 1.75 0 0 0 4.25 13.5h6.5a1.75 1.75 0 0 0 1.75-1.75v-2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M9 3.5h4.5V8M13.5 3.5 7.25 9.75" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 
 const els = {
   itemName: /** @type {HTMLInputElement} */ (document.getElementById("itemName")),
@@ -616,17 +618,9 @@ function mergeItems(sourceId, targetId) {
 
 function renderTile(item, { inFolder = false, folderId = null } = {}) {
   const isLink = item.type === "icon" || item.type === "text";
-  const el = document.createElement(isLink ? "a" : "button");
+  const el = document.createElement(isLink ? "div" : "button");
   el.className = "tile";
-  if (isLink) {
-    el.href = item.url || "#";
-    el.rel = "noreferrer";
-    if (item.url && home.baseConfig.openLinksInNewWindow) {
-      el.target = "_blank";
-    }
-  } else {
-    el.type = "button";
-  }
+  if (!isLink) el.type = "button";
 
   const icon = document.createElement("div");
   icon.className = "tile__icon";
@@ -647,7 +641,40 @@ function renderTile(item, { inFolder = false, folderId = null } = {}) {
   const name = document.createElement("div");
   name.className = "tile__name";
   name.textContent = item.name;
-  el.append(icon, name);
+
+  if (isLink) {
+    const wrap = document.createElement("div");
+    wrap.className = "tile__icon-wrap";
+    wrap.append(icon);
+    if (item.url) {
+      const ext = document.createElement("button");
+      ext.type = "button";
+      ext.className = "tile__ext";
+      ext.title = "新标签打开";
+      ext.setAttribute("aria-label", `新标签打开 ${item.name}`);
+      ext.innerHTML = TILE_EXT_ICON;
+      ext.addEventListener("click", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        if (suppressTileClick) {
+          suppressTileClick = false;
+          return;
+        }
+        window.open(item.url, "_blank", "noopener,noreferrer");
+      });
+      wrap.append(ext);
+    }
+    const hit = document.createElement("a");
+    hit.className = "tile__hit";
+    hit.href = item.url || "#";
+    hit.rel = "noreferrer";
+    hit.draggable = false;
+    hit.setAttribute("aria-label", item.name);
+    if (item.url && home.baseConfig.openLinksInNewWindow) hit.target = "_blank";
+    el.append(wrap, name, hit);
+  } else {
+    el.append(icon, name);
+  }
 
   el.addEventListener("contextmenu", (event) => {
     event.preventDefault();
@@ -655,6 +682,7 @@ function renderTile(item, { inFolder = false, folderId = null } = {}) {
   });
 
   el.addEventListener("click", (event) => {
+    if (event.target instanceof Element && event.target.closest(".tile__ext")) return;
     if (suppressTileClick) {
       event.preventDefault();
       suppressTileClick = false;
@@ -724,13 +752,20 @@ function paintWidgets(cache = {}) {
     let words = [];
     /** @type {"holidays" | "exchange"} */
     let hxFace = "holidays";
+    /** @type {"weather" | "calendar"} */
+    let wxFace = "weather";
     try {
-      [face, words, hxFace] = await Promise.all([loadVocabFace(), loadStudyWords(), loadHxFace()]);
+      [face, words, hxFace, wxFace] = await Promise.all([
+        loadVocabFace(),
+        loadStudyWords(),
+        loadHxFace(),
+        loadWxFace(),
+      ]);
     } catch (error) {
       console.warn("[formant] study words load failed", error);
     }
     if (seq !== widgetPaintSeq) return;
-    paintWidgetsNow(cache, { face, words }, hxFace);
+    paintWidgetsNow(cache, { face, words }, hxFace, wxFace);
   })();
 }
 
@@ -738,15 +773,21 @@ function paintWidgets(cache = {}) {
  * @param {{ weather?: unknown, exchange?: unknown, holidays?: unknown, vocab?: unknown, weatherAt?: string, widgetsAt?: string }} [cache]
  * @param {{ face: "hot" | "study", words: import("./study-words.js").StudyWord[] }} study
  * @param {"holidays" | "exchange"} [hxFace]
+ * @param {"weather" | "calendar"} [wxFace]
  */
-function paintWidgetsNow(cache = {}, study, hxFace = "holidays") {
+function paintWidgetsNow(cache = {}, study, hxFace = "holidays", wxFace = "weather") {
   const weatherAt = cache.weatherAt || cache.widgetsAt || "";
   if (!widgetRow) return;
   const hlsCard = widgetRow.querySelector('[data-widget="hls"]') || renderHlsWidget();
   widgetRow.replaceChildren(
-    renderWeatherWidget(cache.weather || null, {
-      weatherAt,
-      widgetsAt: cache.widgetsAt || "",
+    renderWeatherCalendarWidget({
+      weather: cache.weather || null,
+      weatherMeta: {
+        weatherAt,
+        widgetsAt: cache.widgetsAt || "",
+      },
+      holidays: cache.holidays || null,
+      face: wxFace,
     }),
     renderHolidayExchangeWidget({
       holidays: cache.holidays || null,

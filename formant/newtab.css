@@ -298,6 +298,375 @@ body {
   height: 15px;
 }
 
+.widget--wx {
+  padding: 0;
+  overflow: visible;
+}
+
+.widget--wx.is-flipping {
+  z-index: 4;
+}
+
+.wx-flip {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+  perspective: 900px;
+}
+
+.wx-flip__inner {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  min-height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.55s cubic-bezier(0.4, 0.2, 0.2, 1);
+}
+
+.wx-flip.is-calendar .wx-flip__inner {
+  transform: rotateY(180deg);
+}
+
+.wx-flip.is-instant .wx-flip__inner {
+  transition: none;
+}
+
+.wx-flip__face {
+  grid-area: 1 / 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 100%;
+  padding: 16px;
+  border-radius: var(--radius-lg);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.wx-flip__face--calendar {
+  transform: rotateY(180deg);
+  pointer-events: none;
+}
+
+.wx-flip.is-calendar .wx-flip__face--weather {
+  pointer-events: none;
+}
+
+.wx-flip.is-calendar .wx-flip__face--calendar {
+  pointer-events: auto;
+}
+
+.wx-flip:not(.is-calendar) .wx-flip__face--calendar,
+.wx-flip.is-calendar .wx-flip__face--weather {
+  position: absolute;
+  inset: 0;
+}
+
+.cal-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.cal-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  margin-bottom: 4px;
+  flex: 0 0 auto;
+}
+
+.cal-nav__btn,
+.cal-nav__title {
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  cursor: pointer;
+}
+
+.cal-nav__btn {
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border-radius: 7px;
+  color: var(--muted);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cal-nav__btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+.cal-nav__btn:hover:not(:disabled),
+.cal-nav__title:hover {
+  background: rgba(26, 35, 48, 0.08);
+  color: var(--ink);
+}
+
+.cal-nav__btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.cal-nav__title {
+  min-width: 7.5em;
+  padding: 2px 6px;
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.cal-grid {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  grid-template-rows: 14px repeat(6, minmax(0, 1fr));
+  gap: 1px 0;
+}
+
+.cal-dow {
+  text-align: center;
+  color: var(--faint);
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+.cal-day {
+  appearance: none;
+  margin: 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  min-width: 0;
+  padding: 1px 0 2px;
+  cursor: pointer;
+  line-height: 1.15;
+  text-align: center;
+}
+
+.cal-day:hover {
+  background: rgba(26, 35, 48, 0.06);
+}
+
+.cal-day.is-rest {
+  background: rgba(180, 35, 24, 0.1);
+  border-radius: 0;
+}
+
+.cal-day.is-rest:hover {
+  background: rgba(180, 35, 24, 0.16);
+}
+
+.cal-day.is-rest-start {
+  border-radius: 6px 0 0 6px;
+}
+
+.cal-day.is-rest-end {
+  border-radius: 0 6px 6px 0;
+}
+
+.cal-day.is-rest-only {
+  border-radius: 6px;
+}
+
+.cal-day__n,
+.cal-day__sub {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.cal-day__n {
+  font-size: 12px;
+  font-weight: 560;
+  font-variant-numeric: tabular-nums;
+}
+
+.cal-day__sub {
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.cal-day.is-fest .cal-day__sub {
+  color: var(--accent);
+}
+
+.cal-day.is-term .cal-day__sub {
+  color: #146c43;
+}
+
+.cal-day.is-rest .cal-day__n {
+  color: var(--danger);
+}
+
+.cal-day.is-out {
+  opacity: 0.38;
+}
+
+.cal-day.is-today {
+  background: rgba(31, 75, 153, 0.16);
+}
+
+.cal-day.is-today.is-rest {
+  background: rgba(180, 35, 24, 0.18);
+}
+
+.cal-day.is-selected {
+  box-shadow: inset 0 0 0 1px rgba(31, 75, 153, 0.45);
+}
+
+.cal-day:focus-visible,
+.cal-nav__btn:focus-visible,
+.cal-nav__title:focus-visible {
+  outline: 2px solid rgba(31, 75, 153, 0.45);
+  outline-offset: 1px;
+}
+
+.cal-month-dialog {
+  width: min(320px, calc(100vw - 28px));
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 0;
+  background: #fff;
+  color: var(--ink);
+  box-shadow: 0 24px 70px rgba(30, 45, 70, 0.16);
+  opacity: 0;
+  transform: translateY(10px) scale(0.97);
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease,
+    overlay 0.2s ease allow-discrete,
+    display 0.2s allow-discrete;
+}
+
+.cal-month-dialog[open] {
+  opacity: 1;
+  transform: none;
+}
+
+@starting-style {
+  .cal-month-dialog[open] {
+    opacity: 0;
+    transform: translateY(10px) scale(0.97);
+  }
+}
+
+.cal-month-dialog.is-closing {
+  opacity: 0;
+  transform: translateY(8px) scale(0.98);
+}
+
+.cal-month-dialog::backdrop {
+  background: rgba(230, 236, 244, 0.55);
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  transition:
+    opacity 0.2s ease,
+    overlay 0.2s ease allow-discrete,
+    display 0.2s allow-discrete;
+}
+
+.cal-month-dialog[open]::backdrop {
+  opacity: 1;
+}
+
+@starting-style {
+  .cal-month-dialog[open]::backdrop {
+    opacity: 0;
+  }
+}
+
+.cal-month-dialog.is-closing::backdrop {
+  opacity: 0;
+}
+
+.cal-month-dialog__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 12px 14px 4px 10px;
+}
+
+.cal-month-dialog__year {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.cal-month-dialog__head h3 {
+  margin: 0;
+  min-width: 4.5em;
+  text-align: center;
+  font-size: 15px;
+  font-weight: 650;
+}
+
+.cal-month-dialog__today {
+  border: 0;
+  border-radius: 8px;
+  background: rgba(31, 75, 153, 0.1);
+  color: var(--accent);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.cal-month-dialog__today:hover {
+  background: rgba(31, 75, 153, 0.16);
+}
+
+.cal-month-dialog__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  padding: 10px 16px 16px;
+}
+
+.cal-month-dialog__m {
+  height: 40px;
+  border: 0;
+  border-radius: 10px;
+  background: #f4f6f9;
+  color: var(--ink);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.cal-month-dialog__m:hover {
+  background: #e8eef9;
+}
+
+.cal-month-dialog__m.is-current {
+  background: rgba(31, 75, 153, 0.12);
+  color: var(--accent);
+  font-weight: 650;
+}
+
+.cal-month-dialog__m.is-today:not(.is-current) {
+  box-shadow: inset 0 0 0 1px rgba(31, 75, 153, 0.45);
+}
+
+.cal-month-dialog__m:focus-visible,
+.cal-month-dialog__today:focus-visible {
+  outline: 2px solid rgba(31, 75, 153, 0.45);
+  outline-offset: 1px;
+}
+
 .widget--hls.is-on {
   padding: 0;
   background: #101826;
@@ -570,6 +939,529 @@ body {
   font-size: 11px;
   font-weight: 550;
   font-variant-numeric: tabular-nums;
+}
+
+.wx-flip__face--weather .widget__head,
+.wx-flip__face--weather .weather-main,
+.wx-flip__face--weather .weather-days,
+.wx-flip__face--weather .widget-empty {
+  flex: 0 0 auto;
+}
+
+.weather-pet {
+  flex: 1 1 auto;
+  position: relative;
+  min-height: 48px;
+  margin-top: 8px;
+  overflow: visible;
+  user-select: none;
+  touch-action: none;
+}
+
+.pug {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 42px;
+  height: 34px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: grab;
+  z-index: 1;
+  overflow: visible;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.pug:active {
+  cursor: grabbing;
+}
+
+.pug:focus {
+  outline: none;
+}
+
+.pug:focus-visible {
+  outline: 2px solid rgba(31, 75, 153, 0.45);
+  outline-offset: 2px;
+}
+
+.pug-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-origin: 50% 80%;
+}
+
+.pug.is-left .pug-inner {
+  transform: scaleX(-1);
+}
+
+.pug-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.pug-shadow {
+  fill: rgba(26, 35, 48, 0.18);
+}
+
+.pug-torso,
+.pug-skull,
+.pug-leg--hn rect,
+.pug-leg--fn rect {
+  fill: #d7a56b;
+}
+
+.pug-tail path:first-child,
+.pug-leg--hf rect,
+.pug-leg--ff rect {
+  fill: #c08648;
+}
+
+.pug-belly {
+  fill: #eed6b2;
+}
+
+.pug-leg ellipse,
+.pug-ear,
+.pug-mask,
+.pug-pupil,
+.pug-nose {
+  fill: #2b211c;
+}
+
+.pug-muzzle {
+  fill: #6a4c3b;
+}
+
+.pug-eye-w {
+  fill: #f6f1e8;
+}
+
+.pug-glint {
+  fill: #fff;
+}
+
+.pug-tongue {
+  fill: #e07a78;
+  opacity: 0;
+}
+
+.pug-smile,
+.pug-eye-shut {
+  fill: none;
+  stroke: #1a1410;
+  stroke-width: 1.2;
+  stroke-linecap: round;
+}
+
+.pug-eye-shut {
+  display: none;
+}
+
+.pug-leg,
+.pug-tail,
+.pug-figure,
+.pug-head {
+  transform-box: fill-box;
+}
+
+.pug-leg {
+  transform-origin: 50% 0%;
+}
+
+.pug-tail {
+  transform-origin: 90% 80%;
+}
+
+.pug.is-walk .pug-figure {
+  animation: pug-bob 0.38s ease-in-out infinite;
+}
+
+.pug.is-walk .pug-leg--hf,
+.pug.is-walk .pug-leg--fn {
+  animation: pug-step 0.38s ease-in-out infinite;
+}
+
+.pug.is-walk .pug-leg--hn,
+.pug.is-walk .pug-leg--ff {
+  animation: pug-step 0.38s ease-in-out infinite reverse;
+}
+
+.pug.is-walk .pug-tail,
+.pug.is-pet .pug-tail,
+.pug.is-tease .pug-tail {
+  animation: pug-wag 0.34s ease-in-out infinite;
+}
+
+.pug.is-pet .pug-tail {
+  animation-duration: 0.18s;
+}
+
+.pug.is-sit .pug-figure {
+  transform: translateY(3px);
+}
+
+.pug.is-sit .pug-leg {
+  transform: scaleY(0.42) translateY(4px);
+}
+
+.pug.is-pet .pug-eye-w,
+.pug.is-pet .pug-pupil,
+.pug.is-pet .pug-glint {
+  display: none;
+}
+
+.pug.is-pet .pug-eye-shut,
+.pug.is-pet .pug-tongue {
+  display: block;
+  opacity: 1;
+}
+
+.pug.is-tease .pug-inner {
+  animation: pug-hop 0.55s ease;
+}
+
+.pug.is-tease .pug-tongue {
+  opacity: 1;
+}
+
+.pug.is-mood-hot .pug-tongue {
+  display: block;
+  opacity: 1;
+}
+
+.pug.is-mood-hot .pug-figure {
+  animation: pug-pant 0.34s ease-in-out infinite;
+  transform-origin: 50% 100%;
+}
+
+.pug-sky {
+  display: none;
+  position: absolute;
+  left: 46%;
+  top: -13px;
+  width: 24px;
+  height: 26px;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.pug.is-mood-rain .pug-sky,
+.pug.is-mood-snow .pug-sky {
+  display: block;
+}
+
+.pug-cloud {
+  display: block;
+  width: 24px;
+  height: 12px;
+  fill: #c5cdd6;
+  filter: drop-shadow(0 1px 1px rgba(26, 35, 48, 0.12));
+}
+
+.pug-drop,
+.pug-flake {
+  position: absolute;
+  top: 10px;
+  opacity: 0;
+}
+
+.pug.is-mood-rain .pug-drop {
+  width: 2px;
+  height: 6px;
+  border-radius: 1px;
+  background: #4a7ab5;
+  animation: pug-precip 0.7s linear infinite;
+}
+
+.pug.is-mood-snow .pug-flake {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 0 1px rgba(148, 163, 184, 0.55);
+  animation: pug-precip-drift 1.15s linear infinite;
+}
+
+.pug-sky .pug-drop:nth-child(2),
+.pug-sky .pug-flake:nth-child(5) {
+  left: 6px;
+}
+
+.pug-sky .pug-drop:nth-child(3),
+.pug-sky .pug-flake:nth-child(6) {
+  left: 11px;
+  animation-delay: 0.22s;
+}
+
+.pug-sky .pug-drop:nth-child(4),
+.pug-sky .pug-flake:nth-child(7) {
+  left: 16px;
+  animation-delay: 0.44s;
+}
+
+.pug.is-mood-sunny.is-walk:not(.is-tease):not(.is-flinch) .pug-inner {
+  animation: pug-skip 0.46s ease infinite;
+}
+
+.pug.is-mood-sunny.is-left.is-walk:not(.is-tease):not(.is-flinch) .pug-inner {
+  animation: pug-skip-left 0.46s ease infinite;
+}
+
+.pug.is-mood-cold .pug-figure,
+.pug.is-mood-cold.is-walk .pug-figure,
+.pug.is-mood-cold.is-sit .pug-figure {
+  animation: pug-shiver 0.12s linear infinite;
+}
+
+.pug.is-mood-fog.is-walk .pug-figure {
+  animation: pug-bob 0.7s ease-in-out infinite;
+}
+
+.pug.is-flinch .pug-inner {
+  animation: pug-hop 0.5s ease;
+}
+
+.pug.is-left.is-flinch .pug-inner {
+  animation: pug-hop-left 0.5s ease;
+}
+
+.pug.is-flinch .pug-bark {
+  animation: pug-bark-pop 0.7s ease;
+}
+
+.pug-bark {
+  position: absolute;
+  left: 62%;
+  top: -10px;
+  padding: 1px 5px;
+  border-radius: 8px;
+  background: #fff;
+  color: var(--ink);
+  font-size: 9px;
+  font-weight: 650;
+  line-height: 1.4;
+  box-shadow: 0 4px 12px rgba(26, 35, 48, 0.12);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(4px) scale(0.86);
+}
+
+.pug.is-left .pug-bark {
+  left: auto;
+  right: 62%;
+}
+
+.pug.is-tease .pug-bark {
+  animation: pug-bark-pop 0.7s ease;
+}
+
+.pug-heart {
+  position: absolute;
+  top: 2px;
+  color: #e25b67;
+  font-size: 9px;
+  line-height: 1;
+  pointer-events: none;
+  animation: pug-heart-up 0.7s ease forwards;
+}
+
+@keyframes pug-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-2px);
+  }
+}
+
+@keyframes pug-skip {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  38% {
+    transform: translateY(-11px);
+  }
+}
+
+@keyframes pug-skip-left {
+  0%,
+  100% {
+    transform: scaleX(-1) translateY(0);
+  }
+  38% {
+    transform: scaleX(-1) translateY(-11px);
+  }
+}
+
+@keyframes pug-pant {
+  0%,
+  100% {
+    transform: scaleY(1);
+  }
+  50% {
+    transform: scaleY(0.86) translateY(3px);
+  }
+}
+
+@keyframes pug-precip {
+  0% {
+    opacity: 0;
+    transform: translateY(0);
+  }
+  15% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
+@keyframes pug-precip-drift {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0);
+  }
+  12% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(3px, 14px);
+  }
+}
+
+@keyframes pug-shiver {
+  0%,
+  100% {
+    transform: translate(0, 4px);
+  }
+  25% {
+    transform: translate(-3px, 4px);
+  }
+  75% {
+    transform: translate(3px, 4px);
+  }
+}
+
+@keyframes pug-step {
+  0%,
+  100% {
+    transform: rotate(-16deg);
+  }
+  50% {
+    transform: rotate(14deg);
+  }
+}
+
+@keyframes pug-wag {
+  0%,
+  100% {
+    transform: rotate(-10deg);
+  }
+  50% {
+    transform: rotate(16deg);
+  }
+}
+
+@keyframes pug-hop {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  32% {
+    transform: translateY(-7px);
+  }
+  55% {
+    transform: translateY(0);
+  }
+  72% {
+    transform: translateY(-3px);
+  }
+}
+
+.pug.is-left.is-tease .pug-inner {
+  animation: pug-hop-left 0.55s ease;
+}
+
+@keyframes pug-hop-left {
+  0%,
+  100% {
+    transform: scaleX(-1) translateY(0);
+  }
+  32% {
+    transform: scaleX(-1) translateY(-7px);
+  }
+  55% {
+    transform: scaleX(-1) translateY(0);
+  }
+  72% {
+    transform: scaleX(-1) translateY(-3px);
+  }
+}
+
+@keyframes pug-bark-pop {
+  0% {
+    opacity: 0;
+    transform: translateY(6px) scale(0.8);
+  }
+  18%,
+  62% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.92);
+  }
+}
+
+@keyframes pug-heart-up {
+  0% {
+    opacity: 0;
+    transform: translateY(6px) scale(0.7);
+  }
+  24% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-12px) scale(1.12);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pug.is-walk .pug-figure,
+  .pug.is-walk .pug-leg--hf,
+  .pug.is-walk .pug-leg--fn,
+  .pug.is-walk .pug-leg--hn,
+  .pug.is-walk .pug-leg--ff,
+  .pug.is-walk .pug-tail,
+  .pug.is-pet .pug-tail,
+  .pug.is-tease .pug-tail,
+  .pug.is-tease .pug-inner,
+  .pug.is-left.is-tease .pug-inner,
+  .pug.is-mood-hot .pug-figure,
+  .pug.is-mood-sunny.is-walk:not(.is-tease):not(.is-flinch) .pug-inner,
+  .pug.is-mood-sunny.is-left.is-walk:not(.is-tease):not(.is-flinch) .pug-inner,
+  .pug.is-mood-cold .pug-figure,
+  .pug.is-mood-cold.is-walk .pug-figure,
+  .pug.is-mood-cold.is-sit .pug-figure,
+  .pug.is-mood-rain .pug-drop,
+  .pug.is-mood-snow .pug-flake,
+  .pug.is-flinch .pug-inner,
+  .pug.is-left.is-flinch .pug-inner {
+    animation: none;
+  }
 }
 
 .holiday-layout {
@@ -1380,6 +2272,64 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
+.tile__hit {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  color: inherit;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.tile__icon-wrap {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  width: max-content;
+  flex: 0 0 auto;
+  pointer-events: none;
+  transition: transform 0.18s ease;
+}
+
+.tile__ext {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 2;
+  box-sizing: border-box;
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.94);
+  color: var(--muted);
+  box-shadow: 0 2px 8px rgba(30, 45, 70, 0.16);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  line-height: 0;
+  pointer-events: auto;
+  transform: translate(42%, -42%);
+  transition: color 0.15s ease, background 0.15s ease;
+}
+
+.tile__ext svg {
+  width: 11px;
+  height: 11px;
+}
+
+.tile__ext:hover {
+  color: var(--accent);
+  background: #fff;
+}
+
+.tile__ext:focus-visible {
+  outline: 2px solid rgba(31, 75, 153, 0.45);
+  outline-offset: 1px;
+}
+
 .tile__icon,
 .tile-add__icon {
   width: 64px;
@@ -1400,9 +2350,25 @@ body {
   box-shadow: 0 12px 28px rgba(30, 45, 70, 0.14);
 }
 
+.tile:hover .tile__icon-wrap {
+  transform: translateY(-2px) scale(1.03);
+}
+
+.tile:hover .tile__icon-wrap .tile__icon {
+  transform: none;
+}
+
 .tile:active .tile__icon,
 .tile-add:active .tile-add__icon {
   transform: scale(0.97);
+}
+
+.tile:active .tile__icon-wrap {
+  transform: scale(0.97);
+}
+
+.tile:active .tile__icon-wrap .tile__icon {
+  transform: none;
 }
 
 .tile__icon img {
@@ -1800,7 +2766,6 @@ body {
   border-radius: var(--radius-sm);
   background: #fff;
   color: var(--ink-soft);
-  padding: 8px 13px;
   font: inherit;
   font-size: 12px;
   font-weight: 500;
@@ -2181,6 +3146,8 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .tile__icon,
   .tile-add__icon,
+  .tile__icon-wrap,
+  .tile__ext,
   .widget,
   .icon-btn,
   .widget__refresh,
@@ -2189,8 +3156,10 @@ body {
   .folder-dialog,
   .item-dialog,
   .study-dialog,
+  .cal-month-dialog,
   .vocab-flip__inner,
-  .hx-flip__inner {
+  .hx-flip__inner,
+  .wx-flip__inner {
     transition: none;
   }
 
