@@ -42,4 +42,6 @@ if (!isNewtabEnabled(features)) {
 } else {
   bindRememberNewtabTab();
   await import("./newtab.js");
+  const { mountNewtabMenu } = await import("./newtab-calc.js");
+  mountNewtabMenu();
 }

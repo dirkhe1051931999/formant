@@ -14,6 +14,26 @@
     <div id="dim" class="dim" aria-hidden="true"></div>
 
     <div class="top-actions">
+      <div class="top-menu">
+        <button id="topMenuBtn" class="top-action-btn top-menu__btn" type="button" title="工具" aria-haspopup="menu" aria-expanded="false" aria-controls="topMenuList">
+          工具
+          <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+            <path d="M4 6.25 8 10.25 12 6.25" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </button>
+        <div id="topMenuList" class="top-menu__list" role="menu" hidden>
+          <button type="button" class="top-menu__item" role="menuitem" data-menu="calc">
+            <span class="top-menu__icon" aria-hidden="true">
+              <svg viewBox="0 0 16 16" fill="none">
+                <rect x="2.5" y="1.75" width="11" height="12.5" rx="2.2" stroke="currentColor" stroke-width="1.4" />
+                <path d="M4.4 4.15h7.2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" />
+                <path d="M5.15 7.55h1.5M9.35 7.55h1.5M5.15 10.35h1.5M9.35 10.35h1.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" />
+              </svg>
+            </span>
+            <span class="top-menu__label">计算器</span>
+          </button>
+        </div>
+      </div>
       <button id="refreshBtn" class="top-action-btn" type="button" title="从 mono 刷新主页和卡片数据">刷新</button>
       <button id="syncBtn" class="top-action-btn top-action-btn--primary" type="button" title="同步主页到 mono（本机较旧时不会覆盖云端）">同步</button>
       <button id="settingsBtn" class="icon-btn" type="button" title="打开 New Tab 设置" aria-label="打开 New Tab 设置">
@@ -48,6 +68,25 @@
         </button>
       </header>
       <div id="folderBody" class="folder-dialog__body"></div>
+    </dialog>
+
+    <dialog id="calcDialog" class="calc-dialog" aria-labelledby="calcDialogTitle">
+      <header class="calc-dialog__head">
+        <div>
+          <h3 id="calcDialogTitle">计算器</h3>
+          <p class="calc-dialog__hint">关闭后不保留</p>
+        </div>
+        <button type="button" class="icon-btn" data-calc-close title="关闭" aria-label="关闭">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M6 6l12 12M18 6 6 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+          </svg>
+        </button>
+      </header>
+      <div class="calc-dialog__log" data-calc-log role="log"></div>
+      <form class="calc-dialog__form" data-calc-form action="#" method="post" autocomplete="off">
+        <input class="calc-dialog__input" data-calc-input type="text" autocomplete="off" spellcheck="false" placeholder="输入算式，例如 7*8+2" aria-label="算式" />
+        <button class="calc-dialog__send" data-calc-send type="submit" disabled>发送</button>
+      </form>
     </dialog>
 
     <dialog id="studyDialog" class="study-dialog">

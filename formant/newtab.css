@@ -2028,6 +2028,189 @@ body {
   font-size: 12px;
 }
 
+.calc-dialog {
+  width: min(420px, calc(100vw - 28px));
+  height: min(520px, calc(100vh - 48px));
+  max-height: min(520px, calc(100vh - 48px));
+  margin: auto;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 0;
+  background: #fff;
+  color: var(--ink);
+  box-shadow: 0 24px 70px rgba(30, 45, 70, 0.16);
+  opacity: 0;
+  transform: translateY(10px) scale(0.97);
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease,
+    overlay 0.2s ease allow-discrete,
+    display 0.2s allow-discrete;
+}
+
+.calc-dialog[open] {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  opacity: 1;
+  transform: none;
+}
+
+@starting-style {
+  .calc-dialog[open] {
+    opacity: 0;
+    transform: translateY(10px) scale(0.97);
+  }
+}
+
+.calc-dialog.is-closing {
+  opacity: 0;
+  transform: translateY(8px) scale(0.98);
+}
+
+.calc-dialog::backdrop {
+  background: rgba(230, 236, 244, 0.55);
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  transition:
+    opacity 0.2s ease,
+    overlay 0.2s ease allow-discrete,
+    display 0.2s allow-discrete;
+}
+
+.calc-dialog[open]::backdrop {
+  opacity: 1;
+}
+
+@starting-style {
+  .calc-dialog[open]::backdrop {
+    opacity: 0;
+  }
+}
+
+.calc-dialog.is-closing::backdrop {
+  opacity: 0;
+}
+
+.calc-dialog__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex: 0 0 auto;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.calc-dialog__head h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.calc-dialog__hint {
+  margin: 2px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.calc-dialog__log {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px 18px;
+}
+
+.calc-dialog__empty {
+  margin: auto;
+  color: var(--muted);
+  font-size: 13px;
+  text-align: center;
+}
+
+.calc-msg {
+  max-width: 86%;
+  padding: 8px 12px;
+  border-radius: 14px;
+  font-size: 15px;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  user-select: text;
+}
+
+.calc-msg--user {
+  align-self: flex-end;
+  border-bottom-right-radius: 4px;
+  background: var(--accent);
+  color: #fff;
+}
+
+.calc-msg--bot {
+  align-self: flex-start;
+  border-bottom-left-radius: 4px;
+  background: #f2f5f9;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.calc-msg--error {
+  background: #fdecec;
+  color: var(--danger);
+}
+
+.calc-dialog__form {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+  padding: 12px 14px 14px;
+  border-top: 1px solid var(--line-soft);
+}
+
+.calc-dialog__input {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 38px;
+  margin: 0;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+  color: var(--ink);
+  font: 15px/1 var(--font);
+}
+
+.calc-dialog__input:focus {
+  outline: 2px solid rgba(31, 75, 153, 0.35);
+  border-color: var(--accent);
+}
+
+.calc-dialog__send {
+  flex: 0 0 auto;
+  height: 38px;
+  margin: 0;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 10px;
+  background: var(--accent);
+  color: #fff;
+  font: 600 13px/1 var(--font);
+  cursor: pointer;
+}
+
+.calc-dialog__send:hover {
+  background: #183d80;
+}
+
+.calc-dialog__send:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
 .vocab-head-actions {
   display: inline-flex;
   align-items: center;
@@ -2560,6 +2743,120 @@ body {
 
 .top-action-status.is-error {
   color: var(--danger);
+}
+
+.top-menu {
+  position: relative;
+}
+
+.top-menu__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.top-menu__btn svg {
+  width: 12px;
+  height: 12px;
+  display: block;
+  transition: transform 0.18s ease;
+}
+
+.top-menu__btn[aria-expanded="true"] {
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.top-menu__btn[aria-expanded="true"] svg {
+  transform: rotate(180deg);
+}
+
+.top-menu__list {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 180px;
+  margin: 0;
+  padding: 6px;
+  border: 1px solid rgba(26, 35, 48, 0.08);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow:
+    0 12px 32px rgba(30, 45, 70, 0.14),
+    0 2px 6px rgba(30, 45, 70, 0.06);
+  backdrop-filter: blur(16px);
+  transform-origin: top left;
+  animation: top-menu-in 0.16s ease;
+}
+
+.top-menu__list[hidden] {
+  display: none !important;
+}
+
+@keyframes top-menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.top-menu__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 38px;
+  margin: 0;
+  padding: 0 8px 0 6px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--ink);
+  font: 600 13px/1.2 var(--font);
+  text-align: left;
+  cursor: pointer;
+}
+
+.top-menu__icon {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  background: rgba(31, 75, 153, 0.1);
+  color: var(--accent);
+}
+
+.top-menu__icon svg {
+  width: 15px;
+  height: 15px;
+  display: block;
+}
+
+.top-menu__label {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.top-menu__item:hover,
+.top-menu__item:focus-visible {
+  background: rgba(31, 75, 153, 0.08);
+  outline: none;
+}
+
+.top-menu__item:hover .top-menu__icon,
+.top-menu__item:focus-visible .top-menu__icon {
+  background: var(--accent);
+  color: #fff;
 }
 
 .icon-btn {
@@ -3156,7 +3453,10 @@ body {
   .folder-dialog,
   .item-dialog,
   .study-dialog,
+  .calc-dialog,
   .cal-month-dialog,
+  .top-menu__btn svg,
+  .top-menu__list,
   .vocab-flip__inner,
   .hx-flip__inner,
   .wx-flip__inner {
@@ -3164,7 +3464,8 @@ body {
   }
 
   .widget__refresh.is-loading svg,
-  .item-dialog__spinner {
+  .item-dialog__spinner,
+  .top-menu__list {
     animation: none;
   }
 }

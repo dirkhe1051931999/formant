@@ -48,6 +48,8 @@ formant/                 主扩展（加载此目录为「未打包的扩展」�
   favicon-cache.js       New Tab 快捷图标本机缓存（newtabCacheFavicons）
   newtab-vocab.js        New Tab 热点英语卡片（可翻到生词本）
   newtab-study.js        New Tab 生词本面与分页对话框
+  newtab-calc.js         New Tab 右上「工具」菜单与聊天流计算器（关闭即丢）
+  newtab-calc-eval.js    计算器算式求值（四则、括号、百分号；不用 eval）
   study-words.js         生词本：只记英文单词，写入本机 storage
   newtab-widgets.js      天气 / 假期卡片
   newtab-calendar.js     New Tab 万年历（农历、节气、节日、放假区间）
@@ -617,6 +619,7 @@ CI（`python pack-edge.py --zip-only`）只打 zip，不生成商店图，也不
 - **Ctrl+Home**：命令 `formantNewtab`（不碰浏览器主页按钮，避免和系统主页冲突）。已有 New Tab 则激活该标签，没有则新开一页；当前页（如 V2EX）保留。New Tab 关闭时无效。可在 `chrome://extensions/shortcuts`（Edge 为 `edge://extensions/shortcuts`）改键。建议键仅在安装时写入，重载后若没绑上需在快捷键页手动设一次 Ctrl+Home。
 - 齿轮打开 `option.html#newtab`（运行时扩展 URL，不硬编码扩展 ID），集中管理壁纸、遮罩、搜索框、天气城市，以及快捷链接是否在新窗口打开。
 - **链接在新窗口打开**：写入主页 `baseConfig.openLinksInNewWindow`，随 `GET/PUT /client/newtab/home` 同步。开启后快捷图标与搜索结果在新标签打开，当前 New Tab 保持不动；默认关闭。文件夹仍在本页打开。快捷图标右上角另有外链按钮，一点即新标签打开，和点图标本体（默认当前标签）不冲突。
+- 右上角「工具」在「刷新」左侧。点开后是图标加名称的列表，第一项是「计算器」：dialog 里按聊天发送算式（如 `7*8+2`），下一条就是结果。支持四则、括号、小数、科学计数和百分号，不调用 `eval`。对话不写入 `chrome.storage`、不进 mono、不进钥匙或本机配置；关闭窗口后记录清空。
 - 右上角「刷新」= 从当前 Client API Key **拉取**主页 + 更新卡片；「同步」= 把本机主页 **推送**到该 Key。换电脑后先配置同一把 Key；之后每次打开 New Tab 都会对账云端（本机空或 `revision` 落后则自动拉取，与天气卡片首次打开补拉同类）。空主页、或本机 `revision` 落后于云端时，点「同步」也不会覆盖云端较新布局。设置页顶栏显示 Key 指纹（不展示全文）。
 - New Tab 图标布局存在 mono `web_newtab_home`（按 API Key），**不是** Chrome 浏览器书签；popup 书签树读的是本机 `chrome.bookmarks`。快捷图标默认用站点 `{origin}/favicon.ico`，裂图后再回退 Google `s2/favicons`；成功拉取后写入本机 `newtabCacheFavicons`（按 origin / 自定义 src，14 天内直接复用），**不同步** mono；换 Client API Key 时随其它 New Tab 缓存一并清空。已保存的 Google CDN 地址打开时仍先试站点根图标，手动填写的自定义图标仍有效。
 - mono Base URL / Client API Key 写在 `chrome.storage.local`，并尽量镜像到 `chrome.storage.sync` 以便同账号换机。`option.html#sync` 有两份本机 JSON，导入都可以选文件或把文本贴进框。**本机钥匙**（`version: 2`）含同步的 Base URL 与 Client API Key、识图的 Base URL / API Key / Model、V2EX 的 Imgur Client ID、翻译的 DeepLX API Key。文件里没有的面板不动。`version: 1` 拒绝导入，需要重新导出。导入若更换 Client API Key，会清本机 New Tab / 手势缓存。**本机配置**（`version: 1`，`kind: formant-prefs`）不含密钥，含功能开关、New Tab 主页（含链接新窗口打开）、V2EX 选项、GitZip、自动翻页、手势、代理、X 推文样式、HLS 列表源地址、翻译模式与目标语言、工具箱顺序、Discord 输入翻译引擎、汇率币种。文件里没有的面板不动。词库包、油猴脚本、生词本、当前 HLS 播放会话不在这份文件里。New Tab 导入后仍可能被同一把 Key 的云端较新 `revision` 覆盖，需要留下时到 New Tab 点「同步」推上去。GitZip 不保存 PAT；代理没有账号密码。GPT 密钥在 mono Admin；DeepLX Key 只在本机。保存 New Tab 设置后，已打开的新标签页会通过 local storage 自动更新。
