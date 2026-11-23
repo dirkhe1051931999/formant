@@ -42,7 +42,7 @@
         border: 0;
         border-radius: 999px;
         padding: 8px 14px;
-        background: #1f4b99;
+        background: #4036b5;
         color: #fff;
         font: 600 13px/1.2 "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
         letter-spacing: 0.02em;

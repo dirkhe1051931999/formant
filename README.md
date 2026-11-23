@@ -766,12 +766,12 @@ CI（`python pack-edge.py --zip-only`）只打 zip，不生成商店图，也不
 
 ### 扩展管理（轻量）
 
-![扩展管理：列表启用或禁用](docs/extensions.gif)
+![扩展管理：启用、禁用与导出 ZIP](docs/extensions.gif)
 
 - 入口：popup 顶栏「扩展」二级视图；完整管理仍在 `option.html#extensions`；总开关在 `option.html#features`。
 - **能力**：列出本机已安装扩展（排除 formant 自身与非 `extension` 类型）、按名称/描述/ID 搜索、一键启用/禁用；有 `optionsUrl` 时可打开选项页。
-- **权限**：manifest `management`。
-- **边界**：概念参考「扩展管理器」，**未嵌入**其 MV2 源码包；不做分组/锁定/别名/导入导出/角标。
+- **ZIP 导出**：从 Edge Add-ons 或 Chrome Web Store 获取与本机安装版本一致的安装包，提取程序文件并下载 ZIP。商店没有匹配版本时会提示原因。文件仅包含程序资源。
+- **权限**：使用 `management` 读取和管理扩展，使用 `downloads` 保存 ZIP。
 
 #### 扩展管理冒烟清单
 
@@ -848,4 +848,4 @@ Client 路由前缀：`/api/v1/client/newtab/*`、`/api/v1/client/gestures`、`/
 
 ## 版本
 
-当前扩展版本见 [`formant/manifest.json`](formant/manifest.json) 的 `version` 字段（现为 `1.8.154`）。
+当前扩展版本为 `1.8.229`，以 [`formant/manifest.json`](formant/manifest.json) 的 `version` 字段为准。

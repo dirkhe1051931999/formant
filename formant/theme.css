@@ -1,0 +1,7 @@
+:root {
+  --formant-accent-rgb: 64, 54, 181;
+  --formant-accent: rgb(var(--formant-accent-rgb));
+  --formant-accent-soft: #eeecff;
+  --formant-accent-on-dark: #a99dff;
+  --formant-surface: #f5f6fa;
+}

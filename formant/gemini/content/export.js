@@ -205,7 +205,7 @@
 
   function htmlOutput(turns, images, title) {
     const body = turns.flatMap((turn) => turn.parts.map((part) => `<section><h2>${part.role === "user" ? "我" : "Gemini"}</h2><div class="text">${escapeHtml(part.text)}</div>${part.images.map((url) => `<figure><img src="${images.get(url).dataUrl}" alt="${escapeHtml(images.get(url).name)}"><figcaption>${escapeHtml(images.get(url).name)}</figcaption></figure>`).join("")}</section>`)).join("\n");
-    return `<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>${escapeHtml(title)}</title><style>body{font:15px/1.7 system-ui,"Microsoft YaHei",sans-serif;max-width:850px;margin:40px auto;padding:0 24px;color:#1d2633;background:#fff}h1{font-size:24px}section{border:1px solid #d8e1ec;border-radius:12px;padding:18px 22px;margin:18px 0}h2{font-size:15px;color:#1f4b99;margin:0 0 12px}.text{white-space:pre-wrap;overflow-wrap:anywhere}img{display:block;max-width:100%;height:auto;border-radius:8px}figure{margin:18px 0 0}figcaption{font-size:12px;color:#66758a;margin-top:6px}@media print{body{margin:0}section{break-inside:avoid}}</style><h1>${escapeHtml(title)}</h1>${body}</html>`;
+    return `<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>${escapeHtml(title)}</title><style>body{font:15px/1.7 system-ui,"Microsoft YaHei",sans-serif;max-width:850px;margin:40px auto;padding:0 24px;color:#1d2633;background:#fff}h1{font-size:24px}section{border:1px solid #d8e1ec;border-radius:12px;padding:18px 22px;margin:18px 0}h2{font-size:15px;color:#4036b5;margin:0 0 12px}.text{white-space:pre-wrap;overflow-wrap:anywhere}img{display:block;max-width:100%;height:auto;border-radius:8px}figure{margin:18px 0 0}figcaption{font-size:12px;color:#66758a;margin-top:6px}@media print{body{margin:0}section{break-inside:avoid}}</style><h1>${escapeHtml(title)}</h1>${body}</html>`;
   }
 
   async function toJpeg(source, width, height, quality = 0.78) {
@@ -252,7 +252,7 @@
     };
     const line = async (value, bold = false) => {
       if (y + lineHeight > H - margin) await newPage();
-      ctx.fillStyle = bold ? "#1f4b99" : "#1d2633";
+      ctx.fillStyle = bold ? "#4036b5" : "#1d2633";
       ctx.font = `${bold ? "bold " : ""}27px "Microsoft YaHei", sans-serif`;
       ctx.fillText(value, margin, y, W - margin * 2); y += lineHeight;
     };
@@ -314,7 +314,7 @@
     if (host?.isConnected) return;
     host = document.createElement("div"); host.id = HOST_ID;
     const shadow = host.attachShadow({ mode: "open" });
-    shadow.innerHTML = `<style>:host{all:initial;position:fixed;right:18px;bottom:24px;z-index:2147483645;font:13px/1.4 "Segoe UI","Microsoft YaHei",sans-serif;color:#fff}button{font:inherit;cursor:pointer}.main{border:0;border-radius:999px;background:rgba(21,26,34,.88);color:#fff;padding:9px 15px;box-shadow:0 4px 14px #0004}.main:hover{background:rgba(31,75,153,.95)}.main:disabled{opacity:.55;cursor:wait}.menu{position:absolute;right:0;bottom:48px;min-width:125px;padding:6px;background:#151a22;box-shadow:0 6px 22px #0005;border-radius:10px}.menu button{display:block;width:100%;text-align:left;border:0;border-radius:6px;padding:9px 10px;color:#fff;background:transparent}.menu button:hover{background:#1f4b99}.status{position:absolute;right:0;bottom:48px;width:240px;padding:9px 12px;background:#151a22;border-radius:9px;box-shadow:0 4px 14px #0004}.status[data-error=true]{background:#8b2d34}.menu:not([hidden])+.status{bottom:178px}[hidden]{display:none!important}</style><div class="menu" hidden><button data-format="txt">纯文本 (.txt)</button><button data-format="html">网页 (.html)</button><button data-format="pdf">PDF (.pdf)</button></div><div class="status" hidden></div><button class="main" type="button" aria-label="导出 Gemini 对话">↓ 导出</button>`;
+    shadow.innerHTML = `<style>:host{all:initial;position:fixed;right:18px;bottom:24px;z-index:2147483645;font:13px/1.4 "Segoe UI","Microsoft YaHei",sans-serif;color:#fff}button{font:inherit;cursor:pointer}.main{border:0;border-radius:999px;background:rgba(21,26,34,.88);color:#fff;padding:9px 15px;box-shadow:0 4px 14px #0004}.main:hover{background:rgba(64, 54, 181,.95)}.main:disabled{opacity:.55;cursor:wait}.menu{position:absolute;right:0;bottom:48px;min-width:125px;padding:6px;background:#151a22;box-shadow:0 6px 22px #0005;border-radius:10px}.menu button{display:block;width:100%;text-align:left;border:0;border-radius:6px;padding:9px 10px;color:#fff;background:transparent}.menu button:hover{background:#4036b5}.status{position:absolute;right:0;bottom:48px;width:240px;padding:9px 12px;background:#151a22;border-radius:9px;box-shadow:0 4px 14px #0004}.status[data-error=true]{background:#8b2d34}.menu:not([hidden])+.status{bottom:178px}[hidden]{display:none!important}</style><div class="menu" hidden><button data-format="txt">纯文本 (.txt)</button><button data-format="html">网页 (.html)</button><button data-format="pdf">PDF (.pdf)</button></div><div class="status" hidden></div><button class="main" type="button" aria-label="导出 Gemini 对话">↓ 导出</button>`;
     button = shadow.querySelector(".main"); menu = shadow.querySelector(".menu"); status = shadow.querySelector(".status");
     button.addEventListener("click", () => { if (!busy) { menu.hidden = !menu.hidden; setStatus(""); } });
     menu.addEventListener("click", (event) => { const format = event.target?.dataset?.format; if (format) void exportChat(format); });

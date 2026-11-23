@@ -127,15 +127,15 @@ async function searchGreasyFork(q, site) {
   const host = site.trim();
   if (!query && !host) throw new Error("请输入关键字或选择当前站");
   const url = host
-    ? `https://greasyfork.org/zh-CN/scripts/by-site/${encodeURIComponent(host)}.json`
-    : `https://greasyfork.org/zh-CN/scripts.json?q=${encodeURIComponent(query)}`;
+    ? `https://api.greasyfork.org/zh-CN/scripts/by-site/${encodeURIComponent(host)}.json`
+    : `https://api.greasyfork.org/zh-CN/scripts.json?q=${encodeURIComponent(query)}`;
   const res = await fetch(url, {
     credentials: "omit",
   });
   if (!res.ok) throw new Error(`Greasy Fork 搜索失败（${res.status}）`);
   const data = await res.json();
   const rows = Array.isArray(data) ? data : [];
-  return rows.slice(0, 40).map((item) => ({
+  return rows.map((item) => ({
     id: item.id,
     name: item.name || "",
     description: item.description || "",

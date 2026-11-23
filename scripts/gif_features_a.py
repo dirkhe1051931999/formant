@@ -181,14 +181,21 @@ def render_extensions():
         for i, (name, on) in enumerate(rows):
             y = 236 + i * 56
             d.text((576, y), name, font=F_UI, fill=INK)
+            d.text((775, y + 2), "导出", font=F_SM, fill=ACCENT)
             d.rounded_rectangle((820, y, 878, y + 24), 12, fill=ACCENT if on else MASK)
             knob = 854 if on else 826
             d.ellipse((knob, y + 2, knob + 20, y + 22), fill=SURFACE)
         callout(d, (56, 250), "列表排除 formant 自身")
 
+    def exported(im, d):
+        draw(im, d)
+        panel(d, (550, 419, 896, 480))
+        d.text((568, 435), "已开始下载 uBlock Origin 的 ZIP", font=F_UI, fill=ACCENT)
+
     play("extensions.gif", "formant  ·  扩展管理", [
         ("popup 列出已装扩展", "https://example.com", "页面", lambda im, d: draw(im, d, False), 1200),
         ("一键禁用", "https://example.com", "页面", lambda im, d: draw(im, d, True), 2200),
+        ("导出同版本商店安装包为 ZIP", "https://example.com", "页面", exported, 2300),
     ])
 
 
@@ -227,25 +234,83 @@ def render_gestures():
 
 
 def render_tools():
-    def draw(im, d, tool="二维码"):
-        panel(d, (48, 176, 280, 510))
-        d.text((64, 192), "工具箱", font=F_BOLD, fill=INK)
-        for i, name in enumerate(("二维码", "时间戳", "JSON 美化", "JSON 对比", "图片 Base64", "编码转换", "企业查询", "象棋", "识图")):
-            y = 220 + i * 31
+    # QR matrix for https://example.com, generated with the extension's bundled encoder.
+    qr = """
+#######...#.#.#...#######
+#.....#.###..##.#.#.....#
+#.###.#.##.#..#...#.###.#
+#.###.#.###..#..#.#.###.#
+#.###.#..##..#..#.#.###.#
+#.....#..#.#..#...#.....#
+#######.#.#.#.#.#.#######
+........##....###........
+#.....#.#...#....##..###.
+.###.#...#.#.#####.#####.
+#####.#.##...####..#.#.##
+##..##..####.#..#.##.#..#
+...######.#.##.##.##....#
+###.#...###....##..#...#.
+#.....##..###..#..####.##
+#.#.#..#####.....###.##.#
+#.#..##.####....#####.#..
+........#...###.#...#....
+#######...##....#.#.#...#
+#.....#.....##.##...#..#.
+#.###.#..##.#.#######.#.#
+#.###.#..##...#.###....##
+#.###.#..####..#.....##.#
+#.....#..#.#..####.##...#
+#######.###..##.#.#..#..#
+""".strip().splitlines()
+
+    def draw(im, d, tool="二维码", ready=False):
+        d.rectangle((25, 163, 201, 523), fill=SURFACE)
+        d.line((201, 163, 201, 523), fill=LINE)
+        paste_icon(im, (48, 180), 24)
+        d.text((82, 181), "工具箱", font=F_BOLD, fill=INK)
+        d.text((49, 222), "编码", font=F_SM, fill=MUTED)
+        for i, name in enumerate(("二维码", "时间戳", "JSON 美化", "JSON 对比", "文件对比", "图片 Base64", "编码转换")):
+            y = 244 + i * 32
             if name == tool:
-                d.rounded_rectangle((56, y - 6, 268, y + 24), 8, fill=ACCENT_SOFT)
-            d.text((72, y), name, font=F_UI, fill=ACCENT if name == tool else INK)
-        panel(d, (300, 176, 916, 510))
-        d.text((324, 196), tool, font=F_TITLE, fill=INK)
+                d.rounded_rectangle((42, y - 4, 185, y + 24), 6, fill=ACCENT_SOFT)
+            d.text((54, y), name, font=F_UI, fill=ACCENT if name == tool else MUTED)
+        d.text((224, 177), tool, font=F_TITLE, fill=INK)
         if tool == "二维码":
-            d.rounded_rectangle((340, 250, 500, 410), 8, fill=INK)
-            d.text((360, 430), "生成 / 识别都在本机", font=F_SM, fill=MUTED)
+            pill(d, (788, 177, 845, 207), "生成", on=True)
+            pill(d, (850, 177, 913, 207), "识别", on=False)
+            panel(d, (224, 220, 633, 490))
+            panel(d, (649, 220, 916, 490))
+            d.text((242, 238), "二维码内容", font=F_BOLD, fill=INK)
+            d.rounded_rectangle((242, 267, 615, 342), 7, fill=PAGE, outline=LINE)
+            value = "https://example.com" if ready else "输入网址或文本"
+            d.text((254, 279), value, font=F_UI, fill=INK if ready else MUTED)
+            d.text((242, 357), "外观设置", font=F_BOLD, fill=INK)
+            for i, (label, value) in enumerate((("尺寸（px）", "280"), ("前景色", "黑"), ("背景色", "白"), ("纠错级别", "M 15%"))):
+                x = 242 + i * 95
+                d.text((x, 383), label, font=F_SM, fill=MUTED)
+                pill(d, (x, 401, x + 82, 427), value, on=False)
+            pill(d, (242, 443, 330, 471), "添加 Logo", on=False)
+            d.text((667, 238), "预览", font=F_BOLD, fill=INK)
+            d.rounded_rectangle((667, 267, 898, 437), 7, fill=PAGE, outline=LINE)
+            if ready:
+                d.rectangle((705, 275, 859, 429), fill=SURFACE)
+                for y, row in enumerate(qr):
+                    for x, cell in enumerate(row):
+                        if cell == "#":
+                            left, top = 720 + x * 5, 290 + y * 5
+                            d.rectangle((left, top, left + 4, top + 4), fill=(0, 0, 0))
+            else:
+                d.text((720, 341), "输入内容后自动生成", font=F_SM, fill=MUTED)
+            pill(d, (667, 447, 778, 474), "复制图片", on=ready)
+            pill(d, (787, 447, 898, 474), "下载 PNG", on=False)
         else:
-            d.text((324, 250), '{"id": 12345678901234567890}', font=F_MONO, fill=INK)
-            d.text((324, 290), "超出 2^53 的整数保持原文", font=F_SM, fill=MUTED)
+            panel(d, (224, 220, 916, 490))
+            d.text((248, 250), '{"id": 12345678901234567890}', font=F_MONO, fill=INK)
+            d.text((248, 290), "超出 2^53 的整数保持原文", font=F_SM, fill=MUTED)
 
     play("tools.gif", "formant  ·  工具箱", [
         ("popup 图标打开新标签", "chrome-extension://formant/tools.html#qr", "工具箱", lambda im, d: draw(im, d, "二维码"), 1400),
+        ("输入网址，实时生成二维码", "chrome-extension://formant/tools.html#qr", "工具箱", lambda im, d: draw(im, d, ready=True), 1800),
         ("JSON 美化保大正整数", "chrome-extension://formant/tools.html#json", "工具箱", lambda im, d: draw(im, d, "JSON 美化"), 2400),
     ])
 

@@ -25,7 +25,7 @@
       .acts { flex: none; display: flex; gap: 4px; }
       .btn {
         margin: 0; padding: 0 6px; border: 0; border-radius: 4px; background: transparent;
-        color: var(--text-link, #1f4b99); font-size: 12px; line-height: 1.45; cursor: pointer;
+        color: var(--text-link, #4036b5); font-size: 12px; line-height: 1.45; cursor: pointer;
       }
       .btn:hover { background: var(--background-modifier-hover, rgba(78, 80, 88, 0.12)); }
       .btn.x { color: var(--text-muted, #6b7280); }
@@ -34,7 +34,7 @@
       .strip.error .src { color: #d92d20; }
       .spin {
         display: inline-block; width: 12px; height: 12px; margin-top: 2px; border-radius: 50%;
-        border: 2px solid var(--text-link, #1f4b99); border-right-color: transparent;
+        border: 2px solid var(--text-link, #4036b5); border-right-color: transparent;
         animation: spin 0.7s linear infinite;
       }
       @keyframes spin { to { transform: rotate(360deg); } }

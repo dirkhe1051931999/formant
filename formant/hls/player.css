@@ -1,7 +1,8 @@
+@import "../theme.css";
 :root {
   color-scheme: dark;
-  --accent: #4c7fd4;
-  --accent-deep: #1f4b99;
+  --accent: var(--formant-accent-on-dark);
+  --accent-deep: var(--formant-accent);
   --font: "Segoe UI Variable Text", "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
 }
 
@@ -84,7 +85,7 @@ body {
 }
 
 .notice--info {
-  background: rgba(31, 75, 153, 0.92);
+  background: rgba(var(--formant-accent-rgb), 0.92);
 }
 
 .notice[hidden],

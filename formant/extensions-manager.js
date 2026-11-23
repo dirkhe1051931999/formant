@@ -62,6 +62,13 @@ export async function listManagedExtensions() {
     .sort((a, b) => a.name.localeCompare(b.name, "zh-CN"));
 }
 
+/** @param {string} id */
+export function openManagedExtensionExport(id) {
+  const url = new URL(chrome.runtime.getURL("extension-export.html"));
+  url.searchParams.set("id", id);
+  return chrome.tabs.create({ url: url.href });
+}
+
 /**
  * @param {FormantManagedExtension[]} items
  * @param {string} query

@@ -204,8 +204,8 @@
         overflow: visible;
         white-space: nowrap;
         background: transparent;
-        color: #1f4b99;
-        -webkit-text-fill-color: #1f4b99;
+        color: #4036b5;
+        -webkit-text-fill-color: #4036b5;
         font: 600 14px/32px Arial, "Microsoft YaHei", sans-serif;
         cursor: text;
         user-select: text;

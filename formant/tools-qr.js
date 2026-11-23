@@ -1,4 +1,5 @@
 import { decodeQrBlob } from "./tools-qr-decode.js";
+import { TOOL_ICONS } from "./tools-icons.js";
 import {
   bindDropZone,
   blobToImage,
@@ -14,6 +15,10 @@ import {
 
 const QR_PATH = "tools/vendor/qrcode.js";
 const MARGIN = 3;
+const EMPTY_PREVIEW = `<div class="qr-empty">
+  <span class="qr-empty__icon">${TOOL_ICONS.qr}</span>
+  <span>输入内容后自动生成</span>
+</div>`;
 
 /**
  * 把文本绘成二维码 canvas（UTF-8，保证中文可扫）。
@@ -58,44 +63,45 @@ export function mount(root) {
       <div>
         <h2>二维码</h2>
       </div>
-      <div class="tl-seg" data-tabs>
-        <button type="button" class="is-active" data-tab="gen">生成</button>
-        <button type="button" data-tab="scan">识别</button>
+      <div class="tl-seg qr-tabs" data-tabs role="group" aria-label="二维码工具模式">
+        <button type="button" class="is-active" data-tab="gen" aria-pressed="true">生成</button>
+        <button type="button" data-tab="scan" aria-pressed="false">识别</button>
       </div>
     </header>
 
     <div data-view="gen">
       <div class="qr-layout">
-        <section class="tl-card">
-          <span class="tl-label">内容（链接 / 文本）</span>
-          <textarea class="tl-textarea" data-text placeholder="输入要生成二维码的内容" style="min-height:180px"></textarea>
-          <div class="tl-row">
-            <label class="tl-meta">尺寸 <input class="tl-input" type="number" min="100" max="1000" step="10" value="280" data-size style="width:80px" /></label>
-            <label class="tl-meta">前景 <input class="qr-color" type="color" value="#000000" data-fg /></label>
-            <label class="tl-meta">背景 <input class="qr-color" type="color" value="#ffffff" data-bg /></label>
-            <label class="tl-meta">纠错
-              <select class="tl-select" data-level>
-                <option value="L">L 7%</option>
-                <option value="M" selected>M 15%</option>
-                <option value="Q">Q 25%</option>
-                <option value="H">H 30%</option>
-              </select>
-            </label>
-          </div>
-          <div class="tl-row">
-            <label class="tl-btn tl-btn--ghost" style="cursor:pointer">
-              中心 logo
-              <input type="file" accept="image/*" hidden data-logo />
-            </label>
+        <section class="tl-card qr-editor">
+          <label class="qr-card-title" for="qr-content">二维码内容</label>
+          <textarea class="tl-textarea" id="qr-content" data-text placeholder="输入网址或文本"></textarea>
+          <fieldset class="qr-settings">
+            <legend>外观设置</legend>
+            <div class="qr-fields">
+              <label class="tl-meta">尺寸（px）<input class="tl-input" type="number" min="100" max="1000" step="10" value="280" data-size /></label>
+              <label class="tl-meta">前景色<input class="qr-color" type="color" value="#000000" data-fg /></label>
+              <label class="tl-meta">背景色<input class="qr-color" type="color" value="#ffffff" data-bg /></label>
+              <label class="tl-meta">纠错级别
+                <select class="tl-select" data-level>
+                  <option value="L">L 7%</option>
+                  <option value="M" selected>M 15%</option>
+                  <option value="Q">Q 25%</option>
+                  <option value="H">H 30%</option>
+                </select>
+              </label>
+            </div>
+          </fieldset>
+          <div class="tl-row qr-logo-row">
+            <button type="button" class="tl-btn tl-btn--ghost" data-logo-pick>添加 Logo</button>
+            <input type="file" accept="image/*" hidden data-logo />
             <button type="button" class="tl-btn tl-btn--ghost" data-logo-clear hidden>移除 logo</button>
             <span class="tl-meta">加 logo 时自动使用 H 级纠错</span>
           </div>
         </section>
-        <section class="tl-card">
-          <span class="tl-label">预览</span>
-          <div class="qr-stage" data-stage><span class="tl-meta">输入内容后自动生成</span></div>
-          <p class="tl-meta tl-error" data-gen-error></p>
-          <div class="tl-row">
+        <section class="tl-card qr-preview">
+          <h3 class="qr-card-title">预览</h3>
+          <div class="qr-stage" data-stage>${EMPTY_PREVIEW}</div>
+          <p class="tl-meta tl-error" data-gen-error role="status"></p>
+          <div class="tl-row qr-actions">
             <button type="button" class="tl-btn" data-copy-img disabled>复制图片</button>
             <button type="button" class="tl-btn tl-btn--ghost" data-download disabled>下载 PNG</button>
           </div>
@@ -104,9 +110,9 @@ export function mount(root) {
     </div>
 
     <div data-view="scan" hidden>
-      <div class="tl-grid">
+      <div class="tl-grid qr-scan-layout">
         <section class="tl-card">
-          <span class="tl-label">图片</span>
+          <h3 class="qr-card-title">图片</h3>
           <label class="tl-drop" data-drop>
             <input type="file" accept="image/*" hidden data-scan-file />
             <img alt="" data-scan-preview hidden />
@@ -118,8 +124,8 @@ export function mount(root) {
           </div>
         </section>
         <section class="tl-card">
-          <span class="tl-label">识别结果</span>
-          <textarea class="tl-textarea" data-scan-out readonly placeholder="识别出的内容会显示在这里"></textarea>
+          <label class="qr-card-title" for="qr-result">识别结果</label>
+          <textarea class="tl-textarea" id="qr-result" data-scan-out readonly placeholder="识别出的内容会显示在这里"></textarea>
           <div class="tl-row">
             <button type="button" class="tl-btn" data-scan-copy>复制</button>
             <button type="button" class="tl-btn tl-btn--ghost" data-scan-open hidden>打开链接</button>
@@ -150,7 +156,11 @@ export function mount(root) {
 
   function setTab(next) {
     tab = next;
-    for (const btn of tabs.querySelectorAll("button")) btn.classList.toggle("is-active", btn.dataset.tab === next);
+    for (const btn of tabs.querySelectorAll("button")) {
+      const active = btn.dataset.tab === next;
+      btn.classList.toggle("is-active", active);
+      btn.setAttribute("aria-pressed", String(active));
+    }
     for (const view of root.querySelectorAll("[data-view]")) /** @type {HTMLElement} */ (view).hidden = view.getAttribute("data-view") !== next;
   }
   tabs.addEventListener("click", (e) => {
@@ -165,7 +175,7 @@ export function mount(root) {
     copyImg.disabled = true;
     downloadBtn.disabled = true;
     if (!value) {
-      stage.innerHTML = '<span class="tl-meta">输入内容后自动生成</span>';
+      stage.innerHTML = EMPTY_PREVIEW;
       return;
     }
     try {
@@ -183,6 +193,7 @@ export function mount(root) {
   }, 200);
 
   for (const el of [text, sizeIn, fgIn, bgIn, levelIn]) el.addEventListener("input", render);
+  must("[data-logo-pick]", root).addEventListener("click", () => logoIn.click());
   logoIn.addEventListener("change", async () => {
     const f = logoIn.files?.[0];
     logoIn.value = "";

@@ -23,9 +23,9 @@
       border-radius: 10px; background: #fff; color: #151a22; text-decoration: none;
       box-shadow: 0 1px 2px rgba(21, 26, 34, 0.04);
     }
-    .btn:hover { border-color: #1f4b99; background: #e8eef9; }
+    .btn:hover { border-color: #4036b5; background: #eeecff; }
     .btn.is-off { pointer-events: none; opacity: 0.45; box-shadow: none; }
-    .k { color: #1f4b99; font-size: 11px; font-weight: 650; letter-spacing: 0.02em; }
+    .k { color: #4036b5; font-size: 11px; font-weight: 650; letter-spacing: 0.02em; }
     .t { overflow: hidden; color: #2b3340; font-size: 13px; font-weight: 550; line-height: 1.35; text-overflow: ellipsis; white-space: nowrap; }
     .btn.is-off .k, .btn.is-off .t { color: #98a2b3; }
     .hint { color: #667084; font-size: 11px; line-height: 1.4; }

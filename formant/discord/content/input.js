@@ -129,7 +129,7 @@
       }
       .item:hover { background: var(--background-modifier-hover, #eef3fb); }
       .item b { font-size: 13px; font-weight: 600; }
-      .item.on b { color: var(--text-link, #1f4b99); }
+      .item.on b { color: var(--text-link, #4036b5); }
       .item small { font-size: 11px; color: var(--text-muted, #6b7280); }
     `;
   }

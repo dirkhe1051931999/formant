@@ -1,0 +1,478 @@
+.cal-day__n,
+.cal-day__sub {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.cal-day__n {
+  font-size: 12px;
+  font-weight: 560;
+  font-variant-numeric: tabular-nums;
+}
+
+.cal-day__sub {
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.cal-day.is-fest .cal-day__sub {
+  color: var(--accent);
+}
+
+.cal-day.is-term .cal-day__sub {
+  color: #146c43;
+}
+
+.cal-day.is-rest .cal-day__n {
+  color: var(--danger);
+}
+
+.cal-day.is-out {
+  opacity: 0.38;
+}
+
+.cal-day.is-today {
+  background: rgba(var(--formant-accent-rgb), 0.16);
+}
+
+.cal-day.is-today.is-rest {
+  background: rgba(180, 35, 24, 0.18);
+}
+
+.cal-day.is-selected {
+  box-shadow: inset 0 0 0 1px rgba(var(--formant-accent-rgb), 0.45);
+}
+
+.cal-day:focus-visible,
+.cal-nav__btn:focus-visible,
+.cal-nav__title:focus-visible {
+  outline: 2px solid rgba(var(--formant-accent-rgb), 0.45);
+  outline-offset: 1px;
+}
+
+.cal-month-dialog {
+  width: min(320px, calc(100vw - 28px));
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 0;
+  background: #fff;
+  color: var(--ink);
+  box-shadow: 0 24px 70px rgba(30, 45, 70, 0.16);
+  opacity: 0;
+  transform: translateY(10px) scale(0.97);
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease,
+    overlay 0.2s ease allow-discrete,
+    display 0.2s allow-discrete;
+}
+
+.cal-month-dialog[open] {
+  opacity: 1;
+  transform: none;
+}
+
+@starting-style {
+  .cal-month-dialog[open] {
+    opacity: 0;
+    transform: translateY(10px) scale(0.97);
+  }
+}
+
+.cal-month-dialog.is-closing {
+  opacity: 0;
+  transform: translateY(8px) scale(0.98);
+}
+
+.cal-month-dialog::backdrop {
+  background: rgba(230, 236, 244, 0.55);
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  transition:
+    opacity 0.2s ease,
+    overlay 0.2s ease allow-discrete,
+    display 0.2s allow-discrete;
+}
+
+.cal-month-dialog[open]::backdrop {
+  opacity: 1;
+}
+
+@starting-style {
+  .cal-month-dialog[open]::backdrop {
+    opacity: 0;
+  }
+}
+
+.cal-month-dialog.is-closing::backdrop {
+  opacity: 0;
+}
+
+.cal-month-dialog__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 12px 14px 4px 10px;
+}
+
+.cal-month-dialog__year {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.cal-month-dialog__head h3 {
+  margin: 0;
+  min-width: 4.5em;
+  text-align: center;
+  font-size: 15px;
+  font-weight: 650;
+}
+
+.cal-month-dialog__today {
+  border: 0;
+  border-radius: 8px;
+  background: rgba(var(--formant-accent-rgb), 0.1);
+  color: var(--accent);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.cal-month-dialog__today:hover {
+  background: rgba(var(--formant-accent-rgb), 0.16);
+}
+
+.cal-month-dialog__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  padding: 10px 16px 16px;
+}
+
+.cal-month-dialog__m {
+  height: 40px;
+  border: 0;
+  border-radius: 10px;
+  background: #f4f6f9;
+  color: var(--ink);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.cal-month-dialog__m:hover {
+  background: var(--formant-accent-soft);
+}
+
+.cal-month-dialog__m.is-current {
+  background: rgba(var(--formant-accent-rgb), 0.12);
+  color: var(--accent);
+  font-weight: 650;
+}
+
+.cal-month-dialog__m.is-today:not(.is-current) {
+  box-shadow: inset 0 0 0 1px rgba(var(--formant-accent-rgb), 0.45);
+}
+
+.cal-month-dialog__m:focus-visible,
+.cal-month-dialog__today:focus-visible {
+  outline: 2px solid rgba(var(--formant-accent-rgb), 0.45);
+  outline-offset: 1px;
+}
+
+.widget--hls.is-on {
+  padding: 0;
+  background: #101826;
+  color: var(--formant-accent-soft);
+}
+
+.widget--hls.is-on .widget__head,
+.widget--hls.is-on .empty-status {
+  display: none !important;
+}
+
+.widget--hls:not(.is-on) .hls-mini {
+  display: none !important;
+}
+
+.hls-mini {
+  position: relative;
+  flex: 1 1 auto;
+  width: 100%;
+  min-height: 0;
+  height: 100%;
+  background: #101826;
+}
+
+.hls-mini video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #000;
+}
+
+.hls-mini__hud {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 10px;
+  background: linear-gradient(180deg, rgba(8, 12, 20, 0.55), transparent 36%, transparent 58%, rgba(8, 12, 20, 0.62));
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s ease;
+}
+
+.hls-mini__hud[hidden] {
+  display: none !important;
+}
+
+.widget--hls:hover .hls-mini__hud,
+.widget--hls:focus-within .hls-mini__hud {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.hls-mini__top,
+.hls-mini__bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.hls-mini__title {
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.hls-mini__bar {
+  margin-top: auto;
+}
+
+.hls-mini__btn {
+  box-sizing: border-box;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex: 0 0 auto;
+}
+
+.hls-mini__btn:hover {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.hls-mini__btn[hidden] {
+  display: none !important;
+}
+
+.hls-mini__btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.hls-mini__vol {
+  flex: 1;
+  min-width: 48px;
+  accent-color: #fff;
+}
+
+.widget--holiday .widget__title,
+.widget--holiday .range,
+.widget--holiday .holiday-today,
+.widget--holiday .holiday-list {
+  color: rgba(26, 42, 74, 0.45);
+}
+
+.widget--holiday .holiday-today {
+  font-size: 12px;
+}
+
+.widget--holiday .holiday-stale {
+  color: #b45309;
+  font-weight: 550;
+}
+
+.widget--holiday .widget__refresh {
+  background: rgba(26, 42, 74, 0.08);
+  color: rgba(26, 42, 74, 0.55);
+}
+
+.widget--holiday .widget__refresh:hover {
+  background: rgba(26, 42, 74, 0.14);
+  color: #1a2a4a;
+}
+
+.widget--holiday .holiday-next > div:first-child:not(.holiday-now) {
+  color: rgba(26, 42, 74, 0.7);
+}
+
+.widget--holiday .holiday-now {
+  color: var(--formant-accent);
+  font-size: 15px;
+  font-weight: 650;
+  letter-spacing: 0.01em;
+  line-height: 1.3;
+}
+
+.widget--holiday .holiday-until {
+  color: rgba(26, 42, 74, 0.7);
+}
+
+.widget--holiday .holiday-countdown {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-self: flex-start;
+  max-width: 100%;
+  box-sizing: border-box;
+  margin-top: 2px;
+  padding: 8px 10px 6px;
+  border-radius: 10px;
+  background: rgba(var(--formant-accent-rgb), 0.1);
+}
+
+.widget--holiday .holiday-countdown .days {
+  color: var(--formant-accent);
+}
+
+.widget--holiday .holiday-countdown .range {
+  margin-top: 2px;
+}
+
+.widget--holiday .holiday-list strong,
+.widget--holiday .days {
+  color: #1a2a4a;
+}
+
+.weather-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-3);
+}
+
+.weather-temp-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.weather-temp {
+  font-size: 40px;
+  font-weight: 560;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  color: var(--ink);
+}
+
+.weather-now-icon {
+  color: #3b6bb5;
+  display: inline-flex;
+  line-height: 0;
+}
+
+.weather-now-icon .wx-icon {
+  width: 28px;
+  height: 28px;
+}
+
+.weather-meta {
+  color: var(--ink-soft);
+  font-size: 13px;
+  margin-top: 8px;
+}
+
+.weather-age {
+  color: var(--ink-soft);
+  font-size: inherit;
+}
+
+.weather-range {
+  text-align: right;
+  color: var(--muted);
+  font-size: 12px;
+  padding-top: 4px;
+  font-variant-numeric: tabular-nums;
+}
+
+.weather-days {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 4px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line-soft);
+}
+
+.weather-day {
+  text-align: center;
+  font-size: 10px;
+  color: var(--muted);
+  line-height: 1.25;
+}
+
+.weather-day__date {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+.weather-day__icon {
+  display: grid;
+  place-items: center;
+  margin: 4px 0 2px;
+  color: #4a6fa8;
+}
+
+.weather-day__icon .wx-icon {
+  width: 18px;
+  height: 18px;
+}
+
+.weather-day strong {
+  display: block;
+  color: var(--ink-soft);
+  margin: 2px 0 3px;
+  font-size: 11px;
+  font-weight: 550;
+  font-variant-numeric: tabular-nums;
+}
+
+.wx-flip__face--weather .widget__head,
+.wx-flip__face--weather .weather-main,
+.wx-flip__face--weather .weather-days,
+.wx-flip__face--weather .widget-empty {
+  flex: 0 0 auto;
+}
+
+.weather-pet {
+  flex: 1 1 auto;
+  position: relative;
+  min-height: 48px;
+  margin-top: 8px;
+  overflow: visible;
+  user-select: none;
+  touch-action: none;
+}

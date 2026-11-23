@@ -99,7 +99,7 @@
             position: fixed; right: 16px; bottom: 16px; z-index: 2147483646;
             min-width: 36px; height: 36px; padding: 0 10px;
             border: 0; border-radius: 18px;
-            background: #1f4b99; color: #fff; font: 12px/36px "Segoe UI", sans-serif;
+            background: #4036b5; color: #fff; font: 12px/36px "Segoe UI", sans-serif;
             box-shadow: 0 4px 16px rgba(21, 26, 34, 0.2); cursor: pointer;
           }
           .list {
@@ -116,7 +116,7 @@
             border: 0; background: transparent; color: inherit;
             padding: 8px 10px; border-radius: 8px; cursor: pointer;
           }
-          button.item:hover { background: #e8eef9; color: #1f4b99; }
+          button.item:hover { background: #eeecff; color: #4036b5; }
         </style>
         <button type="button" class="fab" data-fab>油猴</button>
         <div class="list" data-list></div>

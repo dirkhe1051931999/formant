@@ -1,3 +1,5 @@
+@import "./theme.css";
+
 .oolaf-panel-body {
   margin: 0;
   overflow: hidden;
@@ -45,7 +47,7 @@
 .oolaf-panel-resizer:hover,
 .oolaf-panel-resizer:focus,
 .oolaf-panel-resizing .oolaf-panel-resizer {
-  background: #dbe8ff;
+  background: var(--formant-accent-soft);
   outline: none;
 }
 

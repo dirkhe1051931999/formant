@@ -158,7 +158,7 @@
         display: block;
         height: 100%;
         width: 0;
-        background: #1f4b99;
+        background: #4036b5;
       }
     `;
     const card = document.createElement("div");

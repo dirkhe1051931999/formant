@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import json
+
 from gif_lib import (
     ACCENT,
     ACCENT_SOFT,
@@ -20,6 +22,7 @@ from gif_lib import (
     OK,
     OK_BG,
     PAGE,
+    ROOT,
     SURFACE,
     callout,
     draw_browser,
@@ -35,6 +38,7 @@ from gif_lib import (
 def render_setup() -> None:
     gif = Gif()
     box = BOX
+    version = json.loads((ROOT / "formant" / "manifest.json").read_text(encoding="utf-8"))["version"]
 
     def chrome_page(dev_on: bool, loaded: bool, tip: str | None):
         im, d = new_canvas("步骤 1 / 3    加载未打包扩展", "formant  ·  第一次配置")
@@ -50,7 +54,7 @@ def render_setup() -> None:
             d.rounded_rectangle((48, 278, 340, 430), 10, fill=SURFACE, outline=LINE, width=1)
             paste_icon(im, (68, 298), 32)
             d.text((112, 298), "formant", font=F_BOLD, fill=INK)
-            d.text((112, 320), "1.8.154", font=F_SM, fill=MUTED)
+            d.text((112, 320), version, font=F_SM, fill=MUTED)
             d.text((68, 352), "智能翻译、New Tab、书签同步", font=F_SM, fill=MUTED)
             d.rounded_rectangle((68, 386, 140, 412), 12, fill=OK_BG)
             d.text((80, 390), "已启用", font=F_SM, fill=OK)
@@ -60,34 +64,33 @@ def render_setup() -> None:
 
     gif.add(chrome_page(False, False, "先打开开发者模式"), 900)
     gif.add(chrome_page(True, False, "再加载 formant 目录"), 1100)
-    gif.add(chrome_page(True, False, "选择\nD:\\code\\formant\\formant"), 1400)
+    gif.add(chrome_page(True, False, "选择仓库内的\nformant 文件夹"), 1400)
     gif.add(chrome_page(True, True, "扩展已加载"), 1600)
 
     def sync_page(env: str, base: str, key: str, saved: bool, tip: str | None, focus: str = "key"):
         im, d = new_canvas("步骤 2 / 3    打开同步，填写 Client API Key", "formant  ·  第一次配置")
         draw_browser(d, box, "chrome-extension://formant/option.html#sync", "扩展设置")
-        d.rectangle((25, 163, 210, 523), fill=SURFACE)
-        d.line((210, 163, 210, 523), fill=LINE)
+        d.rounded_rectangle((42, 174, 210, 475), 12, fill=SURFACE, outline=LINE, width=1)
         for i, name in enumerate(("概览", "功能", "New Tab", "翻译", "同步")):
-            y = 180 + i * 36
+            y = 192 + i * 36
             on = name == "同步"
             if on:
-                d.rounded_rectangle((36, y - 6, 196, y + 24), 8, fill=ACCENT_SOFT)
-            d.text((48, y), name, font=F_UI, fill=ACCENT if on else INK)
+                d.rounded_rectangle((52, y - 6, 200, y + 24), 8, fill=ACCENT_SOFT)
+            d.text((62, y), name, font=F_UI, fill=ACCENT if on else MUTED)
         d.text((236, 176), "同步", font=F_TITLE, fill=INK)
         d.text((236, 208), "连接 mono。New Tab / 书签 / 词卡按 Client API Key 隔离。", font=F_SM, fill=MUTED)
         d.rounded_rectangle((236, 244, 916, 470), 10, fill=SURFACE, outline=LINE, width=1)
         d.text((256, 258), "mono 连接", font=F_BOLD, fill=INK)
         field(d, 256, 288, 200, "环境", env, focus=focus == "env")
         field(d, 480, 288, 410, "mono Base URL", base, focus=focus == "base")
-        field(d, 256, 352, 634, "Client API Key", key, focus=focus == "key")
-        pill(d, (256, 420, 318, 450), "保存", on=True)
-        pill(d, (330, 420, 430, 450), "立即同步", on=False)
+        field(d, 256, 352, 634, "Client API Key", "•" * len(key), focus=focus == "key")
+        pill(d, (744, 177, 804, 207), "保存", on=False)
+        pill(d, (812, 177, 906, 207), "立即同步", on=True)
         if saved:
             d.rounded_rectangle((700, 418, 896, 452), 8, fill=OK_BG)
             d.text((716, 424), "同步设置已保存", font=F_SM, fill=OK)
         if tip:
-            callout(d, (700, 176), tip)
+            callout(d, (650, 418), tip)
         return im
 
     gif.add(sync_page("dev（本地）", "http://localhost:3101", "", False, "点齿轮打开同步", "env"), 800)

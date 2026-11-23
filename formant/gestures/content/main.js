@@ -94,7 +94,7 @@
         :host { all: initial; pointer-events: none !important; }
         .root { position: fixed; inset: 0; z-index: 2147483646; pointer-events: none; }
         svg { width: 100%; height: 100%; }
-        polyline { fill: none; stroke: #1f4b99; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+        polyline { fill: none; stroke: #4036b5; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
         .label {
           position: fixed; left: 16px; bottom: 18px; padding: 6px 10px; border-radius: 8px;
           background: #151a22; color: #fff; font: 650 12px/1.3 sans-serif;

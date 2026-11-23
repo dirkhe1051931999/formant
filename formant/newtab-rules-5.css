@@ -1,0 +1,475 @@
+.study-more {
+  align-self: flex-start;
+  margin: 2px 0 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--accent);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.study-dialog {
+  width: min(440px, calc(100vw - 28px));
+  max-height: min(560px, calc(100vh - 48px));
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 0;
+  background: #fff;
+  color: var(--ink);
+  box-shadow: 0 24px 70px rgba(30, 45, 70, 0.16);
+  opacity: 0;
+  transform: translateY(10px) scale(0.97);
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease,
+    overlay 0.2s ease allow-discrete,
+    display 0.2s allow-discrete;
+}
+
+.study-dialog[open] {
+  opacity: 1;
+  transform: none;
+}
+
+@starting-style {
+  .study-dialog[open] {
+    opacity: 0;
+    transform: translateY(10px) scale(0.97);
+  }
+}
+
+.study-dialog.is-closing {
+  opacity: 0;
+  transform: translateY(8px) scale(0.98);
+}
+
+.study-dialog::backdrop {
+  background: rgba(230, 236, 244, 0.55);
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  transition:
+    opacity 0.2s ease,
+    overlay 0.2s ease allow-discrete,
+    display 0.2s allow-discrete;
+}
+
+.study-dialog[open]::backdrop {
+  opacity: 1;
+}
+
+@starting-style {
+  .study-dialog[open]::backdrop {
+    opacity: 0;
+  }
+}
+
+.study-dialog.is-closing::backdrop {
+  opacity: 0;
+}
+
+.study-dialog__head,
+.study-dialog__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 14px 18px;
+}
+
+.study-dialog__head {
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.study-dialog__head h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.study-dialog__body {
+  padding: 12px 18px;
+  overflow: auto;
+  max-height: min(420px, calc(100vh - 180px));
+}
+
+.study-dialog__list {
+  gap: 8px;
+}
+
+.study-dialog__empty {
+  margin: 12px 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.study-dialog__foot {
+  border-top: 1px solid var(--line-soft);
+}
+
+.study-dialog__foot button {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--ink);
+  padding: 4px 10px;
+  cursor: pointer;
+}
+
+.study-dialog__foot button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.study-dialog__foot span {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.calc-dialog {
+  width: min(420px, calc(100vw - 28px));
+  height: min(520px, calc(100vh - 48px));
+  max-height: min(520px, calc(100vh - 48px));
+  margin: auto;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 0;
+  background: #fff;
+  color: var(--ink);
+  box-shadow: 0 24px 70px rgba(30, 45, 70, 0.16);
+  opacity: 0;
+  transform: translateY(10px) scale(0.97);
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease,
+    overlay 0.2s ease allow-discrete,
+    display 0.2s allow-discrete;
+}
+
+.calc-dialog[open] {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  opacity: 1;
+  transform: none;
+}
+
+@starting-style {
+  .calc-dialog[open] {
+    opacity: 0;
+    transform: translateY(10px) scale(0.97);
+  }
+}
+
+.calc-dialog.is-closing {
+  opacity: 0;
+  transform: translateY(8px) scale(0.98);
+}
+
+.calc-dialog::backdrop {
+  background: rgba(230, 236, 244, 0.55);
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  transition:
+    opacity 0.2s ease,
+    overlay 0.2s ease allow-discrete,
+    display 0.2s allow-discrete;
+}
+
+.calc-dialog[open]::backdrop {
+  opacity: 1;
+}
+
+@starting-style {
+  .calc-dialog[open]::backdrop {
+    opacity: 0;
+  }
+}
+
+.calc-dialog.is-closing::backdrop {
+  opacity: 0;
+}
+
+.calc-dialog__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex: 0 0 auto;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.calc-dialog__head h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.calc-dialog__hint {
+  margin: 2px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.calc-dialog__log {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px 18px;
+}
+
+.calc-dialog__empty {
+  margin: auto;
+  color: var(--muted);
+  font-size: 13px;
+  text-align: center;
+}
+
+.calc-msg {
+  max-width: 86%;
+  padding: 8px 12px;
+  border-radius: 14px;
+  font-size: 15px;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  user-select: text;
+}
+
+.calc-msg--user {
+  align-self: flex-end;
+  border-bottom-right-radius: 4px;
+  background: var(--accent);
+  color: #fff;
+}
+
+.calc-msg--bot {
+  align-self: flex-start;
+  border-bottom-left-radius: 4px;
+  background: #f2f5f9;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.calc-msg--error {
+  background: #fdecec;
+  color: var(--danger);
+}
+
+.calc-dialog__form {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+  padding: 12px 14px 14px;
+  border-top: 1px solid var(--line-soft);
+}
+
+.calc-dialog__input {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 38px;
+  margin: 0;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+  color: var(--ink);
+  font: 15px/1 var(--font);
+}
+
+.calc-dialog__input:focus {
+  outline: 2px solid rgba(var(--formant-accent-rgb), 0.35);
+  border-color: var(--accent);
+}
+
+.calc-dialog__send {
+  flex: 0 0 auto;
+  height: 38px;
+  margin: 0;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 10px;
+  background: var(--accent);
+  color: #fff;
+  font: 600 13px/1 var(--font);
+  cursor: pointer;
+}
+
+.calc-dialog__send:hover {
+  background: #183d80;
+}
+
+.calc-dialog__send:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.vocab-head-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+}
+
+.vocab-speak-all.is-speaking {
+  color: var(--accent);
+  background: rgba(var(--formant-accent-rgb), 0.12);
+  animation: vocab-pulse 1s ease-in-out infinite;
+}
+
+.vocab-speak-all svg {
+  width: 15px;
+  height: 15px;
+}
+
+.vocab-speak-status {
+  max-width: min(180px, 42vw);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--accent);
+  font-size: 10px;
+  font-weight: 550;
+}
+
+.vocab-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.vocab-item {
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+  gap: 2px;
+  min-height: 34px;
+}
+
+.vocab-item__text {
+  display: inline-flex;
+  align-items: flex-end;
+  flex: 0 1 auto;
+  min-width: 0;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--ink);
+  line-height: 1.35;
+}
+
+.vocab-item__word-block {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  flex-shrink: 0;
+  line-height: 1.15;
+}
+
+.vocab-item__ipa {
+  font-size: 10px;
+  font-weight: 550;
+  color: var(--muted);
+  letter-spacing: 0.02em;
+  line-height: 1.15;
+}
+
+.vocab-item__word {
+  font-weight: 650;
+  flex-shrink: 0;
+}
+
+.vocab-item__reveal {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin: 0;
+  padding: 1px 5px;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  max-width: 100%;
+}
+
+.vocab-item__reveal.is-masked {
+  color: transparent;
+  text-shadow: none;
+  user-select: none;
+  background:
+    repeating-linear-gradient(
+      -45deg,
+      rgba(80, 96, 120, 0.22) 0 3px,
+      rgba(80, 96, 120, 0.08) 3px 6px
+    ),
+    rgba(255, 255, 255, 0.55);
+  box-shadow: inset 0 0 0 1px rgba(80, 96, 120, 0.12);
+}
+
+.vocab-item__reveal.is-masked .vocab-item__meaning,
+.vocab-item__reveal.is-masked .vocab-item__phonetic {
+  filter: blur(5px);
+  opacity: 0.55;
+}
+
+.vocab-item__meaning {
+  color: var(--muted);
+}
+
+.vocab-item__phonetic {
+  color: var(--faint);
+  font-size: 11px;
+}
+
+.vocab-item__actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  flex-shrink: 0;
+  margin-left: 2px;
+}
+
+.vocab-icon-btn {
+  position: relative;
+  width: 24px;
+  height: 24px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--muted);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+}
+
+.vocab-icon-btn:hover {
+  background: rgba(var(--formant-accent-rgb), 0.08);
+  color: var(--ink);
+}
+
+.vocab-icon-btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.vocab-icon-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+.vocab-icon-btn--speak.is-speaking {
+  color: var(--accent);
+  background: rgba(var(--formant-accent-rgb), 0.12);
+  animation: vocab-pulse 1s ease-in-out infinite;
+}

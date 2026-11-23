@@ -460,7 +460,7 @@
       host.style.cssText = "position:fixed;inset:0;pointer-events:none;z-index:2147483646";
       const root = host.attachShadow({ mode: "open" });
       const style = document.createElement("style");
-      style.textContent = ".box{position:fixed;border:2px solid #1f4b99;background:rgba(31,75,153,.16);box-sizing:border-box}.tag{position:fixed;background:#1f4b99;color:#fff;font:12px/1.2 sans-serif;padding:2px 6px;border-radius:4px}";
+      style.textContent = ".box{position:fixed;border:2px solid #4036b5;background:rgba(64, 54, 181,.16);box-sizing:border-box}.tag{position:fixed;background:#4036b5;color:#fff;font:12px/1.2 sans-serif;padding:2px 6px;border-radius:4px}";
       const box = document.createElement("div");
       box.className = "box";
       const tag = document.createElement("div");

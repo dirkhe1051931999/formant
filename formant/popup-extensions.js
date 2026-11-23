@@ -1,6 +1,7 @@
 import {
   filterManagedExtensions,
   listManagedExtensions,
+  openManagedExtensionExport,
   setManagedExtensionEnabled,
   subscribeManagedExtensions,
 } from "./extensions-manager.js";
@@ -83,6 +84,17 @@ export function initPopupExtensions(api) {
         });
         main.append(options);
       }
+      const exportBtn = document.createElement("button");
+      exportBtn.type = "button";
+      exportBtn.className = "ext-pop-row__opts";
+      exportBtn.textContent = "导出";
+      exportBtn.setAttribute("aria-label", `导出 ${item.name} 为 ZIP`);
+      exportBtn.addEventListener("click", () => {
+        void openManagedExtensionExport(item.id).catch(() => {
+          stateEl.textContent = "无法打开导出页";
+        });
+      });
+      main.append(exportBtn);
 
       const toggle = document.createElement("label");
       toggle.className = "ext-pop-row__toggle";

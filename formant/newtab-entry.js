@@ -19,8 +19,8 @@ if (!isNewtabEnabled(features)) {
     <p style="margin:0 0 8px;color:#151a22;font-weight:650">formant New Tab 已关闭</p>
     <p style="margin:0 0 16px">可在扩展设置 → 功能 中重新开启。正在尝试打开浏览器默认新标签页…</p>
     <p style="margin:0">
-      <button type="button" id="btnNtp" style="margin-right:10px;border:1px solid #e5eaf0;border-radius:8px;background:#fff;padding:6px 12px;cursor:pointer;font:inherit;color:#1f4b99">打开默认新标签页</button>
-      <button type="button" id="btnOpt" style="border:1px solid #e5eaf0;border-radius:8px;background:#fff;padding:6px 12px;cursor:pointer;font:inherit;color:#1f4b99">扩展设置</button>
+      <button type="button" id="btnNtp" style="margin-right:10px;border:1px solid #e5eaf0;border-radius:8px;background:#fff;padding:6px 12px;cursor:pointer;font:inherit;color:#4036b5">打开默认新标签页</button>
+      <button type="button" id="btnOpt" style="border:1px solid #e5eaf0;border-radius:8px;background:#fff;padding:6px 12px;cursor:pointer;font:inherit;color:#4036b5">扩展设置</button>
     </p>
   </div>`;
 

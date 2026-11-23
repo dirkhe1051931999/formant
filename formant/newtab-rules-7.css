@@ -1,0 +1,476 @@
+.top-menu__item:hover .top-menu__icon,
+.top-menu__item:focus-visible .top-menu__icon {
+  background: var(--accent);
+  color: #fff;
+}
+
+.icon-btn {
+  box-sizing: border-box;
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  min-height: 36px;
+  padding: 0;
+  margin: 0;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: 11px;
+  background: rgba(255, 255, 255, 0.72);
+  color: rgba(26, 35, 48, 0.55);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  aspect-ratio: 1;
+  line-height: 0;
+  cursor: pointer;
+  overflow: hidden;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 4px 14px rgba(30, 45, 70, 0.08);
+  transition: color 0.18s ease, background 0.18s ease, opacity 0.18s ease;
+  opacity: 0.85;
+}
+
+.icon-btn:hover {
+  opacity: 1;
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.icon-btn:disabled {
+  opacity: 0.4;
+  cursor: wait;
+}
+
+.icon-btn svg {
+  width: 17px;
+  height: 17px;
+  display: block;
+  flex: 0 0 auto;
+}
+
+.settings-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 8;
+  background: rgba(236, 241, 247, 0.45);
+  backdrop-filter: blur(3px);
+  opacity: 0;
+  transition: opacity 0.24s ease;
+}
+
+.settings-backdrop.is-open {
+  opacity: 1;
+}
+
+.settings-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 9;
+  width: min(360px, 100vw);
+  height: 100vh;
+  height: 100dvh;
+  overflow: auto;
+  padding: calc(var(--safe-top) + 20px) 20px calc(var(--safe-bottom) + 28px);
+  background: var(--glass-strong);
+  border-left: 1px solid var(--line);
+  box-shadow: -12px 0 40px rgba(30, 45, 70, 0.08);
+  transform: translateX(104%);
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+.settings-panel.is-open {
+  transform: translateX(0);
+}
+
+.settings-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.settings-header h2 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+}
+
+.settings-sub {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+#cacheMeta {
+  color: var(--faint);
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.settings-status {
+  margin-bottom: var(--space-3);
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  background: rgba(var(--formant-accent-rgb), 0.08);
+  color: #1a3f82;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.settings-status.error {
+  background: rgba(180, 35, 24, 0.08);
+  color: var(--danger);
+}
+
+.settings-section {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-4) 0;
+  border-top: 1px solid var(--line-soft);
+}
+
+.settings-section h3 {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 550;
+  color: var(--faint);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.field {
+  display: grid;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.field[hidden],
+.item-dialog [hidden] {
+  display: none !important;
+}
+
+.field em {
+  font-style: normal;
+  color: var(--ink-soft);
+}
+
+.field input,
+.field select,
+.item-dialog input,
+.item-dialog select {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: #fff;
+  color: var(--ink);
+  padding: 10px 12px;
+  font: inherit;
+  font-size: 13px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.field input:focus,
+.field select:focus,
+.item-dialog input:focus,
+.item-dialog select:focus {
+  outline: none;
+  border-color: rgba(var(--formant-accent-rgb), 0.45);
+  box-shadow: 0 0 0 3px rgba(var(--formant-accent-rgb), 0.1);
+}
+
+.check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--ink-soft);
+  font-size: 13px;
+}
+
+.btn-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-start;
+  margin-top: 2px;
+}
+
+.settings-panel button:not(.icon-btn),
+.item-dialog button:not(.icon-btn),
+.folder-dialog button:not(.icon-btn) {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: #fff;
+  color: var(--ink-soft);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.settings-panel button:not(.icon-btn):hover,
+.item-dialog button:not(.icon-btn):hover {
+  background: #f4f7fb;
+  color: var(--ink);
+}
+
+.settings-panel button.primary,
+.item-dialog button.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-ink);
+}
+
+.settings-panel button.primary:hover,
+.item-dialog button.primary:hover {
+  background: #183d80;
+  border-color: #183d80;
+  color: #fff;
+}
+
+.settings-panel button.danger,
+.item-dialog button.danger {
+  color: var(--danger);
+  border-color: rgba(180, 35, 24, 0.25);
+  background: rgba(180, 35, 24, 0.04);
+  margin-right: auto;
+}
+
+.folder-dialog,
+.item-dialog {
+  width: min(440px, calc(100vw - 28px));
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 0;
+  background: #fff;
+  color: var(--ink);
+  box-shadow: 0 24px 70px rgba(30, 45, 70, 0.16);
+  opacity: 0;
+  transform: translateY(10px) scale(0.97);
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease,
+    overlay 0.2s ease allow-discrete,
+    display 0.2s allow-discrete;
+}
+
+.item-dialog {
+  overflow: hidden;
+}
+
+.item-dialog.is-busy {
+  cursor: wait;
+}
+
+.item-dialog.is-busy form {
+  pointer-events: none;
+}
+
+.item-dialog__busy {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.72);
+  color: var(--ink-soft);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: wait;
+  pointer-events: auto;
+  user-select: none;
+}
+
+.item-dialog__spinner {
+  width: 22px;
+  height: 22px;
+  border: 2px solid var(--line);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: widget-spin 0.7s linear infinite;
+}
+
+.folder-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 6;
+  background: rgba(230, 236, 244, 0.55);
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.folder-scrim.is-open {
+  opacity: 1;
+}
+
+.folder-dialog {
+  position: fixed;
+  z-index: 7;
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+  margin: 0;
+}
+
+.folder-dialog[open],
+.item-dialog[open] {
+  opacity: 1;
+  transform: none;
+}
+
+@starting-style {
+  .folder-dialog[open],
+  .item-dialog[open] {
+    opacity: 0;
+    transform: translateY(10px) scale(0.97);
+  }
+}
+
+.folder-dialog.is-closing,
+.item-dialog.is-closing {
+  opacity: 0;
+  transform: translateY(8px) scale(0.98);
+}
+
+.folder-dialog::backdrop,
+.item-dialog::backdrop {
+  background: rgba(230, 236, 244, 0.55);
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  transition:
+    opacity 0.2s ease,
+    overlay 0.2s ease allow-discrete,
+    display 0.2s allow-discrete;
+}
+
+.folder-dialog[open]::backdrop,
+.item-dialog[open]::backdrop {
+  opacity: 1;
+}
+
+@starting-style {
+  .folder-dialog[open]::backdrop,
+  .item-dialog[open]::backdrop {
+    opacity: 0;
+  }
+}
+
+.folder-dialog.is-closing::backdrop,
+.item-dialog.is-closing::backdrop {
+  opacity: 0;
+}
+
+.icon-preview-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.icon-preview {
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  object-fit: contain;
+  background: #f3f5f8;
+  border: 1px solid var(--line-soft);
+  flex: 0 0 auto;
+}
+
+.color-swatches {
+  display: grid;
+  grid-template-columns: repeat(5, 28px);
+  gap: 8px;
+}
+
+.item-dialog .color-swatch {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  border: 1px solid rgba(26, 35, 48, 0.12);
+  cursor: pointer;
+  padding: 0;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.35);
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.item-dialog .color-swatch:hover {
+  transform: scale(1.06);
+  background: inherit;
+}
+
+.item-dialog .color-swatch.is-selected {
+  box-shadow:
+    0 0 0 2px #fff,
+    0 0 0 4px var(--accent);
+}
+
+.form-error {
+  margin: 0;
+  font-size: 12px;
+  color: var(--danger);
+}
+
+.folder-dialog__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.folder-dialog__head h3,
+.item-dialog h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.folder-dialog__body {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: 14px 8px;
+  justify-items: center;
+  padding: 18px;
+  background: #f7f9fc;
+  min-height: 140px;
+  position: relative;
+}
+
+.folder-dialog.is-extract-target {
+  outline: 2px dashed var(--accent);
+  outline-offset: -4px;
+}
+
+.folder-dialog.is-extract-target .folder-dialog__head h3::after {
+  content: "拖到主页空白处松手即可移出";
+  display: inline-block;
+  margin-left: 10px;
+  vertical-align: middle;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: rgba(var(--formant-accent-rgb), 0.92);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.3;
+  white-space: nowrap;
+}
+
+.folder-dialog .tile__name,
+.folder-dialog .tile-add__name {
+  color: var(--ink-soft);
+  text-shadow: none;
+}

@@ -1,0 +1,271 @@
+.cmp-diff {
+  margin-top: 12px;
+}
+
+.cmp-diff canvas {
+  display: block;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #1c1c1c;
+}
+
+.cmp-slide {
+  position: relative;
+  height: 440px;
+  margin-top: 12px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #f4f6f9;
+}
+
+.cmp-slide img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+.cmp-slide input[type="range"] {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: 14px;
+  width: calc(100% - 32px);
+}
+
+/* 油猴 */
+.us-banner {
+  margin: 0 0 12px;
+}
+
+.us-list,
+.us-search {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.us-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 8px;
+  border-bottom: 1px solid var(--line);
+}
+
+.us-item:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.us-item:first-child {
+  padding-top: 0;
+}
+
+.us-item.is-off {
+  opacity: 0.55;
+}
+
+.us-item__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.us-item__body strong {
+  display: block;
+  font-size: 15px;
+}
+
+.us-item__body p {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.us-item__ops {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.us-switch {
+  display: inline-flex;
+  align-items: center;
+  padding-top: 4px;
+}
+
+.us-editor {
+  min-height: 420px;
+}
+
+/* Lighthouse */
+.lh-scores {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.lh-score {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  background: #f2f4f7;
+  color: var(--muted);
+}
+
+.lh-score--ok {
+  background: #e7f6ec;
+  color: var(--ok);
+}
+
+.lh-score--mid {
+  background: #fff4e5;
+  color: #b54708;
+}
+
+.lh-score--bad {
+  background: #fde8e6;
+  color: var(--danger);
+}
+
+.lh-url {
+  margin: 0;
+  word-break: break-all;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.lh-metrics {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.lh-metrics li + li {
+  margin-top: 4px;
+}
+
+.lh-issue + .lh-issue {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+
+.lh-issue p {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+/* HLS 列表源 */
+.hls-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.hls-form .tl-label {
+  margin-bottom: 0;
+}
+
+.hls-feeds {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.hls-feed {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+  overflow: hidden;
+}
+
+.hls-feed.is-active {
+  border-color: rgba(var(--formant-accent-rgb), 0.45);
+  box-shadow: inset 0 0 0 1px rgba(var(--formant-accent-rgb), 0.18);
+}
+
+.hls-feed__main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  border: 0;
+  background: transparent;
+  padding: 10px 12px;
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+}
+
+.hls-feed__main strong {
+  font-size: 13px;
+}
+
+.hls-feed__main small {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.hls-feed__actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 10px 8px 0;
+}
+
+.hls-target {
+  position: fixed;
+  z-index: 40;
+  min-width: 168px;
+  padding: 6px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 12px 32px rgba(20, 30, 50, 0.16);
+}
+
+.hls-target__item {
+  display: block;
+  width: 100%;
+  margin: 0;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: 13px;
+  text-align: left;
+  padding: 8px 10px;
+  cursor: pointer;
+}
+
+.hls-target__item:hover,
+.hls-target__item.is-last {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+@media (max-width: 860px) {
+  .cmp-panes,
+  .cmp-images {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

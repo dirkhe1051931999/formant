@@ -242,11 +242,11 @@
         padding: 10px 14px;
         cursor: pointer;
         color: #fff;
-        background: rgba(31, 75, 153, 0.92);
+        background: rgba(64, 54, 181, 0.92);
         box-shadow: 0 4px 14px rgba(0, 0, 0, 0.22);
         font: 600 13px/1.2 "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
       }
-      .btn:hover { background: rgba(31, 75, 153, 1); }
+      .btn:hover { background: rgba(64, 54, 181, 1); }
       .btn:disabled { opacity: 0.72; cursor: default; }
       .btn.is-ok { background: rgba(20, 108, 67, 0.92); }
       .btn.is-err { background: rgba(180, 35, 24, 0.92); }

@@ -34,7 +34,7 @@ export async function strokesToPngBlob(strokes) {
   const scale = Math.min((PREVIEW_W - PREVIEW_PAD * 2) / spanX, (PREVIEW_H - PREVIEW_PAD * 2) / spanY);
   const ox = (PREVIEW_W - spanX * scale) / 2;
   const oy = (PREVIEW_H - spanY * scale) / 2;
-  ctx.strokeStyle = "#1f4b99";
+  ctx.strokeStyle = "#4036b5";
   ctx.lineWidth = 5;
   ctx.lineCap = "round";
   ctx.lineJoin = "round";
@@ -59,7 +59,7 @@ export async function strokesToPngBlob(strokes) {
 export function pathPreviewSvg(rawPath) {
   const path = normalizeGesturePath(rawPath);
   const d = schematicPath(path);
-  return `<svg class="gesture-bind__img" viewBox="0 0 72 54" aria-hidden="true"><path d="${d}" fill="none" stroke="#1f4b99" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  return `<svg class="gesture-bind__img" viewBox="0 0 72 54" aria-hidden="true"><path d="${d}" fill="none" stroke="#4036b5" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 }
 
 /**

@@ -1,3 +1,5 @@
+@import "../theme.css";
+
 [hidden] {
   display: none !important;
 }
@@ -101,7 +103,7 @@ body.is-blocked .workspace {
 
 .store {
   padding: 4px 8px 8px;
-  color: #1f4b99;
+  color: var(--formant-accent);
   font-size: 12px;
 }
 
@@ -113,5 +115,5 @@ body.is-blocked .workspace {
 
 .row.is-on,
 .store.is-on {
-  background: #dbe8ff;
+  background: var(--formant-accent-soft);
 }

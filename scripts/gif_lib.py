@@ -13,13 +13,13 @@ ICON_PATH = ROOT / "formant" / "icons" / "icon32.png"
 W, H = 960, 540
 BOX = (24, 104, 936, 524)
 BG = (238, 241, 245)
-PAGE = (244, 246, 249)
+PAGE = (245, 246, 250)
 SURFACE = (255, 255, 255)
-INK = (21, 26, 34)
-MUTED = (102, 112, 132)
-LINE = (221, 227, 236)
-ACCENT = (31, 75, 153)
-ACCENT_SOFT = (232, 238, 249)
+INK = (30, 37, 53)
+MUTED = (88, 100, 118)
+LINE = (221, 226, 235)
+ACCENT = (64, 54, 181)
+ACCENT_SOFT = (238, 236, 255)
 OK = (20, 108, 67)
 OK_BG = (234, 246, 239)
 CHROME = (232, 234, 238)
@@ -70,10 +70,7 @@ class Gif:
 
     def save(self, path: Path) -> None:
         path.parent.mkdir(parents=True, exist_ok=True)
-        base = self.frames[0].quantize(colors=64, method=Image.Quantize.MEDIANCUT)
-        quantized = [base] + [
-            frame.quantize(palette=base, dither=Image.Dither.NONE) for frame in self.frames[1:]
-        ]
+        quantized = [frame.quantize(colors=128, method=Image.Quantize.MEDIANCUT) for frame in self.frames]
         quantized[0].save(
             path,
             save_all=True,

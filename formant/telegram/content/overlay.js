@@ -50,7 +50,7 @@
         background: rgba(21, 26, 34, 0.78);
         box-shadow: 0 4px 14px rgba(0, 0, 0, 0.28);
       }
-      .chip:hover { background: rgba(31, 75, 153, 0.92); }
+      .chip:hover { background: rgba(64, 54, 181, 0.92); }
       .chip svg { width: 18px; height: 18px; }
       .progress {
         position: fixed;

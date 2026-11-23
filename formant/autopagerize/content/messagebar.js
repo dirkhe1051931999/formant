@@ -30,7 +30,7 @@
         pointer-events: none;
       }
       .bar.is-visible { opacity: 1; }
-      .bar--loading { color: #fff; background: rgba(31, 75, 153, 0.92); }
+      .bar--loading { color: #fff; background: rgba(64, 54, 181, 0.92); }
       .bar--error { color: #fff; background: rgba(180, 35, 24, 0.92); }
       .bar--info { color: #fff; background: rgba(21, 26, 34, 0.88); }
     `;

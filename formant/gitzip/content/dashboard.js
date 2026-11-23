@@ -26,7 +26,7 @@
         --fg-ink: #151a22;
         --fg-muted: #667084;
         --fg-line: #d9e1eb;
-        --fg-accent: #1f4b99;
+        --fg-accent: #4036b5;
         --fg-danger: #b42318;
         position: fixed;
         z-index: 2147483647;

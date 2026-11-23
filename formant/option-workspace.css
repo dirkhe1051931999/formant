@@ -1,0 +1,252 @@
+:root {
+  --bg: var(--formant-surface);
+  --ink: #1e2535;
+  --muted: #586476;
+  --line: #dde2eb;
+  --accent: var(--formant-accent);
+  --accent-soft: var(--formant-accent-soft);
+  --shadow: none;
+}
+
+body {
+  background: var(--bg);
+}
+
+.app {
+  max-width: 1320px;
+  padding: 0 clamp(16px, 3vw, 40px) 48px;
+}
+
+.shell-top {
+  min-height: 76px;
+  align-items: center;
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--line);
+}
+
+.shell-top__brand {
+  align-items: center;
+}
+
+.shell-top__brand img {
+  width: 32px;
+  height: 32px;
+}
+
+.shell-top__brand h1 {
+  font-size: 20px;
+}
+
+.shell-top__brand p {
+  display: none;
+}
+
+.shell-top__meta {
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.shell-key,
+.shell-version {
+  padding: 5px 9px;
+  border-radius: 6px;
+}
+
+.shell-key:hover {
+  background: var(--accent-soft);
+}
+
+.shell-version {
+  background: transparent;
+  font-variant-numeric: tabular-nums;
+}
+
+.shell {
+  grid-template-columns: 192px minmax(0, 1fr);
+  gap: clamp(20px, 3vw, 38px);
+}
+
+.shell-nav {
+  gap: 2px;
+  padding: 8px;
+  max-height: calc(100dvh - 32px);
+  overflow: auto;
+  scrollbar-width: thin;
+}
+
+.shell-nav__item {
+  min-height: 37px;
+  padding: 7px 12px;
+  border-radius: 6px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.shell-nav__item:hover:not(:disabled) {
+  background: var(--bg);
+  color: var(--ink);
+}
+
+.shell-nav__item.is-active,
+.shell-nav__item.is-active:hover:not(:disabled) {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.panel__head {
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.panel__head h2 {
+  font-size: 26px;
+}
+
+.panel__head .muted {
+  margin-top: 5px;
+  max-width: 72ch;
+}
+
+.panel__head .muted,
+.settings-card > .muted {
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.settings-stack,
+.general-grid {
+  gap: 16px;
+}
+
+.general-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+}
+
+.settings-card,
+.general-card {
+  padding: clamp(16px, 2vw, 24px);
+}
+
+.settings-card h3,
+.general-card h3 {
+  font-size: 16px;
+}
+
+.general-card {
+  align-content: stretch;
+  grid-template-rows: auto 1fr auto;
+}
+
+.general-card .btn {
+  justify-self: start;
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.settings-field {
+  font-size: 13px;
+}
+
+.settings-field :is(input, select, textarea) {
+  min-width: 0;
+  border-color: var(--line);
+  background: #fafbfe;
+}
+
+.settings-field :is(input, select) {
+  min-height: 38px;
+}
+
+.btn {
+  min-height: 36px;
+  border: 1px solid transparent;
+}
+
+.btn--ghost {
+  border-color: var(--line);
+  background: var(--panel);
+}
+
+.btn--ghost:hover:not(:disabled) {
+  background: var(--bg);
+}
+
+:is(button, a, input, select, textarea):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+#panel-sync .settings-grid {
+  grid-template-columns: minmax(135px, 1fr) minmax(0, 3fr);
+  gap: 14px;
+}
+
+#panel-sync .settings-grid label:has(#optBaseUrl) {
+  grid-column: auto;
+}
+
+#optSyncMeta {
+  padding: 12px;
+  border-left: 3px solid var(--accent);
+  border-radius: 4px;
+  background: var(--accent-soft);
+  line-height: 1.6;
+}
+
+#panel-sync .settings-field textarea {
+  height: 112px;
+  min-height: 100px;
+}
+
+@media (min-width: 1120px) {
+  #panel-sync .settings-stack {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  #panel-sync .settings-card:has(#optEnvSelect),
+  #panel-sync .settings-card:has(.settings-list) {
+    grid-column: 1 / -1;
+  }
+
+  #panel-sync .settings-card:has(#optKeysPaste, #optPrefsPaste) {
+    grid-template-rows: auto 1fr auto auto auto;
+  }
+}
+
+@media (max-width: 960px) {
+  .shell {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 18px;
+  }
+
+  .shell-nav {
+    grid-template-columns: repeat(auto-fit, minmax(86px, 1fr));
+    max-height: none;
+  }
+
+  .shell-nav__item {
+    min-height: 32px;
+    padding: 5px;
+    font-size: 13px;
+  }
+
+  .panel__head {
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 520px) {
+  .shell-top {
+    flex-wrap: wrap;
+    min-height: 0;
+    gap: 8px;
+    padding: 14px 0;
+    margin-bottom: 14px;
+  }
+
+  #panel-sync .settings-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
