@@ -298,6 +298,17 @@ body {
   cursor: not-allowed;
 }
 
+.ublock-status {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.ublock-actions {
+  display: flex;
+  gap: 8px;
+}
+
 .settings-stack {
   display: grid;
   gap: 12px;

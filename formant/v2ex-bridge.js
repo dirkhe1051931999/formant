@@ -36,21 +36,31 @@ async function configureV2exAlarms() {
     return;
   }
 
-  await chrome.declarativeNetRequest.updateEnabledRulesets({
-    enableRulesetIds: [V2EX_WEIBO_RULESET],
-  });
-
   if (options.checkin) {
-    chrome.alarms.create(V2EX_CHECKIN_ALARM, { periodInMinutes: 5 });
+    const alarm = await chrome.alarms.get(V2EX_CHECKIN_ALARM);
+    if (alarm?.periodInMinutes !== 5) {
+      await chrome.alarms.create(V2EX_CHECKIN_ALARM, { periodInMinutes: 5 });
+    }
   } else {
     await chrome.alarms.clear(V2EX_CHECKIN_ALARM);
   }
 
   if (options.msgNote) {
-    chrome.alarms.create(V2EX_NOTIFICATIONS_ALARM, { periodInMinutes: 3 });
+    const alarm = await chrome.alarms.get(V2EX_NOTIFICATIONS_ALARM);
+    if (alarm?.periodInMinutes !== 3) {
+      await chrome.alarms.create(V2EX_NOTIFICATIONS_ALARM, { periodInMinutes: 3 });
+    }
   } else {
     await chrome.alarms.clear(V2EX_NOTIFICATIONS_ALARM);
     await chrome.action.setBadgeText({ text: "" });
+  }
+
+  try {
+    await chrome.declarativeNetRequest.updateEnabledRulesets({
+      enableRulesetIds: [V2EX_WEIBO_RULESET],
+    });
+  } catch (error) {
+    console.warn("[formant] V2EX image rules failed", error);
   }
 }
 
@@ -61,7 +71,11 @@ export async function runV2exCheckinIfEnabled() {
   if (!(await isV2exRuntimeEnabled())) {
     return { status: "disabled", message: "V2EX Plus 功能已关闭" };
   }
-  return runV2exCheckin(await loadV2exOptions());
+  const result = await runV2exCheckin(await loadV2exOptions());
+  if (result.status === "failed" || result.status === "logged-out") {
+    console.warn("[formant] V2EX check-in:", result.message);
+  }
+  return result;
 }
 
 /**

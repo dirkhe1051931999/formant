@@ -63,24 +63,45 @@
     const path = location.pathname.toLowerCase();
     if (/\.css$/.test(path)) return "css";
     if (/\.(js|mjs|cjs)$/.test(path)) return "js";
+    if (
+      /\.(?:txt|md|markdown|csv|tsv|log|ini|conf|cfg|yml|yaml|toml|rst|nfo|srt|vtt|m3u8?|ics|lst)$/.test(
+        path,
+      )
+    ) {
+      return "";
+    }
 
     const onlyPlainText =
       body.children.length === 1 && ["PRE", "TEXTAREA"].includes(body.children[0].tagName);
     if (!onlyPlainText) return "";
 
     const head = text.slice(0, 4000);
-    if (/^\s*</.test(head)) return "";
+    if (/^\s*</.test(head) || looksLikeFilterList(head)) return "";
     if (/\{[^}"']{0,80}:[^}]{0,120};/.test(head) && !/\b(function|=>|var |let |const )/.test(head)) {
       return "css";
     }
     if (
       /\b(?:function|=>|var |let |const |class |import |export )\b/.test(head) ||
-      /^\s*[\(!]/.test(head) ||
+      /^\s*(?:!function\b|!\(|\()/.test(head) ||
       /\.min\.js/i.test(location.href)
     ) {
       return "js";
     }
     return "";
+  }
+
+  /**
+   * Adblock / uBlock lists often start with `! Title:` or `[Adblock Plus 2.0]`.
+   * A leading `!` used to match minified `!function`, which pulled these into JS pretty.
+   * @param {string} head
+   * @returns {boolean}
+   */
+  function looksLikeFilterList(head) {
+    const start = String(head || "").trimStart();
+    if (/^\[Adblock(?:\s+Plus)?[^\]]*\]/i.test(start)) return true;
+    return /^!\s*(?:Title|Expires|License|Homepage|Redirect|Version|Last modified|Diff-Path|Checksum)\s*:/i.test(
+      start,
+    );
   }
 
   /**

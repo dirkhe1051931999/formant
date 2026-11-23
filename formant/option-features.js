@@ -7,6 +7,7 @@ import {
   normalizeFeatures,
   saveFeatures,
 } from "./features.js";
+import { UBLOCK_STATUS_KEY, loadUblockStatus } from "./ublock-sync.js";
 
 /**
  * @typedef {{ toast: (text: string) => void }} PanelApi
@@ -22,6 +23,8 @@ export function initFeaturesPanel(api) {
 
   /** @type {import("./features.js").FormantFeatures | null} */
   let current = null;
+  const statusEl = document.getElementById("ublockStatus");
+  const updateBtn = document.getElementById("ublockUpdateNow");
 
   function syncDependentUi() {
     if (!current) return;
@@ -69,6 +72,7 @@ export function initFeaturesPanel(api) {
       "imagePrompt.enabled": current.imagePrompt.enabled,
       "tools.enabled": current.tools.enabled,
       "userscript.enabled": current.userscript.enabled,
+      "ublock.enabled": current.ublock.enabled,
     };
     for (const [path, value] of Object.entries(map)) {
       const input = /** @type {HTMLInputElement | null} */ (
@@ -77,6 +81,7 @@ export function initFeaturesPanel(api) {
       if (input) input.checked = value;
     }
     syncDependentUi();
+    if (updateBtn) updateBtn.disabled = !current.ublock.enabled;
 
     const summary = document.getElementById("featuresSummary");
     if (summary) {
@@ -115,6 +120,7 @@ export function initFeaturesPanel(api) {
       if (current.imagePrompt.enabled) bits.push("识图");
       if (current.tools.enabled) bits.push("工具箱");
       if (current.userscript.enabled) bits.push("油猴");
+      if (current.ublock.enabled) bits.push("广告拦截");
       summary.textContent = bits.length ? `已启用：${bits.join(" · ")}` : "当前未启用任何可选能力";
     }
   }
@@ -162,6 +168,7 @@ export function initFeaturesPanel(api) {
     else if (path === "imagePrompt.enabled") current.imagePrompt.enabled = on;
     else if (path === "tools.enabled") current.tools.enabled = on;
     else if (path === "userscript.enabled") current.userscript.enabled = on;
+    else if (path === "ublock.enabled") current.ublock.enabled = on;
     else return;
 
     void (async () => {
@@ -185,14 +192,63 @@ export function initFeaturesPanel(api) {
     });
   });
 
+  /**
+   * @param {Awaited<ReturnType<typeof loadUblockStatus>>} status
+   */
+  function paintUblockStatus(status) {
+    if (!statusEl) return;
+    if (!status.lastUpdated && !status.ruleCount) {
+      statusEl.textContent = "规则尚未生成，后台正在编译…";
+      return;
+    }
+    const when = status.lastUpdated
+      ? new Date(status.lastUpdated).toLocaleString()
+      : "尚未更新";
+    const source =
+      status.source === "cdn" ? "CDN" : status.source === "cache" ? "缓存" : "离线种子";
+    const err = status.lastError ? `；上次错误：${status.lastError}` : "";
+    const scriptlets = status.scriptlets === "2 worlds"
+      ? "已启用"
+      : status.scriptlets === "pending"
+        ? "待编译"
+        : status.scriptlets === "disabled"
+          ? "已关闭"
+          : `未启用（${status.scriptlets || "未知错误"}；请在 Edge 扩展详情中开启「允许运行用户脚本」）`;
+    statusEl.textContent = `网络 ${status.ruleCount} 条（配额外 ${status.skipped}）· 元素隐藏 ${status.cosmeticCount || 0} 条 · scriptlet：${scriptlets} · ${source} · ${when}${err}`;
+  }
+
+  void loadUblockStatus().then(paintUblockStatus);
+
+  updateBtn?.addEventListener("click", () => {
+    updateBtn.disabled = true;
+    void chrome.runtime
+      .sendMessage({ type: "FORMANT_UBLOCK_UPDATE_NOW" })
+      .then((res) => {
+        if (!res?.ok) throw new Error(res?.error || "更新失败");
+        if (res.status) paintUblockStatus(res.status);
+        toast("过滤列表已更新");
+      })
+      .catch((error) => {
+        toast(error instanceof Error ? error.message : String(error));
+      })
+      .finally(() => {
+        updateBtn.disabled = !current?.ublock.enabled;
+      });
+  });
+
   void loadFeatures().then((f) => {
     current = f;
     paint();
   });
 
   chrome.storage.onChanged.addListener((changes, area) => {
-    if (area !== "local" || !changes[FEATURES_KEY]) return;
-    current = normalizeFeatures(changes[FEATURES_KEY].newValue);
-    paint();
+    if (area !== "local") return;
+    if (changes[FEATURES_KEY]) {
+      current = normalizeFeatures(changes[FEATURES_KEY].newValue);
+      paint();
+    }
+    if (changes[UBLOCK_STATUS_KEY]) {
+      void loadUblockStatus().then(paintUblockStatus);
+    }
   });
 }

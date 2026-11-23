@@ -1,0 +1,33 @@
+uBlock Origin integration notice
+================================
+
+This directory contains an integration derived from uBlock Origin 1.76.0:
+
+  Project: https://github.com/gorhill/uBlock
+  Tag: 1.76.0 (aa9236cb351e369cbb68113dbe8175b87f3cd134)
+  Copyright: Raymond Hill & contributors
+  License: GNU General Public License, version 3.0
+
+The original COPYING text is retained beside this notice.
+
+formant copies the static-filter parser, DNR compiler, scriptlet registry and
+scriptlet compiler/templates under `core/`, plus required `lib/` modules.
+Filter lists are fetched at runtime from the URLs published in upstream
+`assets/assets.json`. Bundled `assets/` files are offline seeds for first run
+and CDN failure. The bundled AdGuard Chinese, EasyList, EasyPrivacy and other
+third-party lists retain the attribution and license headers in their text.
+
+formant-owned files in this tree:
+
+  core/vapi-shim.js
+      Empty vAPI.localStorage / canWASM=false so the compiler can load in an
+      MV3 service worker.
+
+  content/cosmetic.js
+      Applies upstream compiled CSS selectors to pages.
+
+  ../ublock-page-rules.js
+      Connects compiled page rules to formant's MV3 content/userScripts APIs.
+
+css-tree (src/lib/csstree) retains its upstream MIT license in
+`lib/csstree/LICENSE`.

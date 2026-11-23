@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "__MSG_extensionName__",
-    "version": "1.8.226",
+    "version": "1.8.228",
   "default_locale": "zh_CN",
   "homepage_url": "https://www.oolaf.top",
   "description": "__MSG_extensionDescription__",
@@ -11,6 +11,7 @@
     "contextMenus",
     "cookies",
     "declarativeNetRequest",
+    "declarativeNetRequestFeedback",
     "downloads",
     "management",
     "notifications",
@@ -300,7 +301,8 @@
         "gemini/content/sizes.js",
         "gemini/content/remove-math.js",
         "gemini/content/remove.js",
-        "gemini/content/bootstrap.js"
+        "gemini/content/bootstrap.js",
+        "gemini/content/export.js"
       ],
       "run_at": "document_start",
       "all_frames": false
@@ -315,6 +317,22 @@
   "web_accessible_resources": [
     {
       "resources": ["autopagerize/siteinfo.json"],
+      "matches": ["http://*/*", "https://*/*"]
+    },
+    {
+      "resources": [
+        "ublock/core/web_accessible_resources/*.js",
+        "ublock/core/web_accessible_resources/*.gif",
+        "ublock/core/web_accessible_resources/*.png",
+        "ublock/core/web_accessible_resources/*.css",
+        "ublock/core/web_accessible_resources/*.json",
+        "ublock/core/web_accessible_resources/*.txt",
+        "ublock/core/web_accessible_resources/*.xml",
+        "ublock/core/web_accessible_resources/*.mp3",
+        "ublock/core/web_accessible_resources/*.mp4",
+        "ublock/core/web_accessible_resources/noop.html",
+        "ublock/core/web_accessible_resources/empty"
+      ],
       "matches": ["http://*/*", "https://*/*"]
     }
   ]

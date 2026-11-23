@@ -29,6 +29,7 @@ import { handleGestureMessage } from "./gestures-bridge.js";
 import { handleTelegramMessage } from "./telegram-bridge.js";
 import { handleFreefqMessage } from "./freefq-bridge.js";
 import { initHuavodBackground } from "./huavod-bridge.js";
+import { handleUblockMessage, initUblockBackground } from "./ublock-bridge.js";
 import { initHlsBackground } from "./hls-bridge.js";
 import { handleAxureMessage } from "./axure-bridge.js";
 import { initVueBackground } from "./vue-bridge.js";
@@ -74,6 +75,10 @@ void initProxyBackground().catch((error) => {
 
 void initHuavodBackground().catch((error) => {
   console.warn("[formant] huavod background init failed", error);
+});
+
+void initUblockBackground().catch((error) => {
+  console.warn("[formant] uBO background init failed", error);
 });
 
 initHlsBackground();
@@ -209,6 +214,9 @@ if (chrome.runtime.onStartup) {
 }
 
 void ensureContextMenus();
+chrome.storage.onChanged.addListener((changes, area) => {
+  if (area === "local" && changes.formantFeatures) void ensureContextMenus();
+});
 void initV2exBackground({
   refreshContextMenus: () => {
     void ensureContextMenus();
@@ -428,13 +436,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         },
       );
     })()
-      .then(async (result) => {
-        try {
-          await recordStudyWord(String(message.q || ""), result);
-        } catch (error) {
-          console.warn("[formant] study word record failed", error);
-        }
+      .then((result) => {
         sendResponse({ ok: true, result });
+        void recordStudyWord(String(message.q || ""), result).catch((error) => {
+          console.warn("[formant] study word record failed", error);
+        });
       })
       .catch((error) =>
         sendResponse({
@@ -477,6 +483,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (handleAxureMessage(message, sender, sendResponse)) return true;
 
   if (handleUserscriptMessage(message, sender, sendResponse)) return true;
+
+  if (handleUblockMessage(message, sender, sendResponse)) return true;
 
   return false;
 });

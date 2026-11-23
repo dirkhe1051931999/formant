@@ -38,6 +38,7 @@ export const FEATURES_KEY = "formantFeatures";
  *   imagePrompt: { enabled: boolean },
  *   tools: { enabled: boolean },
  *   userscript: { enabled: boolean },
+ *   ublock: { enabled: boolean },
  * }} FormantFeatures
  */
 
@@ -134,6 +135,9 @@ export const DEFAULT_FEATURES = {
   userscript: {
     enabled: true,
   },
+  ublock: {
+    enabled: true,
+  },
 };
 
 /**
@@ -180,6 +184,7 @@ export function normalizeFeatures(raw) {
   const imagePrompt = src.imagePrompt && typeof src.imagePrompt === "object" ? src.imagePrompt : {};
   const tools = src.tools && typeof src.tools === "object" ? src.tools : {};
   const userscript = src.userscript && typeof src.userscript === "object" ? src.userscript : {};
+  const ublock = src.ublock && typeof src.ublock === "object" ? src.ublock : {};
 
   return {
     translate: {
@@ -272,6 +277,9 @@ export function normalizeFeatures(raw) {
     },
     userscript: {
       enabled: asBool(userscript.enabled, DEFAULT_FEATURES.userscript.enabled),
+    },
+    ublock: {
+      enabled: asBool(ublock.enabled, DEFAULT_FEATURES.ublock.enabled),
     },
   };
 }
@@ -448,4 +456,8 @@ export function isToolsEnabled(f) {
 
 export function isUserscriptEnabled(f) {
   return f.userscript.enabled;
+}
+
+export function isUblockEnabled(f) {
+  return f.ublock.enabled;
 }

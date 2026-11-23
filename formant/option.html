@@ -13,7 +13,7 @@
           <img src="icons/icon32.png" width="24" height="24" alt="" />
           <div>
             <h1>扩展设置</h1>
-            <p>formant 通用管理页 · 功能 / New Tab / V2EX / GitZip / 自动翻页 / 手势 / 代理 / 扩展 / 词库 / 翻译 / X 推文 / 识图 / 同步</p>
+            <p>formant 通用管理页 · 功能 / 广告拦截 / New Tab / V2EX / GitZip / 自动翻页 / 手势 / 代理 / 扩展 / 词库 / 翻译 / X 推文 / 识图 / 同步</p>
           </div>
         </div>
         <div class="shell-top__meta">
@@ -45,13 +45,13 @@
             <header class="panel__head">
               <div>
                 <h2>概览</h2>
-                <p class="muted">从左侧切换模块：功能（含 Discord / freefq / huavod / elitepvpers / GitHub issues / Gemini 去水印 / Gmail 邮箱 / HLS 播放等总开关）、New Tab、V2EX、GitZip、自动翻页、手势、代理、扩展、词库、翻译、X 推文与同步。HLS 列表源在工具箱。</p>
+                <p class="muted">从左侧切换模块：功能（含广告拦截 / Discord / freefq / huavod / elitepvpers / GitHub issues / Gemini 去水印 / Gmail 邮箱 / HLS 播放等总开关）、New Tab、V2EX、GitZip、自动翻页、手势、代理、扩展、词库、翻译、X 推文与同步。HLS 列表源在工具箱。</p>
               </div>
             </header>
             <div class="general-grid">
               <article class="general-card">
                 <h3>功能</h3>
-                <p class="ui-clamp-2" data-tooltip-clamp>翻译 / New Tab / Discord 聊天翻译 / elitepvpers 帖子翻译 / GitHub issues 翻译 / freefq 导出 / huavod 控制台 / Gemini 去水印 / Gmail 邮箱 / HLS 播放等能力的总开关与细分开关。</p>
+                <p class="ui-clamp-2" data-tooltip-clamp>翻译 / 广告拦截 / New Tab / Discord 聊天翻译 / elitepvpers 帖子翻译 / GitHub issues 翻译 / freefq 导出 / huavod 控制台 / Gemini 去水印 / Gmail 邮箱 / HLS 播放等能力的总开关与细分开关。</p>
                 <button type="button" class="btn" data-go-panel="features">打开功能</button>
               </article>
               <article class="general-card">
@@ -156,6 +156,22 @@
                   </span>
                   <input type="checkbox" data-feature="translate.contextMenu" data-requires-translate />
                 </label>
+              </section>
+
+              <section class="settings-card">
+                <h3>广告拦截</h3>
+                <p class="muted">使用 uBlock Origin 1.76.0 的规则解析器、默认订阅、元素隐藏及 scriptlet。列表从 uAssets 更新。MV3 的 DNR 配额会限制网络规则数量；右下角显示本页网络拦截次数。</p>
+                <label class="feature-row">
+                  <span>
+                    <strong>启用 uBlock 网络拦截</strong>
+                    <small>uBO 默认列表 / EasyList / EasyPrivacy / 中文区域列表</small>
+                  </span>
+                  <input type="checkbox" data-feature="ublock.enabled" />
+                </label>
+                <p class="ublock-status muted" id="ublockStatus">规则加载中…</p>
+                <div class="ublock-actions">
+                  <button type="button" class="btn" id="ublockUpdateNow">立即更新列表</button>
+                </div>
               </section>
 
               <section class="settings-card">
@@ -387,12 +403,12 @@
                 </label>
               </section>
               <section class="settings-card">
-                <h3>Gemini 去水印</h3>
-                <p class="muted">默认开启。在 gemini.google.com 和 business.gemini.google 下载生成图时，去掉右下角 Gemini 水印再保存。只处理 googleusercontent 上的成图（路径以 <code>gg</code> / <code>rd</code> 开头），并尽量取原图尺寸。对话文字、导航和其它网站不受影响。关闭后下一次下载恢复带水印原图。不另开面板，不同步到 mono。</p>
+                <h3>Gemini 工具</h3>
+                <p class="muted">默认开启。在 Gemini 对话页提供 TXT、HTML、PDF 导出，导出前主动加载历史消息并保存图片。下载生成图时继续去掉右下角水印。关闭后隐藏导出按钮并停止去水印。</p>
                 <label class="feature-row">
                   <span>
-                    <strong>启用 Gemini 下载去水印</strong>
-                    <small>gemini.google.com 生成图下载时去掉右下角水印</small>
+                    <strong>启用 Gemini 工具</strong>
+                    <small>导出完整对话，并在下载生成图时去水印</small>
                   </span>
                   <input type="checkbox" data-feature="gemini.enabled" />
                 </label>

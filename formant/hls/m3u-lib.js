@@ -37,9 +37,22 @@ export function isTxtListUrl(raw) {
  * @returns {boolean}
  */
 export function isHlsManifest(text) {
-  return /#EXT-X-(TARGETDURATION|STREAM-INF|MEDIA-SEQUENCE|ENDLIST|PLAYLIST-TYPE|I-FRAMES-ONLY)\b/i.test(
+  return /^[ \t]*#EXT-X-(TARGETDURATION|STREAM-INF|MEDIA-SEQUENCE|ENDLIST|PLAYLIST-TYPE|I-FRAMES-ONLY)\b/im.test(
     String(text || "")
   );
+}
+
+/**
+ * Absolute http(s), or a relative media path. Prose and filter lines are not paths.
+ * @param {string} text
+ * @returns {boolean}
+ */
+function isPlaylistHref(text) {
+  if (/^https?:\/\//i.test(text)) return true;
+  if (/\s/.test(text) || text.includes("#")) return false;
+  const path = /^(?:\/|\.{1,2}\/)(?:[A-Za-z0-9._~%-]+\/)*[A-Za-z0-9._~%-]+(?:\?[A-Za-z0-9._~%=&+-]*)?$/;
+  if (path.test(text)) return true;
+  return /^[A-Za-z0-9._~%-]+\.(?:m3u8?|mp4|ts|flv|mpd|mkv|m4s)(?:\?[A-Za-z0-9._~%=&+-]*)?$/i.test(text);
 }
 
 /**
@@ -48,8 +61,10 @@ export function isHlsManifest(text) {
  * @returns {string}
  */
 function resolveHttpUrl(href, baseUrl) {
+  const text = String(href || "").trim();
+  if (!text || !isPlaylistHref(text)) return "";
   try {
-    const url = new URL(String(href || "").trim(), baseUrl);
+    const url = new URL(text, baseUrl);
     if (url.protocol !== "http:" && url.protocol !== "https:") return "";
     return url.href;
   } catch {
@@ -235,14 +250,19 @@ function parseIptvTxt(text, baseUrl) {
  * @param {string} text
  * @returns {boolean}
  */
+function hasM3uChannelMarkers(text) {
+  return /^[ \t]*#EXTM3U\b/im.test(text) || /^[ \t]*#EXTINF:/im.test(text);
+}
+
 export function looksLikeChannelList(text) {
   const raw = String(text || "").replace(/^\uFEFF/, "");
   if (!raw || isBlockedPage(raw)) return false;
-  if (isHlsManifest(raw)) return true;
-  if (/#EXTM3U|#EXTINF:|#genre#/i.test(raw)) return true;
+  if (isHlsManifest(raw) || hasM3uChannelMarkers(raw)) return true;
   let hits = 0;
   for (const line of raw.split(/\r?\n/)) {
-    if (/^[^,#]+,\s*https?:\/\//i.test(line.trim())) {
+    const trimmed = line.trim();
+    if (/#genre#\s*$/i.test(trimmed)) return true;
+    if (/^[^,#]+,\s*https?:\/\//i.test(trimmed)) {
       hits += 1;
       if (hits >= 2) return true;
     }
@@ -259,7 +279,7 @@ export function parseChannelList(text, baseUrl) {
   const raw = String(text || "").replace(/^\uFEFF/, "");
   if (isBlockedPage(raw)) return { kind: "empty", items: [] };
   if (isHlsManifest(raw)) return { kind: "hls", items: [] };
-  const parsed = /#EXTM3U|#EXTINF:/i.test(raw) ? parseM3uBody(raw, baseUrl) : parseIptvTxt(raw, baseUrl);
+  const parsed = hasM3uChannelMarkers(raw) ? parseM3uBody(raw, baseUrl) : parseIptvTxt(raw, baseUrl);
   if (parsed.kind === "list") parsed.items = mergeChannels(parsed.items);
   return parsed;
 }
