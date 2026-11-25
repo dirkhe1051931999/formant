@@ -33,6 +33,7 @@ import { handleUblockMessage, initUblockBackground } from "./ublock-bridge.js";
 import { initHlsBackground } from "./hls-bridge.js";
 import { handleAxureMessage } from "./axure-bridge.js";
 import { initVueBackground } from "./vue-bridge.js";
+import { initTechDetectBackground } from "./tech-detect-bridge.js";
 import { handleXTranslateMessage } from "./x-translate-bridge.js";
 import { handleDiscordTranslateMessage } from "./discord-bridge.js";
 import { handleElitepvpersTranslateMessage } from "./elitepvpers-bridge.js";
@@ -83,6 +84,7 @@ void initUblockBackground().catch((error) => {
 
 initHlsBackground();
 initVueBackground();
+initTechDetectBackground();
 initUserscriptBackground();
 
 const SYNC_DEBOUNCE_MS = 8_000;
@@ -462,31 +464,21 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     return false;
   }
 
-  if (handleAutopagerizeMessage(message, sender, sendResponse)) return true;
-
-  if (handleGestureMessage(message, sender, sendResponse)) return true;
-
-  if (handleTelegramMessage(message, sender, sendResponse)) return true;
-
-  if (handleFreefqMessage(message, sender, sendResponse)) return true;
-
-  if (handleXTranslateMessage(message, sender, sendResponse)) return true;
-
-  if (handleDiscordTranslateMessage(message, sender, sendResponse)) return true;
-
-  if (handleElitepvpersTranslateMessage(message, sender, sendResponse)) return true;
-
-  if (handleGithubIssuesTranslateMessage(message, sender, sendResponse)) return true;
-
-  if (handleGeminiMessage(message, sender, sendResponse)) return true;
-
-  if (handleAxureMessage(message, sender, sendResponse)) return true;
-
-  if (handleUserscriptMessage(message, sender, sendResponse)) return true;
-
-  if (handleUblockMessage(message, sender, sendResponse)) return true;
-
-  return false;
+  const handlers = [
+    handleAutopagerizeMessage,
+    handleGestureMessage,
+    handleTelegramMessage,
+    handleFreefqMessage,
+    handleXTranslateMessage,
+    handleDiscordTranslateMessage,
+    handleElitepvpersTranslateMessage,
+    handleGithubIssuesTranslateMessage,
+    handleGeminiMessage,
+    handleAxureMessage,
+    handleUserscriptMessage,
+    handleUblockMessage,
+  ];
+  return handlers.some((handle) => handle(message, sender, sendResponse));
 });
 
 chrome.commands.onCommand.addListener((command) => {

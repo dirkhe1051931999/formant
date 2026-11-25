@@ -23,7 +23,6 @@ export function initTranslatePanel(api) {
   const { toast } = api;
   const modeEl = document.getElementById("optTranslateMode");
   const targetSelect = /** @type {HTMLSelectElement | null} */ (document.getElementById("optTranslateTarget"));
-  const modeHint = document.getElementById("optTranslateModeHint");
 
   if (!modeEl || !targetSelect) return;
 
@@ -36,20 +35,6 @@ export function initTranslatePanel(api) {
       const selected = mode === currentMode ? "true" : "false";
       return `<button type="button" class="opt-mode__btn${active}" role="tab" data-mode="${mode}" aria-selected="${selected}">${TRANSLATE_MODE_LABELS[mode]}</button>`;
     }).join("");
-  }
-
-  /**
-   * @param {import("./translate-router.js").TranslateMode} mode
-   */
-  function setModeHint(mode) {
-    if (!modeHint) return;
-    const hints = {
-      auto: "按文本难度自动选路：简单走 Google（失败 → DeepLX）；复杂同时跑 Google + GPT。",
-      google: "仅 Google；失败时自动走 DeepLX 备用。",
-      gpt: "仅 GPT（经 mono）。",
-      all: "Google、GPT、DeepLX 三路并行，便于对照。",
-    };
-    modeHint.textContent = hints[mode] || hints.auto;
   }
 
   targetSelect.innerHTML = TRANSLATE_TARGETS.map(
@@ -65,7 +50,6 @@ export function initTranslatePanel(api) {
     void (async () => {
       currentMode = await saveTranslateMode(mode);
       renderModeButtons();
-      setModeHint(currentMode);
       toast(`默认模式：${TRANSLATE_MODE_LABELS[currentMode]}`);
     })();
   });
@@ -97,7 +81,6 @@ export function initTranslatePanel(api) {
   void (async () => {
     currentMode = await loadTranslateMode();
     renderModeButtons();
-    setModeHint(currentMode);
     targetSelect.value = await loadTranslateTarget();
     savedKey = await loadDeeplxApiKey();
     if (keyInput) keyInput.value = savedKey;

@@ -10,9 +10,9 @@
 
 .tl-workspace .tl-shell {
   grid-template-columns: 216px minmax(0, 1fr);
-  gap: clamp(24px, 3vw, 48px);
+  gap: 0;
   max-width: 1440px;
-  padding: 0 clamp(20px, 3vw, 48px) 0 0;
+  padding: 0;
 }
 
 .tl-workspace .tl-side {
@@ -79,7 +79,11 @@
 }
 
 .tl-workspace .tl-main {
-  padding: 30px 0 16px;
+  padding: 30px var(--formant-workspace-padding-inline) 16px;
+}
+
+.tl-workspace :is(.tl-panel__body, .tl-panel:not(:has(.tl-head))):not(:fullscreen) {
+  scrollbar-gutter: stable both-edges;
 }
 
 .tl-workspace .tl-head {
@@ -250,8 +254,6 @@
   .tl-workspace .tl-shell {
     grid-template-columns: minmax(0, 1fr);
     grid-template-rows: minmax(0, min(145px, 30%)) minmax(0, 1fr);
-    gap: 0;
-    padding: 0;
   }
 
   .tl-workspace .tl-side {
@@ -273,7 +275,8 @@
   }
 
   .tl-workspace .tl-main {
-    padding: 16px 16px 10px;
+    padding-top: 16px;
+    padding-bottom: 10px;
   }
 
   .tl-workspace .tl-head {

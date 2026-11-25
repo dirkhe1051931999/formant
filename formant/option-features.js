@@ -1,13 +1,11 @@
 import {
   FEATURES_KEY,
-  isTranslateContextMenuEnabled,
-  isTranslatePopupEnabled,
-  isTranslateSelectionEnabled,
   loadFeatures,
   normalizeFeatures,
   saveFeatures,
 } from "./features.js";
 import { UBLOCK_STATUS_KEY, loadUblockStatus } from "./ublock-sync.js";
+import { formatUblockStatus } from "./option-ublock.js";
 
 /**
  * @typedef {{ toast: (text: string) => void }} PanelApi
@@ -68,6 +66,7 @@ export function initFeaturesPanel(api) {
       "gmail.enabled": current.gmail.enabled,
       "axure.enabled": current.axure.enabled,
       "vue.enabled": current.vue.enabled,
+      "techDetect.enabled": current.techDetect.enabled,
       "hls.enabled": current.hls.enabled,
       "imagePrompt.enabled": current.imagePrompt.enabled,
       "tools.enabled": current.tools.enabled,
@@ -82,47 +81,6 @@ export function initFeaturesPanel(api) {
     }
     syncDependentUi();
     if (updateBtn) updateBtn.disabled = !current.ublock.enabled;
-
-    const summary = document.getElementById("featuresSummary");
-    if (summary) {
-      const bits = [];
-      if (isTranslatePopupEnabled(current)) bits.push("弹窗翻译");
-      if (isTranslateSelectionEnabled(current)) bits.push("划词");
-      if (isTranslateContextMenuEnabled(current)) bits.push("右键翻译");
-      if (current.newtab.enabled) bits.push("New Tab");
-      const imgs = [];
-      if (current.imageSave.png) imgs.push("PNG");
-      if (current.imageSave.jpg) imgs.push("JPG");
-      if (imgs.length) bits.push(`另存为 ${imgs.join("/")}`);
-      if (current.screenshot.enabled) bits.push("滚动截屏");
-      if (current.office.enabled) bits.push("oolafOffice");
-      if (current.v2ex.enabled) bits.push("V2EX Plus");
-      if (current.gitzip.enabled) bits.push("GitZip");
-      if (current.autopagerize.enabled) bits.push("AutoPagerize");
-      if (current.proxy.enabled) bits.push("代理");
-      if (current.extensions.enabled) bits.push("扩展管理");
-      if (current.siteData.enabled) bits.push("站点数据");
-      if (current.gestures.enabled) bits.push("鼠标手势");
-      if (current.telegram.enabled) bits.push("Telegram 下载");
-      if (current.xTranslate.enabled) bits.push("X 推文翻译");
-      if (current.discord.enabled) bits.push("Discord 翻译");
-      if (current.elitepvpers.enabled) bits.push("elitepvpers 翻译");
-      if (current.githubIssues.enabled) bits.push("GitHub issues 翻译");
-      if (current.linuxdo.enabled) bits.push("linux.do 列表");
-      if (current.hupu.enabled) bits.push("虎扑帖子");
-      if (current.freefq.enabled) bits.push("freefq 导出");
-      if (current.huavod.enabled) bits.push("huavod 控制台");
-      if (current.gemini.enabled) bits.push("Gemini 去水印");
-      if (current.gmail.enabled) bits.push("Gmail 邮箱");
-      if (current.axure.enabled) bits.push("Axure 原型");
-      if (current.vue.enabled) bits.push("Vue 组件");
-      if (current.hls.enabled) bits.push("HLS 播放");
-      if (current.imagePrompt.enabled) bits.push("识图");
-      if (current.tools.enabled) bits.push("工具箱");
-      if (current.userscript.enabled) bits.push("油猴");
-      if (current.ublock.enabled) bits.push("广告拦截");
-      summary.textContent = bits.length ? `已启用：${bits.join(" · ")}` : "当前未启用任何可选能力";
-    }
   }
 
   root.addEventListener("change", (event) => {
@@ -164,6 +122,7 @@ export function initFeaturesPanel(api) {
     else if (path === "gmail.enabled") current.gmail.enabled = on;
     else if (path === "axure.enabled") current.axure.enabled = on;
     else if (path === "vue.enabled") current.vue.enabled = on;
+    else if (path === "techDetect.enabled") current.techDetect.enabled = on;
     else if (path === "hls.enabled") current.hls.enabled = on;
     else if (path === "imagePrompt.enabled") current.imagePrompt.enabled = on;
     else if (path === "tools.enabled") current.tools.enabled = on;
@@ -197,24 +156,7 @@ export function initFeaturesPanel(api) {
    */
   function paintUblockStatus(status) {
     if (!statusEl) return;
-    if (!status.lastUpdated && !status.ruleCount) {
-      statusEl.textContent = "规则尚未生成，后台正在编译…";
-      return;
-    }
-    const when = status.lastUpdated
-      ? new Date(status.lastUpdated).toLocaleString()
-      : "尚未更新";
-    const source =
-      status.source === "cdn" ? "CDN" : status.source === "cache" ? "缓存" : "离线种子";
-    const err = status.lastError ? `；上次错误：${status.lastError}` : "";
-    const scriptlets = status.scriptlets === "2 worlds"
-      ? "已启用"
-      : status.scriptlets === "pending"
-        ? "待编译"
-        : status.scriptlets === "disabled"
-          ? "已关闭"
-          : `未启用（${status.scriptlets || "未知错误"}；请在 Edge 扩展详情中开启「允许运行用户脚本」）`;
-    statusEl.textContent = `网络 ${status.ruleCount} 条（配额外 ${status.skipped}）· 元素隐藏 ${status.cosmeticCount || 0} 条 · scriptlet：${scriptlets} · ${source} · ${when}${err}`;
+    statusEl.textContent = formatUblockStatus(status);
   }
 
   void loadUblockStatus().then(paintUblockStatus);

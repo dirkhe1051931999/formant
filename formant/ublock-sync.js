@@ -2,6 +2,7 @@
 
 export const UBLOCK_LISTS_KEY = "formantUblockLists";
 export const UBLOCK_STATUS_KEY = "formantUblockStatus";
+export const UBLOCK_PROGRESS_KEY = "formantUblockProgress";
 
 export const SUBSCRIBED_LISTS = [
   "ublock-filters",
@@ -16,7 +17,7 @@ export const SUBSCRIBED_LISTS = [
   "urlhaus-1",
 ];
 
-const SEED_PATHS = {
+export const SEED_PATHS = {
   "ublock-filters": "ublock/assets/ublock/filters.min.txt",
   "ublock-quick-fixes": "ublock/assets/ublock/quick-fixes.min.txt",
   "ublock-unbreak": "ublock/assets/ublock/unbreak.min.txt",
@@ -35,7 +36,7 @@ const CATALOG_URLS = [
   "https://cdn.jsdelivr.net/gh/gorhill/uBlock@master/assets/assets.json",
 ];
 
-const FETCH_MS = 20_000;
+const FETCH_MS = 5_000;
 const DB_NAME = "formant-ublock-lists";
 
 function openDb() {
@@ -96,17 +97,50 @@ async function dbWrite(value) {
 
 /**
  * @param {string} url
+ * @param {AbortSignal} [outerSignal]
  * @returns {Promise<string>}
  */
-async function fetchText(url) {
+async function fetchText(url, outerSignal) {
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), FETCH_MS);
+  const onAbort = () => ctrl.abort();
+  outerSignal?.addEventListener("abort", onAbort, { once: true });
   try {
     const res = await fetch(url, { cache: "no-store", signal: ctrl.signal });
     if (!res.ok) throw new Error(`${res.status} ${url}`);
     return await res.text();
   } finally {
     clearTimeout(timer);
+    outerSignal?.removeEventListener("abort", onAbort);
+  }
+}
+
+/**
+ * Race up to N candidate URLs concurrently and return the first valid response.
+ * @param {string[]} urls
+ * @param {number} [minLen]
+ * @returns {Promise<{ url: string, text: string }>}
+ */
+async function fetchFirstText(urls, minLen = 1) {
+  const unique = [...new Set(urls)];
+  if (!unique.length) throw new Error("no candidate urls");
+  const controllers = unique.map(() => new AbortController());
+  try {
+    return await Promise.any(
+      unique.map(async (url, idx) => {
+        const text = await fetchText(url, controllers[idx].signal);
+        if (!text || text.length < minLen) throw new Error(`empty ${url}`);
+        for (let i = 0; i < controllers.length; i += 1) {
+          if (i !== idx) controllers[i].abort();
+        }
+        return { url, text };
+      }),
+    );
+  } catch (error) {
+    if (error instanceof AggregateError && error.errors?.length) {
+      throw error.errors[0];
+    }
+    throw error;
   }
 }
 
@@ -130,20 +164,22 @@ async function loadSeedCatalog() {
 }
 
 /**
+ * @param {(msg: string) => void} [onLog]
  * @returns {Promise<{ catalog: Record<string, any>, source: "cdn" | "seed" }>}
  */
-export async function loadCatalog() {
-  for (const url of CATALOG_URLS) {
-    try {
-      const text = await fetchText(url);
-      const catalog = JSON.parse(text);
-      if (catalog && typeof catalog === "object") {
-        return { catalog, source: "cdn" };
-      }
-    } catch (error) {
-      console.warn("[formant] uBO catalog fetch failed", url, error);
+export async function loadCatalog(onLog) {
+  const started = Date.now();
+  try {
+    const { url, text } = await fetchFirstText(CATALOG_URLS, 20);
+    const catalog = JSON.parse(text);
+    if (catalog && typeof catalog === "object") {
+      onLog?.(`目录获取成功 (${Date.now() - started}ms): ${new URL(url).hostname}`);
+      return { catalog, source: "cdn" };
     }
+  } catch (error) {
+    console.warn("[formant] uBO catalog race failed", error);
   }
+  onLog?.(`远程目录不可用 (${Date.now() - started}ms)，使用内置目录`);
   return { catalog: await loadSeedCatalog(), source: "seed" };
 }
 
@@ -171,25 +207,17 @@ async function loadSeedList(id) {
  * @returns {Promise<UblockList>}
  */
 async function fetchRemoteList(id, entry) {
-  const urls = [...asUrlList(entry?.cdnURLs), ...asUrlList(entry?.contentURL)];
-  let lastError = /** @type {unknown} */ (null);
-  for (const url of urls) {
-    try {
-      const text = await fetchText(url);
-      if (!text || text.length < 32) continue;
-      return {
-        id,
-        title: typeof entry?.title === "string" ? entry.title : id,
-        text,
-        url,
-        fetchedAt: Date.now(),
-        source: "cdn",
-      };
-    } catch (error) {
-      lastError = error;
-    }
-  }
-  throw lastError instanceof Error ? lastError : new Error(`failed to fetch ${id}`);
+  const urls = [...new Set([...asUrlList(entry?.cdnURLs), ...asUrlList(entry?.contentURL)])].slice(0, 3);
+  if (!urls.length) throw new Error(`no urls for ${id}`);
+  const { url, text } = await fetchFirstText(urls, 32);
+  return {
+    id,
+    title: typeof entry?.title === "string" ? entry.title : id,
+    text,
+    url,
+    fetchedAt: Date.now(),
+    source: "cdn",
+  };
 }
 
 /**
@@ -270,33 +298,44 @@ export async function resolveLists(preferCache = true) {
 
 /**
  * Pull catalog + lists from uAssets. On total failure, keep previous cache/seed.
+ * @param {(msg: string) => void} [onLog]
  * @returns {Promise<UblockListsState>}
  */
-export async function refreshListsFromNetwork() {
+export async function refreshListsFromNetwork(onLog) {
   const previous = (await loadCachedLists()) || (await loadSeedLists());
+  onLog?.("正在拉取过滤目录 (assets.json)...");
   let catalog;
   let catalogSource;
   try {
-    const loaded = await loadCatalog();
+    const loaded = await loadCatalog(onLog);
     catalog = loaded.catalog;
     catalogSource = loaded.source;
   } catch (error) {
     console.warn("[formant] uBO catalog unavailable", error);
+    onLog?.("目录拉取失败，保留已有缓存/内置规则");
     return previous;
   }
 
   /** @type {Record<string, UblockList>} */
   const lists = { ...previous.lists };
   let anyRemote = false;
+  let done = 0;
+  const total = SUBSCRIBED_LISTS.length;
+  onLog?.(`开始并发拉取 ${total} 个订阅列表...`);
   await Promise.all(SUBSCRIBED_LISTS.map(async (id) => {
     const entry = catalog[id] || {};
+    const started = Date.now();
     try {
       const remote = await fetchRemoteList(id, entry);
       lists[id] = remote;
       anyRemote = true;
+      done += 1;
+      onLog?.(`[${done}/${total}] ${id} 拉取成功 (${Date.now() - started}ms, ${(remote.text.length / 1024).toFixed(0)} KB)`);
     } catch (error) {
       console.warn("[formant] uBO list fetch failed", id, error);
       if (!lists[id] && SEED_PATHS[id]) lists[id] = await loadSeedList(id);
+      done += 1;
+      onLog?.(`[${done}/${total}] ${id} 拉取失败 (${Date.now() - started}ms)，回退本地`);
     }
   }));
 

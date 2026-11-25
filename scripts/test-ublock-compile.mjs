@@ -1,4 +1,4 @@
-// Exercises the uBO 1.76.0 compiler, formant's DNR quota, CSS and scriptlets.
+// Exercises the uBO 1.76.0 compiler, formant's hybrid static+dynamic DNR, CSS, procedural & scriptlets.
 // No browser or network required: uses the bundled offline lists.
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
@@ -21,8 +21,11 @@ const source = {
 };
 
 const dnr = new Map([[91001, { id: 91001, action: { type: 'block' }, condition: { urlFilter: 'huavod' } }]]);
+const enabledRulesets = new Set();
 let scriptletCount = 0;
+let fallbackCount = 0;
 let tencentScriptlet = false;
+let allowUserScripts = true;
 const saved = {};
 globalThis.chrome = {
   runtime: { getURL: (path) => pathToFileURL(resolve(ext, path)).href },
@@ -36,10 +39,19 @@ globalThis.chrome = {
       for (const id of removeRuleIds) dnr.delete(id);
       for (const rule of addRules) dnr.set(rule.id, rule);
     },
+    updateEnabledRulesets: async ({ enableRulesetIds = [], disableRulesetIds = [] }) => {
+      for (const id of disableRulesetIds) enabledRulesets.delete(id);
+      for (const id of enableRulesetIds) enabledRulesets.add(id);
+    },
+  },
+  scripting: {
+    unregisterContentScripts: async () => { fallbackCount = 0; },
+    registerContentScripts: async (scripts) => { fallbackCount = scripts.length; },
   },
   userScripts: {
     unregister: async () => { scriptletCount = 0; },
     register: async (scripts) => {
+      if (!allowUserScripts) throw new Error('User scripts not allowed');
       for (const script of scripts) {
         const code = script.js[0].code;
         new Function(code);
@@ -50,7 +62,7 @@ globalThis.chrome = {
   },
 };
 globalThis.fetch = async (url) => {
-  try { return { ok: true, text: () => readFile(fileURLToPath(url), 'utf8') }; }
+  try { return { ok: true, text: () => readFile(fileURLToPath(url), 'utf8'), json: async () => JSON.parse(await readFile(fileURLToPath(url), 'utf8')) }; }
   catch { return { ok: false }; }
 };
 
@@ -65,23 +77,56 @@ const originalLog = console.log;
 console.log = () => {}; // uBO logs unsupported post-1.76.0 scriptlet tokens.
 const status = await applyUblockLists(state, { enabled: true });
 console.log = originalLog;
-assert(status.ruleCount > 20_000);
-assert(status.ruleCount <= 30_000);
+
+assert(status.ruleCount > 100_000, `Expected >100k static rules, got ${status.ruleCount}`);
+assert.equal(status.skipped, 0);
+assert.equal(enabledRulesets.size, 10);
+assert.equal(dnr.size, 1); // Only unrelated formant rule 91001; seed lists are in static rulesets.
 assert.equal(scriptletCount, 2);
-assert.equal(status.scriptlets, '2 worlds');
-const redirects = [...dnr.values()].filter((rule) => rule.action.type === 'redirect').length;
-assert(redirects > 100);
-for (const rule of dnr.values()) {
-  if (rule.action.type !== 'redirect') continue;
-  assert(existsSync(resolve(ext, rule.action.redirect.extensionPath.slice(1))));
+assert.equal(status.scriptlets, '2 worlds (userScripts)');
+
+// Verify manifest static rulesets and fallback scriptlets exist on disk.
+const manifest = JSON.parse(await readFile(resolve(ext, 'manifest.json'), 'utf8'));
+for (const res of manifest.declarative_net_request.rule_resources) {
+  assert(existsSync(resolve(ext, res.path)), `Missing ruleset file: ${res.path}`);
 }
+assert(existsSync(resolve(ext, 'ublock/rulesets/scriptlets-main.js')));
+assert(existsSync(resolve(ext, 'ublock/rulesets/scriptlets-isolated.js')));
+
+// Verify CDN delta adds only newly added rules to dynamic DNR.
+const cdnLists = {
+  ...lists,
+  'ublock-quick-fixes': {
+    ...lists['ublock-quick-fixes'],
+    source: 'cdn',
+    text: `${lists['ublock-quick-fixes'].text}\n||formant-cdn-delta-ad.example^\n`,
+  },
+};
+console.log = () => {};
+const cdnStatus = await applyUblockLists({ catalogSource: 'cdn', catalogFetchedAt: Date.now(), lists: cdnLists }, { enabled: true });
+console.log = originalLog;
+assert.equal(cdnStatus.ruleCount, status.ruleCount + 1);
+assert.equal(cdnStatus.skipped, 0);
+assert.equal(dnr.size, 2); // 91001 + 1 CDN delta rule.
+
+// Verify procedural rules and scriptlet fallback when userScripts is disabled.
 assert(getPageCss('https://sports.qq.com/').specific.includes('txp'));
+assert(getPageCss('https://www.facebook.com/').procedural.length > 0);
 assert(tencentScriptlet);
 assert(getGenericCss('https://sports.qq.com/', ['.ad', '.ads']).length > 0);
-assert(dnr.has(91001)); // Other formant rules are untouched.
+
+allowUserScripts = false;
+console.log = () => {};
+const fbStatus = await applyUblockLists(state, { enabled: true });
+console.log = originalLog;
+assert.equal(fbStatus.scriptlets, '2 worlds (static fallback)');
+assert.equal(fallbackCount, 2);
+
 const disabled = await applyUblockLists(state, { enabled: false });
 assert.equal(disabled.ruleCount, 0);
+assert.equal(enabledRulesets.size, 0);
 assert.equal(scriptletCount, 0);
+assert.equal(fallbackCount, 0);
 assert(dnr.has(91001));
 assert.equal(dnr.size, 1);
-console.log('uBO compile verified', { rules: status.ruleCount, redirects, skipped: status.skipped, cosmetics: status.cosmeticCount, scriptlets: status.scriptlets });
+console.log('uBO compile verified', { rules: status.ruleCount, cdnDelta: cdnStatus.ruleCount - status.ruleCount, skipped: status.skipped, cosmetics: status.cosmeticCount, scriptlets: status.scriptlets, fallback: fbStatus.scriptlets });

@@ -454,7 +454,7 @@ html.is-detached-panel body {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 4px;
-  margin: 0 12px;
+  margin: 8px 12px 0;
   padding: 3px;
   border: 1px solid var(--line);
   border-radius: 10px;

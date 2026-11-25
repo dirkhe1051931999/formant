@@ -1,4 +1,3 @@
-import { initClampTooltips } from "./option-tooltip.js";
 import { initFeaturesPanel } from "./option-features.js";
 import { initImagePromptPanel } from "./option-image-prompt.js";
 import { initGesturesPanel } from "./option-gestures.js";
@@ -13,6 +12,7 @@ import { initKeysTransfer } from "./option-keys.js";
 import { initPrefsTransfer } from "./option-prefs.js";
 import { initClientKeyScope } from "./option-scope.js";
 import { initTranslatePanel } from "./option-translate.js";
+import { initUblockPanel } from "./option-ublock.js";
 import { initXTranslatePanel } from "./option-x-translate.js";
 import { initV2exPanel } from "./option-v2ex.js";
 
@@ -20,6 +20,7 @@ import { initV2exPanel } from "./option-v2ex.js";
 const ENABLED_PANELS = new Set([
   "general",
   "features",
+  "ublock",
   "newtab",
   "v2ex",
   "gitzip",
@@ -38,6 +39,7 @@ const ENABLED_PANELS = new Set([
 const PANEL_TITLES = {
   general: "扩展设置",
   features: "功能",
+  ublock: "广告拦截",
   newtab: "New Tab",
   v2ex: "V2EX",
   gitzip: "GitZip",
@@ -139,6 +141,20 @@ function bindShell() {
     });
   });
 
+  document.querySelectorAll("[data-open-window]").forEach((el) => {
+    el.addEventListener("click", () => {
+      const page = el.getAttribute("data-open-window");
+      if (!page) return;
+      void chrome.windows.create({
+        url: chrome.runtime.getURL(page),
+        type: "popup",
+        width: 1180,
+        height: 780,
+        focused: true,
+      });
+    });
+  });
+
   window.addEventListener("hashchange", () => {
     showPanel(location.hash, { pushHash: false });
   });
@@ -146,10 +162,22 @@ function bindShell() {
   showPanel(location.hash || "general", { pushHash: true });
 }
 
+const panelFiles = [
+  "option-panels-features.html",
+  "option-panels-browser.html",
+  "option-panels-data.html",
+];
+const panels = await Promise.all(panelFiles.map(async (file) => {
+  const response = await fetch(new URL(file, import.meta.url));
+  if (!response.ok) throw new Error(`Unable to load ${file}: ${response.status}`);
+  return response.text();
+}));
+document.querySelector(".shell-body").insertAdjacentHTML("beforeend", panels.join("\n"));
+
 bindShell();
-initClampTooltips();
 initClientKeyScope();
 initFeaturesPanel({ toast });
+initUblockPanel({ toast });
 initNewtabPanel({ toast });
 initV2exPanel({ toast });
 initGitzipPanel({ toast });

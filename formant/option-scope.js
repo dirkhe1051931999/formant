@@ -1,13 +1,5 @@
 import { loadSettings, maskClientKey } from "./sync.js";
 
-function scopeLabel(clientKey) {
-  const fingerprint = maskClientKey(clientKey);
-  if (!fingerprint) {
-    return "未配置 Client API Key。New Tab / 手势 / 书签 / 热点英语的云端配置按 Key 隔离，请先到「同步」填写。";
-  }
-  return `当前 Client API Key：${fingerprint}。换一把 Key 就是另一套 New Tab / 手势 / 书签 / 热点英语，互不影响。`;
-}
-
 function chipLabel(clientKey) {
   const fingerprint = maskClientKey(clientKey);
   return fingerprint ? `Key ${fingerprint}` : "";
@@ -18,10 +10,6 @@ export function initClientKeyScope() {
 
   async function paint() {
     const settings = await loadSettings();
-    const text = scopeLabel(settings.clientKey);
-    document.querySelectorAll("[data-client-key-scope]").forEach((el) => {
-      el.textContent = text;
-    });
     if (!chip) return;
     const label = chipLabel(settings.clientKey);
     chip.hidden = !label;

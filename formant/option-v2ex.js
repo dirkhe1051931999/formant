@@ -18,51 +18,51 @@ const GROUPS = [
   {
     title: "签到",
     fields: [
-      ["checkin", "自动签到", "每 5 分钟检查一次；成功后当天不再重复签到", "checkbox"],
+      ["checkin", "自动签到", "checkbox"],
     ],
   },
   {
     title: "提醒",
     fields: [
-      ["msgNote", "消息提醒", "每 3 分钟检查 V2EX 未读消息并更新扩展角标", "checkbox"],
-      ["chickinNote", "签到成功提醒", "自动签到成功后显示浏览器通知", "checkbox"],
+      ["msgNote", "消息提醒", "checkbox"],
+      ["chickinNote", "签到成功提醒", "checkbox"],
     ],
   },
   {
     title: "浏览",
     fields: [
-      ["preview", "主题预览", "在主题列表中原地展开主题正文", "checkbox"],
-      ["ignore", "主题忽略", "在主题列表中加入忽略操作", "checkbox"],
-      ["fold", "自动折叠", "折叠超长主题正文与回复，点击回复体展开/收起", "checkbox"],
-      ["jump", "跳过主题", "浏览主题翻页时直接跳到回复区", "checkbox"],
-      ["newWindow", "新标签页浏览主题", "列表中的主题链接默认在新标签页打开", "checkbox"],
+      ["preview", "主题预览", "checkbox"],
+      ["ignore", "主题忽略", "checkbox"],
+      ["fold", "自动折叠", "checkbox"],
+      ["jump", "跳过主题", "checkbox"],
+      ["newWindow", "新标签页浏览主题", "checkbox"],
     ],
   },
   {
     title: "回复",
     fields: [
-      ["replyUserNum", "回复楼层号", "回复时自动附加对方楼层号", "checkbox"],
-      ["relateReply", "快速查看相关回复", "悬停 @ 用户查看其最近相关回复", "checkbox"],
-      ["nestedComment", "楼中楼模式", "先并发拉齐评论分页（最多 100 页、4 路）再按 @ / #楼层 组树；跨页回复才会进同一棵树", "checkbox"],
-      ["opReplyBg", "楼主回复背景", "默认关闭；打开后给带 OP 标记的回复铺背景", "checkbox"],
-      ["replyColor", "楼主回复背景色", "需先开启「楼主回复背景」", "color"],
-      ["replyA", "楼主回复背景透明度", "0 到 1", "range"],
-      ["imageParsing", "图片解析", "将常见图片链接展开为图片预览", "checkbox"],
-      ["thankColor", "感谢爱心颜色", "设置感谢区域的强调色", "color"],
-      ["weekNewuser", "淡化新用户", "淡化最近一个月注册用户的回复", "checkbox"],
+      ["replyUserNum", "回复楼层号", "checkbox"],
+      ["relateReply", "快速查看相关回复", "checkbox"],
+      ["nestedComment", "楼中楼模式", "checkbox"],
+      ["opReplyBg", "楼主回复背景", "checkbox"],
+      ["replyColor", "楼主回复背景色", "color"],
+      ["replyA", "楼主回复背景透明度", "range"],
+      ["imageParsing", "图片解析", "checkbox"],
+      ["thankColor", "感谢爱心颜色", "color"],
+      ["weekNewuser", "淡化新用户", "checkbox"],
     ],
   },
   {
     title: "其他",
     fields: [
-      ["vDaily", "启用 vDaily", "展示推荐主题/回复，并在浏览主题时提交公开主题数据", "checkbox"],
-      ["userinfo", "快速查看用户信息", "悬停头像显示资料、关注、屏蔽与标记操作", "checkbox"],
-      ["markColor", "标记用户颜色", "设置被标记用户头像框颜色", "color"],
-      ["sov2ex", "使用 sov2ex 搜索", "替换 V2EX 页面内置搜索入口", "checkbox"],
-      ["sov2exMenu", "右键 sov2ex 搜索", "选中文字后显示 sov2ex 右键菜单", "checkbox"],
-      ["searchShortcut", "开启搜索快捷键", "按 / 聚焦 V2EX 搜索框", "checkbox"],
-      ["dblclickToTop", "双击返回顶部", "双击页面空白区域平滑回到顶部", "checkbox"],
-      ["base64", "Base64 解码", "选中 Base64 文本后显示可复制的解码结果", "checkbox"],
+      ["vDaily", "启用 vDaily", "checkbox"],
+      ["userinfo", "快速查看用户信息", "checkbox"],
+      ["markColor", "标记用户颜色", "color"],
+      ["sov2ex", "使用 sov2ex 搜索", "checkbox"],
+      ["sov2exMenu", "右键 sov2ex 搜索", "checkbox"],
+      ["searchShortcut", "开启搜索快捷键", "checkbox"],
+      ["dblclickToTop", "双击返回顶部", "checkbox"],
+      ["base64", "Base64 解码", "checkbox"],
     ],
   },
 ];
@@ -70,19 +70,16 @@ const GROUPS = [
 /**
  * @param {string} name
  * @param {string} label
- * @param {string} hint
  * @param {"checkbox" | "color" | "range"} kind
  * @param {Record<string, any>} options
  */
-function createSetting(name, label, hint, kind, options) {
+function createSetting(name, label, kind, options) {
   const row = document.createElement("label");
   row.className = "feature-row v2ex-setting";
   const copy = document.createElement("span");
   const title = document.createElement("strong");
   title.textContent = label;
-  const description = document.createElement("small");
-  description.textContent = hint;
-  copy.append(title, description);
+  copy.append(title);
 
   const input = /** @type {HTMLInputElement} */ (document.createElement("input"));
   input.name = name;
@@ -167,8 +164,8 @@ export function initV2exPanel(api) {
       const heading = document.createElement("h3");
       heading.textContent = group.title;
       card.append(heading);
-      for (const [name, label, hint, kind] of group.fields) {
-        card.append(createSetting(name, label, hint, /** @type {any} */ (kind), options));
+      for (const [name, label, kind] of group.fields) {
+        card.append(createSetting(name, label, /** @type {any} */ (kind), options));
       }
       form.append(card);
     }

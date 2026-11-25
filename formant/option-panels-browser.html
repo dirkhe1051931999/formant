@@ -1,0 +1,347 @@
+<section class="panel" data-panel="ublock" id="panel-ublock" hidden>
+  <header class="panel__head">
+    <div>
+      <h2>广告拦截</h2>
+    </div>
+    <div class="panel__actions">
+      <button type="button" class="btn btn--ghost" id="ublockResetConfig">恢复默认</button>
+      <button type="button" class="btn btn--ghost" id="ublockPanelUpdateNow">立即更新列表</button>
+      <button type="button" class="btn" id="ublockSaveConfig">保存配置</button>
+    </div>
+  </header>
+  <form id="ublockConfigForm" class="settings-stack" onsubmit="return false">
+    <section class="settings-card">
+      <h3>运行状态与选项</h3>
+      <p class="ublock-status muted" id="ublockPanelStatus">规则加载中…</p>
+      <details class="ublock-log-wrap" id="ublockLogWrap">
+        <summary>更新日志</summary>
+        <pre class="ublock-log" id="ublockUpdateLog">暂无更新日志</pre>
+      </details>
+      <label class="feature-row">
+        <span><strong>启用元素隐藏（CSS / 程序化规则）</strong></span>
+        <input type="checkbox" id="ublockOptCosmetic" />
+      </label>
+      <label class="feature-row">
+        <span><strong>启用脚本注入（Scriptlets）</strong></span>
+        <input type="checkbox" id="ublockOptScriptlets" />
+      </label>
+    </section>
+
+    <section class="settings-card">
+      <h3>订阅过滤列表</h3>
+      <div id="ublockListToggles"></div>
+    </section>
+
+    <section class="settings-card">
+      <h3>信任站点（白名单）</h3>
+      <label class="settings-field settings-field--wide">
+        每行一个域名（支持子域名自动放行，如 example.com）
+        <textarea id="ublockTrustedSites" rows="4" spellcheck="false" placeholder="example.com&#10;localhost"></textarea>
+      </label>
+    </section>
+
+    <section class="settings-card">
+      <h3>自定义过滤规则</h3>
+      <label class="settings-field settings-field--wide">
+        支持 uBlock 语法（如 ||ads.example.com^、example.com##.ad-banner）
+        <textarea id="ublockCustomFilters" rows="6" spellcheck="false" placeholder="! 自定义规则每行一条&#10;||ads.example.com^&#10;example.com##.ad-banner"></textarea>
+      </label>
+    </section>
+  </form>
+</section>
+
+<section class="panel" data-panel="newtab" id="panel-newtab" hidden>
+  <header class="panel__head">
+    <div>
+      <h2>New Tab</h2>
+    </div>
+    <div class="panel__actions">
+      <button type="button" id="newtabRefresh" class="btn btn--ghost">刷新数据</button>
+      <button type="button" id="newtabSync" class="btn">同步主页</button>
+    </div>
+  </header>
+  <form id="newtabForm" class="settings-stack" onsubmit="return false">
+    <section class="settings-card">
+      <h3>主页外观与城市</h3>
+      <div class="settings-grid">
+        <label class="settings-field">
+          LocationID（和风）
+          <input id="newtabLocationId" type="text" placeholder="101110101" />
+        </label>
+        <label class="settings-field">
+          城市名
+          <input id="newtabCityName" type="text" placeholder="西安" />
+        </label>
+        <label class="settings-field settings-field--wide">
+          壁纸 URL
+          <input id="newtabWallpaperUrl" type="url" spellcheck="false" placeholder="https://" />
+        </label>
+        <label class="settings-field settings-field--wide">
+          遮罩 <span id="newtabWallpaperMaskValue">0.12</span>
+          <input id="newtabWallpaperMask" type="range" min="0" max="0.85" step="0.01" />
+        </label>
+      </div>
+      <label class="feature-row">
+        <span>
+          <strong>显示搜索框</strong>
+        </span>
+        <input id="newtabShowSearch" type="checkbox" />
+      </label>
+      <label class="feature-row">
+        <span>
+          <strong>链接在新窗口打开</strong>
+        </span>
+        <input id="newtabOpenLinksInNewWindow" type="checkbox" />
+      </label>
+      <div class="panel__actions panel__actions--start">
+        <button type="button" id="newtabSave" class="btn btn--ghost">保存 New Tab 设置</button>
+      </div>
+      <p id="newtabState" class="settings-meta">加载中…</p>
+    </section>
+    <section class="settings-card">
+      <h3>mono 连接</h3>
+      <div class="panel__actions panel__actions--start">
+        <button type="button" class="btn btn--ghost" data-go-panel="sync">打开同步设置</button>
+      </div>
+    </section>
+  </form>
+</section>
+
+<section class="panel" data-panel="v2ex" id="panel-v2ex" hidden>
+  <header class="panel__head">
+    <div>
+      <h2>V2EX Plus</h2>
+    </div>
+    <div class="panel__actions">
+      <button type="button" id="v2exCheckinNow" class="btn">立即签到</button>
+      <button type="button" id="v2exReset" class="btn btn--ghost">恢复默认</button>
+    </div>
+  </header>
+  <p id="v2exState" class="settings-meta">加载中…</p>
+  <div id="v2exSettings" class="settings-stack"></div>
+  <div class="settings-stack">
+  <section class="settings-card">
+    <h3>Imgur 图片上传</h3>
+    <div class="settings-grid">
+      <label class="settings-field settings-field--wide">
+        Imgur Client ID
+        <span class="settings-inline">
+          <input id="v2exImgurClientId" type="password" spellcheck="false" autocomplete="off" placeholder="可选：保存后刷新 V2EX 页面" />
+          <button type="button" id="v2exImgurSave" class="btn btn--ghost">保存 Imgur ID</button>
+        </span>
+      </label>
+    </div>
+    <p id="v2exImgurMeta" class="settings-meta"></p>
+  </section>
+  <section class="settings-card">
+    <h3>入口与管理</h3>
+    <div class="v2ex-entry">
+      <div class="panel__actions panel__actions--start">
+        <button type="button" id="v2exStyles" class="btn btn--ghost">样式商城</button>
+        <button type="button" id="v2exShortcuts" class="btn btn--ghost">设置快捷键</button>
+      </div>
+      <div id="v2exManagement" class="v2ex-management"></div>
+    </div>
+  </section>
+  </div>
+</section>
+
+<section class="panel" data-panel="gitzip" id="panel-gitzip" hidden>
+  <header class="panel__head">
+    <div>
+      <h2>GitZip（公开仓库）</h2>
+    </div>
+  </header>
+  <form id="gitzipForm" class="settings-stack" onsubmit="return false">
+    <section class="settings-card">
+      <h3>选择方式</h3>
+      <div class="settings-grid">
+        <label class="settings-field settings-field--wide">
+          文件列表选择
+          <select id="gitzipSelectBehaviour">
+            <option value="both">复选标记 + 双击行</option>
+            <option value="single-check">仅复选标记</option>
+            <option value="double-click">仅双击行</option>
+          </select>
+        </label>
+      </div>
+    </section>
+    <section class="settings-card">
+      <h3>悬浮下载面板主题</h3>
+      <div class="settings-grid">
+        <label class="settings-field settings-field--wide">
+          主题
+          <select id="gitzipTheme">
+            <option value="default">跟随系统</option>
+            <option value="light">浅色</option>
+            <option value="dark">深色</option>
+          </select>
+        </label>
+      </div>
+    </section>
+    <section class="settings-card">
+      <div class="panel__actions panel__actions--start">
+        <button type="button" id="gitzipReset" class="btn btn--ghost">恢复默认</button>
+      </div>
+      <p id="gitzipState" class="settings-meta">加载中…</p>
+    </section>
+  </form>
+</section>
+
+<section class="panel" data-panel="autopagerize" id="panel-autopagerize" hidden>
+  <header class="panel__head">
+    <div>
+      <h2>AutoPagerize（自动翻页）</h2>
+    </div>
+    <div class="panel__actions">
+      <button type="button" id="autopagerizeReset" class="btn btn--ghost">恢复默认</button>
+    </div>
+  </header>
+  <form id="autopagerizeForm" class="settings-stack" onsubmit="return false">
+    <section class="settings-card">
+      <h3>显示与排除</h3>
+      <label class="feature-row">
+        <span>
+          <strong>显示状态条</strong>
+        </span>
+        <input id="autopagerizeMessageBar" type="checkbox" />
+      </label>
+      <label class="settings-field settings-field--wide">
+        排除 URL（每行一条，支持通配符 <code>*</code> 或 <code>/正则/</code>）
+        <textarea id="autopagerizeExclude" rows="5" cols="60" placeholder="https://mail.google.com/*&#10;/[^.]+\.example\.com\//"></textarea>
+      </label>
+      <div class="panel__actions panel__actions--start">
+        <button type="button" id="autopagerizeSave" class="btn">保存设置</button>
+      </div>
+      <p id="autopagerizeState" class="settings-meta">加载中…</p>
+    </section>
+  </form>
+</section>
+
+<section class="panel" data-panel="gestures" id="panel-gestures" hidden>
+  <header class="panel__head">
+    <div>
+      <h2>鼠标手势</h2>
+    </div>
+    <div class="panel__actions">
+      <button type="button" id="gesturesRefresh" class="btn btn--ghost">刷新</button>
+      <button type="button" id="gesturesSync" class="btn">同步</button>
+      <button type="button" id="gesturesReset" class="btn btn--ghost">恢复默认</button>
+    </div>
+  </header>
+  <form id="gesturesForm" class="settings-stack" onsubmit="return false">
+    <section class="settings-card">
+      <h3>识别</h3>
+      <label class="settings-field">
+        最小位移（像素）
+        <input id="gesturesMinDistance" type="number" min="6" max="40" step="1" />
+      </label>
+    </section>
+    <section class="settings-card">
+      <h3>手势</h3>
+      <div class="gesture-pad" id="gesturesPad" tabindex="0">
+        <svg id="gesturesPadSvg" class="gesture-pad__svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+          <g id="gesturesPadStrokes"></g>
+        </svg>
+        <p id="gesturesPadHint" class="gesture-pad__hint">点「添加」或「绘制」后在此划动</p>
+      </div>
+      <div class="gesture-add">
+        <select id="gesturesAddAction" aria-label="要添加的动作"></select>
+        <button type="button" id="gesturesAdd" class="btn">添加</button>
+      </div>
+      <div class="gesture-bind-list" id="gesturesBindList"></div>
+      <p id="gesturesState" class="settings-meta">加载中…</p>
+    </section>
+  </form>
+</section>
+
+<section class="panel" data-panel="proxy" id="panel-proxy" hidden>
+  <header class="panel__head">
+    <div>
+      <h2>代理</h2>
+    </div>
+  </header>
+  <form id="proxyForm" class="settings-stack" onsubmit="return false">
+    <section class="settings-card">
+      <h3>当前配置</h3>
+      <p id="proxyState" class="settings-meta">加载中…</p>
+      <div id="proxyProfileList" class="proxy-profile-list"></div>
+    </section>
+    <section class="settings-card">
+      <h3>PAC 脚本</h3>
+      <div class="settings-grid">
+        <label class="settings-field settings-field--wide">
+          PAC URL
+          <input id="proxyPacUrl" type="url" spellcheck="false" placeholder="https://example.com/proxy.pac" />
+        </label>
+        <label class="settings-field settings-field--wide">
+          PAC 内容（导入或粘贴）
+          <textarea id="proxyPacData" rows="6" placeholder="function FindProxyForURL(url, host) {&#10;  return &quot;PROXY 127.0.0.1:7890&quot;;&#10;}"></textarea>
+        </label>
+        <label class="settings-field settings-field--wide">
+          导入 .pac 文件
+          <input id="proxyPacFile" type="file" accept=".pac,.js,text/plain,text/javascript" />
+        </label>
+      </div>
+      <div class="panel__actions panel__actions--start">
+        <button type="button" id="proxyPacSave" class="btn">保存 PAC</button>
+        <button type="button" id="proxyPacApply" class="btn">启用 PAC</button>
+        <button type="button" id="proxyPacClear" class="btn btn--ghost">清除 PAC</button>
+      </div>
+    </section>
+    <section class="settings-card">
+      <h3>添加 / 编辑固定代理</h3>
+      <input id="proxyEditId" type="hidden" value="" />
+      <div class="settings-grid">
+        <label class="settings-field">
+          名称
+          <input id="proxyName" type="text" maxlength="40" placeholder="公司 SOCKS" />
+        </label>
+        <label class="settings-field">
+          协议
+          <select id="proxyScheme">
+            <option value="http">HTTP</option>
+            <option value="https">HTTPS</option>
+            <option value="socks4">SOCKS4</option>
+            <option value="socks5" selected>SOCKS5</option>
+          </select>
+        </label>
+        <label class="settings-field">
+          主机
+          <input id="proxyHost" type="text" spellcheck="false" placeholder="127.0.0.1" />
+        </label>
+        <label class="settings-field">
+          端口
+          <input id="proxyPort" type="number" min="1" max="65535" value="7890" />
+        </label>
+        <label class="settings-field settings-field--wide">
+          绕过列表（每行一条）
+          <textarea id="proxyBypass" rows="4" placeholder="localhost&#10;127.0.0.1&#10;&lt;local&gt;"></textarea>
+        </label>
+      </div>
+      <div class="panel__actions panel__actions--start">
+        <button type="button" id="proxySaveProfile" class="btn">添加代理</button>
+        <button type="button" id="proxyResetForm" class="btn btn--ghost">清空表单</button>
+      </div>
+    </section>
+  </form>
+</section>
+
+<section class="panel" data-panel="extensions" id="panel-extensions" hidden>
+  <header class="panel__head">
+    <div>
+      <h2>扩展管理</h2>
+    </div>
+  </header>
+  <div id="extensionsPanelBody" class="settings-stack">
+    <section class="settings-card">
+      <h3>已安装扩展</h3>
+      <p id="extensionsState" class="settings-meta">加载中…</p>
+      <label class="settings-field settings-field--wide">
+        搜索
+        <input id="extensionsSearch" type="search" placeholder="名称 / 描述 / ID" autocomplete="off" />
+      </label>
+      <div id="extensionsList" class="ext-list"></div>
+    </section>
+  </div>
+</section>

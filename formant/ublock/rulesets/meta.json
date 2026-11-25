@@ -1,0 +1,82 @@
+{
+  "generatedAt": "2026-11-25T01:49:37.507Z",
+  "totalRules": 134749,
+  "totalRegex": 374,
+  "droppedRegex": 0,
+  "rulesets": [
+    {
+      "id": "ublock_ublock-filters",
+      "listId": "ublock-filters",
+      "file": "ublock-filters.json",
+      "count": 4129,
+      "regexCount": 174
+    },
+    {
+      "id": "ublock_ublock-badware",
+      "listId": "ublock-badware",
+      "file": "ublock-badware.json",
+      "count": 1554,
+      "regexCount": 134
+    },
+    {
+      "id": "ublock_ublock-privacy",
+      "listId": "ublock-privacy",
+      "file": "ublock-privacy.json",
+      "count": 896,
+      "regexCount": 14
+    },
+    {
+      "id": "ublock_ublock-quick-fixes",
+      "listId": "ublock-quick-fixes",
+      "file": "ublock-quick-fixes.json",
+      "count": 99,
+      "regexCount": 3
+    },
+    {
+      "id": "ublock_ublock-unbreak",
+      "listId": "ublock-unbreak",
+      "file": "ublock-unbreak.json",
+      "count": 1547,
+      "regexCount": 0
+    },
+    {
+      "id": "ublock_easylist",
+      "listId": "easylist",
+      "file": "easylist.json",
+      "count": 3920,
+      "regexCount": 13
+    },
+    {
+      "id": "ublock_easyprivacy",
+      "listId": "easyprivacy",
+      "file": "easyprivacy.json",
+      "count": 9281,
+      "regexCount": 9
+    },
+    {
+      "id": "ublock_CHN-0",
+      "listId": "CHN-0",
+      "file": "CHN-0.json",
+      "count": 6018,
+      "regexCount": 27
+    },
+    {
+      "id": "ublock_plowe-0",
+      "listId": "plowe-0",
+      "file": "plowe-0.json",
+      "count": 4,
+      "regexCount": 0
+    },
+    {
+      "id": "ublock_urlhaus-1",
+      "listId": "urlhaus-1",
+      "file": "urlhaus-1.json",
+      "count": 107301,
+      "regexCount": 0
+    }
+  ],
+  "scriptlets": {
+    "MAIN": "scriptlets-main.js",
+    "ISOLATED": "scriptlets-isolated.js"
+  }
+}

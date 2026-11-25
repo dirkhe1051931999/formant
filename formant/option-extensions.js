@@ -71,9 +71,7 @@ export function initExtensionsPanel(api) {
       main.className = "ext-row__main";
       const title = document.createElement("strong");
       title.textContent = item.name;
-      const meta = document.createElement("small");
-      meta.textContent = item.description || item.id;
-      main.append(title, meta);
+      main.append(title);
 
       const actions = document.createElement("div");
       actions.className = "ext-row__actions";

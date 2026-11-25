@@ -1,0 +1,325 @@
+<section class="panel" data-panel="features" id="panel-features" hidden>
+  <header class="panel__head">
+    <div>
+      <h2>功能开关</h2>
+    </div>
+  </header>
+  <form id="featuresForm" class="settings-stack" onsubmit="return false">
+    <section class="settings-card">
+      <h3>翻译</h3>
+      <label class="feature-row">
+        <span>
+          <strong>启用翻译</strong>
+        </span>
+        <input type="checkbox" data-feature="translate.enabled" />
+      </label>
+      <label class="feature-row feature-row--nested" data-requires-translate-wrap>
+        <span>
+          <strong>弹窗翻译</strong>
+        </span>
+        <input type="checkbox" data-feature="translate.popup" data-requires-translate />
+      </label>
+      <label class="feature-row feature-row--nested">
+        <span>
+          <strong>划词浮标</strong>
+        </span>
+        <input type="checkbox" data-feature="translate.selection" data-requires-translate />
+      </label>
+      <label class="feature-row feature-row--nested">
+        <span>
+          <strong>右键翻译</strong>
+        </span>
+        <input type="checkbox" data-feature="translate.contextMenu" data-requires-translate />
+      </label>
+    </section>
+
+    <section class="settings-card">
+      <h3>广告拦截</h3>
+      <label class="feature-row">
+        <span>
+          <strong>启用 uBlock 网络拦截</strong>
+        </span>
+        <input type="checkbox" data-feature="ublock.enabled" />
+      </label>
+      <p class="ublock-status muted" id="ublockStatus">规则加载中…</p>
+      <div class="ublock-actions">
+        <button type="button" class="btn" id="ublockUpdateNow">立即更新列表</button>
+      </div>
+    </section>
+
+    <section class="settings-card">
+      <h3>New Tab</h3>
+      <label class="feature-row">
+        <span>
+          <strong>启用 formant New Tab</strong>
+        </span>
+        <input type="checkbox" data-feature="newtab.enabled" />
+      </label>
+    </section>
+
+    <section class="settings-card">
+      <h3>图片另存为</h3>
+      <label class="feature-row">
+        <span>
+          <strong>另存为 PNG</strong>
+        </span>
+        <input type="checkbox" data-feature="imageSave.png" />
+      </label>
+      <label class="feature-row">
+        <span>
+          <strong>另存为 JPG</strong>
+        </span>
+        <input type="checkbox" data-feature="imageSave.jpg" />
+      </label>
+    </section>
+    <section class="settings-card">
+      <h3>滚动截屏</h3>
+      <label class="feature-row">
+        <span>
+          <strong>启用滚动截屏</strong>
+        </span>
+        <input type="checkbox" data-feature="screenshot.enabled" />
+      </label>
+    </section>
+    <section class="settings-card">
+      <h3>oolafOffice</h3>
+      <div class="panel__actions panel__actions--start">
+        <a href="oolafoffice/index.html" target="_blank" rel="noopener">打开 oolafOffice 起始页</a>
+      </div>
+      <label class="feature-row">
+        <span>
+          <strong>启用 oolafOffice</strong>
+        </span>
+        <input type="checkbox" data-feature="office.enabled" />
+      </label>
+    </section>
+    <section class="settings-card">
+      <h3>V2EX Plus</h3>
+      <label class="feature-row">
+        <span>
+          <strong>启用 V2EX Plus</strong>
+        </span>
+        <input type="checkbox" data-feature="v2ex.enabled" />
+      </label>
+    </section>
+    <section class="settings-card">
+      <h3>GitZip</h3>
+      <label class="feature-row">
+        <span>
+          <strong>启用 GitZip</strong>
+        </span>
+        <input type="checkbox" data-feature="gitzip.enabled" />
+      </label>
+    </section>
+    <section class="settings-card">
+      <h3>AutoPagerize</h3>
+      <label class="feature-row">
+        <span>
+          <strong>启用 AutoPagerize</strong>
+        </span>
+        <input type="checkbox" data-feature="autopagerize.enabled" />
+      </label>
+    </section>
+    <section class="settings-card">
+      <h3>鼠标手势</h3>
+      <label class="feature-row">
+        <span>
+          <strong>启用鼠标手势</strong>
+        </span>
+        <input type="checkbox" data-feature="gestures.enabled" />
+      </label>
+    </section>
+    <section class="settings-card">
+      <h3>代理</h3>
+      <label class="feature-row">
+        <span>
+          <strong>启用代理切换</strong>
+        </span>
+        <input type="checkbox" data-feature="proxy.enabled" />
+      </label>
+    </section>
+    <section class="settings-card">
+      <h3>扩展管理</h3>
+      <label class="feature-row">
+        <span>
+          <strong>启用扩展管理</strong>
+        </span>
+        <input type="checkbox" data-feature="extensions.enabled" />
+      </label>
+    </section>
+    <section class="settings-card">
+      <h3>站点数据</h3>
+      <label class="feature-row">
+        <span>
+          <strong>启用站点数据提取</strong>
+        </span>
+        <input type="checkbox" data-feature="siteData.enabled" />
+      </label>
+    </section>
+    <section class="settings-card">
+      <h3>Telegram 下载</h3>
+      <label class="feature-row">
+        <span>
+          <strong>启用 Telegram 受限下载</strong>
+        </span>
+        <input type="checkbox" data-feature="telegram.enabled" />
+      </label>
+    </section>
+    <section class="settings-card">
+      <h3>X 推文翻译</h3>
+      <label class="feature-row">
+        <span>
+          <strong>启用 X 推文翻译</strong>
+        </span>
+        <input type="checkbox" data-feature="xTranslate.enabled" />
+      </label>
+    </section>
+    <section class="settings-card">
+      <h3>Discord 翻译</h3>
+      <label class="feature-row">
+        <span>
+          <strong>启用 Discord 聊天翻译</strong>
+        </span>
+        <input type="checkbox" data-feature="discord.enabled" />
+      </label>
+    </section>
+    <section class="settings-card">
+      <h3>elitepvpers 翻译</h3>
+      <label class="feature-row">
+        <span>
+          <strong>启用 elitepvpers 帖子翻译</strong>
+        </span>
+        <input type="checkbox" data-feature="elitepvpers.enabled" />
+      </label>
+    </section>
+    <section class="settings-card">
+      <h3>GitHub issues 翻译</h3>
+      <label class="feature-row">
+        <span>
+          <strong>启用 GitHub issues 翻译</strong>
+        </span>
+        <input type="checkbox" data-feature="githubIssues.enabled" />
+      </label>
+    </section>
+    <section class="settings-card">
+      <h3>linux.do 列表</h3>
+      <label class="feature-row">
+        <span>
+          <strong>启用 linux.do 列表表格</strong>
+        </span>
+        <input type="checkbox" data-feature="linuxdo.enabled" />
+      </label>
+    </section>
+    <section class="settings-card">
+      <h3>虎扑帖子</h3>
+      <label class="feature-row">
+        <span>
+          <strong>启用虎扑简洁版式</strong>
+        </span>
+        <input type="checkbox" data-feature="hupu.enabled" />
+      </label>
+    </section>
+    <section class="settings-card">
+      <h3>freefq 导出</h3>
+      <label class="feature-row">
+        <span>
+          <strong>启用 freefq 一键导出</strong>
+        </span>
+        <input type="checkbox" data-feature="freefq.enabled" />
+      </label>
+    </section>
+    <section class="settings-card">
+      <h3>huavod 控制台</h3>
+      <label class="feature-row">
+        <span>
+          <strong>启用 huavod 控制台解锁</strong>
+        </span>
+        <input type="checkbox" data-feature="huavod.enabled" />
+      </label>
+    </section>
+    <section class="settings-card">
+      <h3>Gemini 工具</h3>
+      <label class="feature-row">
+        <span>
+          <strong>启用 Gemini 工具</strong>
+        </span>
+        <input type="checkbox" data-feature="gemini.enabled" />
+      </label>
+    </section>
+    <section class="settings-card">
+      <h3>Gmail 邮箱</h3>
+      <label class="feature-row">
+        <span>
+          <strong>启用 Gmail 当前邮箱</strong>
+        </span>
+        <input type="checkbox" data-feature="gmail.enabled" />
+      </label>
+    </section>
+    <section class="settings-card">
+      <h3>Axure 原型</h3>
+      <label class="feature-row">
+        <span>
+          <strong>启用 Axure 本地原型</strong>
+        </span>
+        <input type="checkbox" data-feature="axure.enabled" />
+      </label>
+    </section>
+    <section class="settings-card">
+      <h3>Vue 组件</h3>
+      <label class="feature-row">
+        <span>
+          <strong>启用 Vue 组件检查</strong>
+        </span>
+        <input type="checkbox" data-feature="vue.enabled" />
+      </label>
+    </section>
+    <section class="settings-card">
+      <h3>页面框架探测</h3>
+      <label class="feature-row">
+        <span>
+          <strong>启用页面框架探测（Nuxt / Next / React / Angular / Astro / WordPress）</strong>
+        </span>
+        <input type="checkbox" data-feature="techDetect.enabled" />
+      </label>
+    </section>
+    <section class="settings-card">
+      <h3>HLS 播放</h3>
+      <label class="feature-row">
+        <span>
+          <strong>启用 HLS 播放</strong>
+        </span>
+        <input type="checkbox" data-feature="hls.enabled" />
+      </label>
+      <div class="panel__actions panel__actions--start">
+        <button type="button" class="btn" data-open-tools="hls">打开工具箱 HLS</button>
+      </div>
+    </section>
+    <section class="settings-card">
+      <h3>识图</h3>
+      <label class="feature-row">
+        <span>
+          <strong>启用识图</strong>
+        </span>
+        <input type="checkbox" data-feature="imagePrompt.enabled" />
+      </label>
+    </section>
+    <section class="settings-card">
+      <h3>工具箱</h3>
+      <label class="feature-row">
+        <span>
+          <strong>启用工具箱</strong>
+        </span>
+        <input type="checkbox" data-feature="tools.enabled" />
+      </label>
+    </section>
+    <section class="settings-card">
+      <h3>油猴</h3>
+      <label class="feature-row">
+        <span>
+          <strong>启用油猴</strong>
+        </span>
+        <input type="checkbox" data-feature="userscript.enabled" />
+      </label>
+    </section>
+  </form>
+</section>

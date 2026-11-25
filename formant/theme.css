@@ -4,4 +4,11 @@
   --formant-accent-soft: #eeecff;
   --formant-accent-on-dark: #a99dff;
   --formant-surface: #f5f6fa;
+  --formant-workspace-padding-inline: 16px;
+}
+
+@media (max-width: 860px) {
+  :root {
+    --formant-workspace-padding-inline: 12px;
+  }
 }

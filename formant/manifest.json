@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "__MSG_extensionName__",
-  "version": "1.8.229",
+  "version": "1.8.230",
   "default_locale": "zh_CN",
   "homepage_url": "https://www.oolaf.top",
   "description": "__MSG_extensionDescription__",
@@ -81,6 +81,56 @@
         "id": "v2ex_weibo_images",
         "enabled": true,
         "path": "v2ex-plus/rules.json"
+      },
+      {
+        "id": "ublock_ublock-filters",
+        "enabled": false,
+        "path": "ublock/rulesets/ublock-filters.json"
+      },
+      {
+        "id": "ublock_ublock-badware",
+        "enabled": false,
+        "path": "ublock/rulesets/ublock-badware.json"
+      },
+      {
+        "id": "ublock_ublock-privacy",
+        "enabled": false,
+        "path": "ublock/rulesets/ublock-privacy.json"
+      },
+      {
+        "id": "ublock_ublock-quick-fixes",
+        "enabled": false,
+        "path": "ublock/rulesets/ublock-quick-fixes.json"
+      },
+      {
+        "id": "ublock_ublock-unbreak",
+        "enabled": false,
+        "path": "ublock/rulesets/ublock-unbreak.json"
+      },
+      {
+        "id": "ublock_easylist",
+        "enabled": false,
+        "path": "ublock/rulesets/easylist.json"
+      },
+      {
+        "id": "ublock_easyprivacy",
+        "enabled": false,
+        "path": "ublock/rulesets/easyprivacy.json"
+      },
+      {
+        "id": "ublock_CHN-0",
+        "enabled": false,
+        "path": "ublock/rulesets/CHN-0.json"
+      },
+      {
+        "id": "ublock_plowe-0",
+        "enabled": false,
+        "path": "ublock/rulesets/plowe-0.json"
+      },
+      {
+        "id": "ublock_urlhaus-1",
+        "enabled": false,
+        "path": "ublock/rulesets/urlhaus-1.json"
       }
     ]
   },

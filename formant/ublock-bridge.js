@@ -1,17 +1,23 @@
 import { FEATURES_KEY, isUblockEnabled, loadFeatures, normalizeFeatures } from "./features.js";
 import { UBLOCK_RULE_ID_MIN, UBLOCK_RULE_ID_MAX, applyUblockLists, getUblockDynamicRules } from "./ublock-apply.js";
+import { UBLOCK_CONFIG_KEY, loadUblockConfig } from "./ublock-config.js";
+import { STATIC_RULESET_IDS } from "./ublock-dnr-utils.js";
 import {
+  UBLOCK_PROGRESS_KEY,
   UBLOCK_STATUS_KEY,
   loadUblockStatus,
   refreshListsFromNetwork,
   resolveLists,
 } from "./ublock-sync.js";
 import { getGenericCss, getPageCss, hasPageRules } from "./ublock-page-rules.js";
+import { clearAllAdCounts, clearTabIcon, getTabIconInfo, setTabAdCount } from "./action-icon.js";
 
 export const UBLOCK_ALARM = "formant-ublock-lists";
-const ALARM_MINUTES = 12 * 60;
+const ALARM_MINUTES = 24 * 60;
+const UBLOCK_AUTO_DATE_KEY = "formantUblockAutoUpdateDate";
 const COSMETIC_ID = "formant-ublock-cosmetic";
 const BADGE_ID = "formant-ublock-badge";
+const STATIC_RULESET_SET = new Set(STATIC_RULESET_IDS);
 
 /** @type {Promise<unknown> | null} */
 let applyJob = null;
@@ -54,9 +60,7 @@ function bump(tabId, kind, n = 1) {
 }
 
 function notifyBadge(tabId) {
-  void chrome.tabs
-    .sendMessage(tabId, { type: "FORMANT_UBLOCK_COUNT", count: totalHits(tabId) })
-    .catch(() => {});
+  void setTabAdCount(tabId, totalHits(tabId));
 }
 
 async function refreshBlockRuleIds() {
@@ -87,50 +91,102 @@ async function broadcastEnabled(enabled) {
  */
 async function syncContentScripts(enabled) {
   await chrome.scripting.unregisterContentScripts({ ids: [COSMETIC_ID, BADGE_ID, "formant-ublock-video"] }).catch(() => {});
-  await broadcastEnabled(enabled);
-  if (!enabled) return;
+  const config = enabled ? await loadUblockConfig() : null;
+  const cosmeticOn = Boolean(enabled && config?.cosmetic);
+  if (!enabled) {
+    tabHits.clear();
+    void clearAllAdCounts();
+  }
+  await broadcastEnabled(cosmeticOn);
+  if (!enabled || !cosmeticOn) return;
+
   await chrome.scripting.registerContentScripts([
     {
       id: COSMETIC_ID,
-      js: ["ublock/content/cosmetic.js"],
+      js: ["ublock/content/procedural.js", "ublock/content/cosmetic.js"],
       matches: ["http://*/*", "https://*/*"],
       runAt: "document_start",
       allFrames: true,
-      persistAcrossSessions: true,
-    },
-    {
-      id: BADGE_ID,
-      js: ["ublock/content/badge.js"],
-      matches: ["http://*/*", "https://*/*"],
-      runAt: "document_idle",
-      allFrames: false,
+      matchOriginAsFallback: true,
       persistAcrossSessions: true,
     },
   ]);
+
   const tabs = await chrome.tabs.query({ url: ["http://*/*", "https://*/*"] });
   await Promise.all(
     tabs.map(async (tab) => {
       if (tab.id == null) return;
       await chrome.scripting
-        .executeScript({ target: { tabId: tab.id, allFrames: true }, files: ["ublock/content/cosmetic.js"] })
-        .catch(() => {});
-      await chrome.scripting
-        .executeScript({ target: { tabId: tab.id }, files: ["ublock/content/badge.js"] })
+        .executeScript({
+          target: { tabId: tab.id, allFrames: true },
+          files: ["ublock/content/procedural.js", "ublock/content/cosmetic.js"],
+        })
         .catch(() => {});
     }),
   );
 }
 
+function createProgressTracker() {
+  const startedAt = Date.now();
+  /** @type {string[]} */
+  const logs = [];
+  let writeChain = Promise.resolve();
+
+  const flush = (running) => {
+    const payload = {
+      running,
+      startedAt,
+      updatedAt: Date.now(),
+      logs: logs.slice(-60),
+    };
+    writeChain = writeChain
+      .then(() => chrome.storage.local.set({ [UBLOCK_PROGRESS_KEY]: payload }))
+      .catch(() => {});
+    return writeChain;
+  };
+
+  const log = (msg) => {
+    const now = new Date();
+    const hh = String(now.getHours()).padStart(2, "0");
+    const mm = String(now.getMinutes()).padStart(2, "0");
+    const ss = String(now.getSeconds()).padStart(2, "0");
+    logs.push(`[${hh}:${mm}:${ss}] ${msg}`);
+    void flush(true);
+  };
+
+  const finish = async (summary) => {
+    if (summary) log(summary);
+    await flush(false);
+  };
+
+  return { log, finish, startedAt };
+}
+
 /**
  * @param {boolean} enabled
- * @param {{ refresh?: boolean }} [opts]
+ * @param {{ refresh?: boolean, trackProgress?: boolean }} [opts]
  */
 async function applyNow(enabled, opts = {}) {
-  const state = opts.refresh ? await refreshListsFromNetwork() : await resolveLists(true);
+  let effectiveEnabled = Boolean(enabled);
+  if (effectiveEnabled && !isUblockEnabled(await loadFeatures())) {
+    effectiveEnabled = false;
+  }
+  const tracker = effectiveEnabled && opts.trackProgress ? createProgressTracker() : null;
+  const onLog = tracker?.log;
+  const state = effectiveEnabled
+    ? (opts.refresh ? await refreshListsFromNetwork(onLog) : await resolveLists(true))
+    : { catalogSource: "seed", catalogFetchedAt: 0, lists: {} };
+  if (effectiveEnabled && !isUblockEnabled(await loadFeatures())) {
+    effectiveEnabled = false;
+  }
   try {
-    const status = await applyUblockLists(state, { enabled });
+    const status = await applyUblockLists(state, { enabled: effectiveEnabled, onLog });
+    if (!effectiveEnabled) {
+      tabHits.clear();
+      void clearAllAdCounts();
+    }
     await refreshBlockRuleIds();
-    if (enabled) {
+    if (effectiveEnabled) {
       const tabs = await chrome.tabs.query({ url: ["http://*/*", "https://*/*"] });
       for (const tab of tabs) {
         if (tab.id != null) {
@@ -138,17 +194,25 @@ async function applyNow(enabled, opts = {}) {
         }
       }
     }
+    if (tracker) {
+      const sec = ((Date.now() - tracker.startedAt) / 1000).toFixed(1);
+      await tracker.finish(`更新完成，总耗时 ${sec}s（网络 ${status.ruleCount} 条）`);
+    }
     return status;
   } catch (error) {
     console.warn("[formant] uBO apply failed, keeping previous DNR", error);
     const prev = await loadUblockStatus();
     const status = {
       ...prev,
-      enabled,
+      enabled: effectiveEnabled,
       lastError: error instanceof Error ? error.message : String(error),
       lastUpdated: Date.now(),
     };
     await chrome.storage.local.set({ [UBLOCK_STATUS_KEY]: status });
+    if (tracker) {
+      const msg = error instanceof Error ? error.message : String(error);
+      await tracker.finish(`更新失败: ${msg}`);
+    }
     throw error;
   }
 }
@@ -161,12 +225,44 @@ export async function configureUblockAlarm(enabled) {
   await chrome.alarms.clear(UBLOCK_ALARM);
 }
 
+function todayKey() {
+  const now = new Date();
+  const m = String(now.getMonth() + 1).padStart(2, "0");
+  const d = String(now.getDate()).padStart(2, "0");
+  return `${now.getFullYear()}-${m}-${d}`;
+}
+
+async function markAutoUpdatedToday() {
+  await chrome.storage.local.set({ [UBLOCK_AUTO_DATE_KEY]: todayKey() }).catch(() => {});
+}
+
+/** Run at most once per local calendar day when formant activates. */
+function maybeDailyAutoUpdate() {
+  void enqueue(async () => {
+    const features = await loadFeatures();
+    if (!isUblockEnabled(features)) return;
+    const today = todayKey();
+    const stored = await chrome.storage.local.get(UBLOCK_AUTO_DATE_KEY);
+    if (stored?.[UBLOCK_AUTO_DATE_KEY] === today) return;
+    await applyNow(true, { refresh: true });
+    await markAutoUpdatedToday();
+  }).catch((error) => {
+    console.warn("[formant] uBO daily auto-update failed", error);
+  });
+}
+
 function onRuleMatched(info) {
   const tabId = info?.request?.tabId;
   const ruleId = info?.rule?.ruleId;
+  const rulesetId = info?.rule?.rulesetId;
   if (!Number.isInteger(tabId) || tabId < 0) return;
-  if (typeof ruleId !== "number" || ruleId < UBLOCK_RULE_ID_MIN || ruleId > UBLOCK_RULE_ID_MAX) return;
-  if (!blockRuleIds.has(ruleId)) return;
+  const isStatic = typeof rulesetId === "string" && STATIC_RULESET_SET.has(rulesetId);
+  const isDynamic =
+    typeof ruleId === "number" &&
+    ruleId >= UBLOCK_RULE_ID_MIN &&
+    ruleId <= UBLOCK_RULE_ID_MAX &&
+    blockRuleIds.has(ruleId);
+  if (!isStatic && !isDynamic) return;
   bump(tabId, "network");
 }
 
@@ -181,24 +277,37 @@ export async function initUblockBackground() {
   chrome.webNavigation.onCommitted.addListener((details) => {
     if (details.frameId !== 0) return;
     tabHits.delete(details.tabId);
+    void setTabAdCount(details.tabId, 0);
   });
   chrome.tabs.onRemoved.addListener((tabId) => {
     tabHits.delete(tabId);
+    clearTabIcon(tabId);
   });
 
   chrome.alarms.onAlarm.addListener((alarm) => {
     if (alarm.name !== UBLOCK_ALARM) return;
-    void enqueue(async () => {
-      const features = await loadFeatures();
-      if (!isUblockEnabled(features)) return;
-      await applyNow(true, { refresh: true });
-    }).catch((error) => {
-      console.warn("[formant] uBO alarm update failed", error);
-    });
+    maybeDailyAutoUpdate();
   });
 
+  if (chrome.runtime?.onStartup) {
+    chrome.runtime.onStartup.addListener(() => {
+      maybeDailyAutoUpdate();
+    });
+  }
+
   chrome.storage.onChanged.addListener((changes, area) => {
-    if (area !== "local" || !changes[FEATURES_KEY]) return;
+    if (area !== "local") return;
+    if (changes[UBLOCK_CONFIG_KEY]) {
+      void enqueue(async () => {
+        const features = await loadFeatures();
+        if (!isUblockEnabled(features)) return;
+        await applyNow(true, { refresh: false });
+        await syncContentScripts(true);
+      }).catch((error) => {
+        console.warn("[formant] uBO config update failed", error);
+      });
+    }
+    if (!changes[FEATURES_KEY]) return;
     const next = normalizeFeatures(changes[FEATURES_KEY].newValue);
     const enabled = isUblockEnabled(next);
     if (enabled === lastEnabled) return;
@@ -228,9 +337,7 @@ export async function initUblockBackground() {
 
   await enqueue(() => applyNow(true, { refresh: false }));
   await syncContentScripts(true);
-  void enqueue(() => applyNow(true, { refresh: true })).catch((error) => {
-    console.warn("[formant] uBO CDN refresh failed", error);
-  });
+  maybeDailyAutoUpdate();
 }
 
 /**
@@ -259,6 +366,21 @@ export function handleUblockMessage(message, sender, sendResponse) {
     const tabId = sender.tab?.id;
     sendResponse({ ok: true, count: tabId == null ? 0 : totalHits(tabId) });
     return false;
+  }
+
+  if (type === "FORMANT_TAB_PAGE_INFO") {
+    maybeDailyAutoUpdate();
+    const reqTabId = /** @type {{ tabId?: number }} */ (message).tabId;
+    void (async () => {
+      let tabId = Number.isInteger(reqTabId) ? reqTabId : undefined;
+      if (tabId == null) {
+        const [active] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
+        tabId = active?.id;
+      }
+      const info = tabId != null ? getTabIconInfo(tabId) : { framework: null, frameworkName: null, adCount: 0 };
+      return { ok: true, ...info };
+    })().then(sendResponse);
+    return true;
   }
 
   if (type === "FORMANT_UBLOCK_PAGE_RULES" || type === "FORMANT_UBLOCK_GENERIC") {
@@ -294,14 +416,26 @@ export function handleUblockMessage(message, sender, sendResponse) {
   }
 
   if (type === "FORMANT_UBLOCK_UPDATE_NOW") {
+    const now = new Date();
+    const ts = `[${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}:${String(now.getSeconds()).padStart(2, "0")}]`;
+    void chrome.storage.local.set({
+      [UBLOCK_PROGRESS_KEY]: {
+        running: true,
+        startedAt: Date.now(),
+        updatedAt: Date.now(),
+        logs: [applyJob ? `${ts} 正在等待前一个后台任务完成...` : `${ts} 已提交更新任务，正在连接 CDN...`],
+      },
+    });
     void enqueue(async () => {
       const features = await loadFeatures();
       if (!isUblockEnabled(features)) {
         await syncContentScripts(false);
         return applyNow(false, { refresh: false });
       }
-      await syncContentScripts(true);
-      return applyNow(true, { refresh: true });
+      const status = await applyNow(true, { refresh: true, trackProgress: true });
+      await markAutoUpdatedToday();
+      void syncContentScripts(true);
+      return status;
     })
       .then((status) => sendResponse({ ok: true, status }))
       .catch((error) =>

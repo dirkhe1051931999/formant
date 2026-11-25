@@ -1,0 +1,250 @@
+<section class="panel" data-panel="lexicon" id="panel-lexicon" hidden>
+  <header class="panel__head">
+    <div>
+      <h2>词库</h2>
+    </div>
+    <div class="panel__actions">
+      <button type="button" id="btnNew" class="btn">新建包</button>
+      <button
+        type="button"
+        id="btnImport"
+        class="btn btn--ghost"
+      >
+        导入 JSON
+      </button>
+      <input id="fileImport" type="file" accept="application/json,.json" hidden />
+      <button type="button" id="btnExport" class="btn btn--ghost">导出当前包</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="side">
+      <section class="side__group">
+        <h2>内置词库</h2>
+        <div id="builtinList" class="pack-list"></div>
+      </section>
+      <section class="side__group">
+        <h2>自定义词库</h2>
+        <div id="customList" class="pack-list"></div>
+        <p id="customEmpty" class="muted">暂无自定义包，可新建或导入 JSON。</p>
+      </section>
+    </aside>
+
+    <main class="main">
+      <div class="main__toolbar">
+        <div>
+          <h2 id="packTitle">选择左侧词库</h2>
+          <p id="packMeta" class="muted"></p>
+        </div>
+        <div class="main__toolbar-right">
+          <input id="searchInput" type="search" placeholder="搜索短语 / 释义…" />
+          <button type="button" id="btnAddEntry" class="btn" hidden>添加条目</button>
+          <button type="button" id="btnDeletePack" class="btn btn--danger" hidden>删除包</button>
+        </div>
+      </div>
+
+      <div id="editorBar" class="editor" hidden>
+        <label>
+          名称
+          <input id="packNameInput" type="text" />
+        </label>
+        <label>
+          语言
+          <select id="packLangSelect">
+            <option value="en">英语</option>
+            <option value="zh">中文</option>
+            <option value="ja">日语</option>
+            <option value="ko">韩语</option>
+            <option value="tr">土耳其语</option>
+          </select>
+        </label>
+        <button type="button" id="btnSavePackMeta" class="btn btn--ghost">保存包信息</button>
+      </div>
+
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>短语</th>
+              <th>释义</th>
+              <th>标签</th>
+              <th class="col-actions">操作</th>
+            </tr>
+          </thead>
+          <tbody id="entryBody">
+            <tr>
+              <td colspan="4" class="muted">请选择左侧词库包</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+</section>
+
+<section class="panel" data-panel="translate" id="panel-translate" hidden>
+  <header class="panel__head">
+    <div>
+      <h2>翻译</h2>
+    </div>
+  </header>
+  <div class="settings-stack">
+    <section class="settings-card">
+      <h3>默认模式</h3>
+      <div id="optTranslateMode" class="opt-mode" role="tablist" aria-label="默认翻译模式"></div>
+    </section>
+    <section class="settings-card">
+      <h3>默认目标语言</h3>
+      <label class="settings-field">
+        目标语言
+        <select id="optTranslateTarget"></select>
+      </label>
+    </section>
+    <section class="settings-card">
+      <h3>DeepLX</h3>
+      <label class="settings-field settings-field--wide">
+        API Key
+        <input
+          id="optDeeplxKey"
+          type="password"
+          spellcheck="false"
+          autocomplete="off"
+          placeholder="填在 api.deeplx.org 路径里的那段"
+        />
+      </label>
+    </section>
+  </div>
+</section>
+
+<section class="panel" data-panel="x-translate" id="panel-x-translate" hidden>
+  <header class="panel__head">
+    <div>
+      <h2>X 推文翻译</h2>
+      <p class="muted" id="xTranslateState">加载中…</p>
+    </div>
+    <div class="panel__actions">
+      <button type="button" id="xTranslateReset" class="btn btn--ghost">恢复默认</button>
+    </div>
+  </header>
+  <form id="xTranslateForm" class="settings-stack" onsubmit="return false">
+    <section class="settings-card">
+      <h3>译文样式</h3>
+      <div class="settings-grid">
+        <label class="settings-field">
+          颜色
+          <span class="x-translate-color-row">
+            <input id="xTranslateColor" type="color" />
+            <input id="xTranslateHex" type="text" spellcheck="false" maxlength="7" placeholder="#8c8c8c" />
+          </span>
+        </label>
+        <label class="settings-field">
+          字号（px）
+          <input id="xTranslateSize" type="number" min="10" max="24" step="1" />
+        </label>
+      </div>
+      <p id="xTranslatePreview" class="x-translate-preview">译文预览：The quick brown fox 跳过懒狗</p>
+    </section>
+  </form>
+</section>
+
+<section class="panel" data-panel="image-prompt" id="panel-image-prompt" hidden>
+  <header class="panel__head">
+    <div>
+      <h2>识图</h2>
+      <p class="muted" id="imagePromptState">加载中…</p>
+    </div>
+    <div class="panel__actions">
+      <button type="button" id="imagePromptSave" class="btn">保存</button>
+    </div>
+  </header>
+  <form id="imagePromptForm" class="settings-stack" onsubmit="return false">
+    <section class="settings-card">
+      <h3>视觉模型</h3>
+      <div class="settings-grid">
+        <label class="settings-field settings-field--wide">
+          Base URL
+          <input id="imagePromptBaseUrl" type="url" spellcheck="false" autocomplete="off" placeholder="https://api.openai.com/v1" />
+        </label>
+        <label class="settings-field settings-field--wide">
+          API Key
+          <input id="imagePromptApiKey" type="password" spellcheck="false" autocomplete="off" placeholder="sk-…" />
+        </label>
+        <label class="settings-field settings-field--wide">
+          Model
+          <input id="imagePromptModel" type="text" spellcheck="false" autocomplete="off" placeholder="gpt-4.1-mini" />
+        </label>
+      </div>
+    </section>
+  </form>
+</section>
+
+<section class="panel" data-panel="sync" id="panel-sync" hidden>
+  <header class="panel__head">
+    <div>
+      <h2>同步</h2>
+    </div>
+    <div class="panel__actions">
+      <button type="button" id="optSyncSave" class="btn btn--ghost">保存</button>
+      <button type="button" id="optSyncNow" class="btn">立即同步</button>
+    </div>
+  </header>
+  <div class="settings-stack">
+    <section class="settings-card">
+      <h3>mono 连接</h3>
+      <div class="settings-grid">
+        <label class="settings-field">
+          环境
+          <select id="optEnvSelect">
+            <option value="dev">dev（本地）</option>
+            <option value="prod">prod</option>
+          </select>
+        </label>
+        <label class="settings-field settings-field--wide">
+          mono Base URL
+          <input id="optBaseUrl" type="url" spellcheck="false" autocomplete="off" placeholder="https://" />
+        </label>
+        <label class="settings-field settings-field--wide">
+          Client API Key
+          <input
+            id="optClientKey"
+            type="password"
+            spellcheck="false"
+            autocomplete="off"
+            placeholder="ock_live_…"
+          />
+        </label>
+      </div>
+      <p id="optSyncMeta" class="settings-meta">尚未同步</p>
+    </section>
+    <section class="settings-card">
+      <h3>本机钥匙</h3>
+      <div class="panel__actions panel__actions--start">
+        <button type="button" id="optKeysExport" class="btn btn--ghost">导出 JSON</button>
+        <button type="button" id="optKeysImport" class="btn btn--ghost">导入 JSON</button>
+        <input id="optKeysFile" type="file" accept="application/json,.json" hidden />
+      </div>
+      <label class="settings-field settings-field--wide">
+        粘贴 JSON
+        <textarea id="optKeysPaste" rows="8" spellcheck="false" placeholder='{"version":2,...}'></textarea>
+      </label>
+      <div class="panel__actions panel__actions--start">
+        <button type="button" id="optKeysPasteImport" class="btn btn--ghost">导入这段 JSON</button>
+      </div>
+    </section>
+    <section class="settings-card">
+      <h3>本机配置</h3>
+      <div class="panel__actions panel__actions--start">
+        <button type="button" id="optPrefsExport" class="btn btn--ghost">导出 JSON</button>
+        <button type="button" id="optPrefsImport" class="btn btn--ghost">导入 JSON</button>
+        <input id="optPrefsFile" type="file" accept="application/json,.json" hidden />
+      </div>
+      <label class="settings-field settings-field--wide">
+        粘贴 JSON
+        <textarea id="optPrefsPaste" rows="8" spellcheck="false" placeholder='{"version":1,"kind":"formant-prefs",...}'></textarea>
+      </label>
+      <div class="panel__actions panel__actions--start">
+        <button type="button" id="optPrefsPasteImport" class="btn btn--ghost">导入这段 JSON</button>
+      </div>
+    </section>
+  </div>
+</section>

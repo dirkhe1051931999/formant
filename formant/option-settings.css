@@ -164,16 +164,6 @@
   white-space: pre-wrap;
 }
 
-.settings-list {
-  margin: 0;
-  padding-left: 1.15em;
-  color: var(--muted);
-  font-size: 13px;
-  line-height: 1.55;
-  display: grid;
-  gap: 6px;
-}
-
 .x-translate-color-row {
   display: flex;
   align-items: center;
@@ -198,22 +188,6 @@
 .x-translate-preview {
   margin: 12px 0 0;
   line-height: 1.45;
-}
-
-.settings-list strong {
-  color: var(--ink);
-  font-weight: 650;
-}
-
-.settings-list code {
-  font-size: 12px;
-  background: #eef2f7;
-  padding: 1px 5px;
-  border-radius: 4px;
-}
-
-#panel-gitzip .settings-list {
-  margin-bottom: 2px;
 }
 
 #panel-gitzip .settings-meta {

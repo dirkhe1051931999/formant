@@ -118,12 +118,12 @@ export function initProxyPanel(api) {
 
     /** @type {{ id: string, title: string, meta: string, builtin: boolean }[]} */
     const rows = [
-      { id: PROXY_BUILTIN.DIRECT, title: "直连", meta: "不使用代理", builtin: true },
-      { id: PROXY_BUILTIN.SYSTEM, title: "系统代理", meta: "跟随操作系统 / 浏览器系统代理", builtin: true },
+      { id: PROXY_BUILTIN.DIRECT, title: "直连", meta: "", builtin: true },
+      { id: PROXY_BUILTIN.SYSTEM, title: "系统代理", meta: "", builtin: true },
       {
         id: PROXY_BUILTIN.PAC,
         title: "PAC",
-        meta: hasPacConfig(current.pac) ? describePac(current.pac) : "请先导入或填写下方 PAC",
+        meta: hasPacConfig(current.pac) ? describePac(current.pac) : "",
         builtin: true,
       },
     ];
@@ -146,9 +146,12 @@ export function initProxyPanel(api) {
       main.dataset.proxyActivate = row.id;
       const title = document.createElement("strong");
       title.textContent = row.title;
-      const meta = document.createElement("small");
-      meta.textContent = row.meta;
-      main.append(title, meta);
+      main.append(title);
+      if (row.meta) {
+        const meta = document.createElement("small");
+        meta.textContent = row.meta;
+        main.append(meta);
+      }
       item.append(main);
 
       if (!row.builtin) {

@@ -6,11 +6,13 @@ import {
   loadFeatures,
   normalizeFeatures,
 } from "./features.js";
+import { initPopupPageInfo } from "./popup-page-info.js";
 
 const PAGE_URL = chrome.runtime.getURL("tools.html");
 
 /** 工具箱入口：工具箱、识图或 HLS 任一开启即显示。 */
 export function initPopupTools() {
+  initPopupPageInfo();
   const navBtn = /** @type {HTMLButtonElement | null} */ (document.getElementById("toolsNavBtn"));
   if (!navBtn) return;
 

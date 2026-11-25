@@ -6,6 +6,7 @@ import { loadLocalHomeState, saveLocalHome } from "./home-sync.js";
 import { loadSourceStore, normalizeSourceStore, saveSourceStore } from "./hls/sources-store.js";
 import { normalizeExchangePrefs } from "./newtab-exchange.js";
 import { loadProxySettings, saveProxySettings } from "./proxy-config.js";
+import { loadUblockConfig, normalizeUblockConfig, saveUblockConfig } from "./ublock-config.js";
 import {
   loadTranslateMode,
   loadTranslateTarget,
@@ -22,6 +23,10 @@ const PREFS_KIND = "formant-prefs";
 const TOOLS_ORDER_KEY = "formantToolsOrder";
 const DISCORD_INPUT_KEY = "formantDiscordInput";
 const EXCHANGE_PREFS_KEY = "formantExchange";
+const LEXICON_DISABLED_KEY = "formantLexiconDisabled";
+const HX_FACE_KEY = "formantHxFace";
+const WX_FACE_KEY = "formantWxFace";
+const VOCAB_FACE_KEY = "formantVocabFace";
 
 /** @typedef {{ toast: (text: string) => void }} PanelApi */
 
@@ -84,6 +89,11 @@ async function exportPrefs() {
     toolsOrder,
     discordInput,
     exchange,
+    ublock,
+    lexiconDisabled,
+    hxFace,
+    wxFace,
+    vocabFace,
   ] = await Promise.all([
     loadFeatures(),
     loadLocalHomeState(),
@@ -99,6 +109,11 @@ async function exportPrefs() {
     chrome.storage.local.get(TOOLS_ORDER_KEY),
     chrome.storage.local.get(DISCORD_INPUT_KEY),
     chrome.storage.local.get(EXCHANGE_PREFS_KEY),
+    loadUblockConfig(),
+    chrome.storage.local.get(LEXICON_DISABLED_KEY),
+    chrome.storage.local.get(HX_FACE_KEY),
+    chrome.storage.local.get(WX_FACE_KEY),
+    chrome.storage.local.get(VOCAB_FACE_KEY),
   ]);
   const payload = {
     version: PREFS_VERSION,
@@ -116,6 +131,13 @@ async function exportPrefs() {
     toolsOrder: asIdList(toolsOrder[TOOLS_ORDER_KEY]),
     discordInput: asDiscordInput(discordInput[DISCORD_INPUT_KEY]),
     exchange: normalizeExchangePrefs(exchange[EXCHANGE_PREFS_KEY]),
+    ublock,
+    lexiconDisabled: asIdList(lexiconDisabled[LEXICON_DISABLED_KEY]),
+    newtabFaces: {
+      hx: asFace(hxFace[HX_FACE_KEY]),
+      wx: asFace(wxFace[WX_FACE_KEY]),
+      vocab: asFace(vocabFace[VOCAB_FACE_KEY]),
+    },
   };
   const blob = new Blob([`${JSON.stringify(payload, null, 2)}\n`], { type: "application/json" });
   const url = URL.createObjectURL(blob);
@@ -158,6 +180,9 @@ async function applyPrefs(filePrefs) {
     toolsOrder: "工具箱顺序",
     discordInput: "Discord 输入翻译",
     exchange: "汇率币种",
+    ublock: "广告拦截",
+    lexiconDisabled: "词库启用状态",
+    newtabFaces: "New Tab 卡片外观",
   };
   const parts = Object.keys(labels).filter((key) => key in filePrefs);
   if (!parts.length) throw new Error("这段 JSON 里没有可导入的配置");
@@ -199,6 +224,23 @@ async function applyPrefs(filePrefs) {
   if (filePrefs.exchange) {
     await chrome.storage.local.set({ [EXCHANGE_PREFS_KEY]: normalizeExchangePrefs(filePrefs.exchange) });
   }
+  if (filePrefs.ublock) {
+    await saveUblockConfig(normalizeUblockConfig(filePrefs.ublock));
+  }
+  if (filePrefs.lexiconDisabled) {
+    await chrome.storage.local.set({ [LEXICON_DISABLED_KEY]: asIdList(filePrefs.lexiconDisabled) });
+  }
+  if (filePrefs.newtabFaces && typeof filePrefs.newtabFaces === "object") {
+    const faces = /** @type {Record<string, unknown>} */ (filePrefs.newtabFaces);
+    const updates = {};
+    const hx = asFace(faces.hx);
+    const wx = asFace(faces.wx);
+    const vocab = asFace(faces.vocab);
+    if (hx) updates[HX_FACE_KEY] = hx;
+    if (wx) updates[WX_FACE_KEY] = wx;
+    if (vocab) updates[VOCAB_FACE_KEY] = vocab;
+    if (Object.keys(updates).length) await chrome.storage.local.set(updates);
+  }
   if (!parts.length) {
     throw new Error(skipped.length ? skipped.join("；") : "这段 JSON 里没有可导入的配置");
   }
@@ -233,6 +275,9 @@ function normalizePrefsFile(raw) {
     "toolsOrder",
     "discordInput",
     "exchange",
+    "ublock",
+    "lexiconDisabled",
+    "newtabFaces",
   ]) {
     if (key in src) next[key] = src[key];
   }
@@ -271,6 +316,14 @@ function asIdList(raw) {
 function asDiscordInput(raw) {
   const src = raw && typeof raw === "object" ? /** @type {Record<string, unknown>} */ (raw) : {};
   return { engine: src.engine === "gpt" ? "gpt" : "google" };
+}
+
+/**
+ * @param {unknown} raw
+ * @returns {string}
+ */
+function asFace(raw) {
+  return typeof raw === "string" ? raw.trim().slice(0, 64) : "";
 }
 
 function fileDate() {

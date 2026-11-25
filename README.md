@@ -12,6 +12,8 @@
 
 Chrome → `chrome://extensions` → 打开「开发者模式」→「加载已解压的扩展程序」→ 选择本仓库的 `formant` 目录。然后点 popup 齿轮打开 `option.html#sync`：环境选 prod（`https://www.oolaf.top`）或 dev（`http://localhost:3101`），填入 mono Admin 签发的 Client API Key 并保存。
 
+扩展设置各面板直接显示配置项、操作入口和当前状态。功能用法与配置说明见下文各模块。
+
 ![第一次配置：加载扩展并填写 Client API Key](docs/setup.gif)
 
 ### 2. 日常使用
@@ -59,6 +61,7 @@ formant/                 主扩展（加载此目录为「未打包的扩展」�
   newtab-exchange.js     New Tab 汇率卡片（本机币种、条数、排序）
   newtab-exchange-currencies.js  汇率下拉的全球法币清单
   newtab-exchange-countries.js   国家与货币对应，供汇率搜索
+  option-panels-*.html   扩展设置面板模板
   option.html/js/css     通用扩展设置壳（#general / #features / #newtab / #v2ex / #gitzip / #autopagerize / #gestures / #proxy / #extensions / #lexicon / #translate / #x-translate / #image-prompt / #sync）
   option-features.js     功能开关面板
   option-gitzip.js       GitZip 公开模式设置面板
@@ -231,7 +234,7 @@ CI（`python pack-edge.py --zip-only`）只打 zip，不生成商店图，也不
 
 各功能示例 GIF 见下方对应小节。
 
-- 入口：`option.html#features`（扩展设置 → 功能）
+- 入口：`option.html#features`（扩展设置 → 功能）。各功能的启用状态直接显示在对应开关上。
 - 存储：`chrome.storage.local.formantFeatures`
 - **翻译**：总开关 + 弹窗 / 划词浮标 / 右键菜单
 - **New Tab**：关闭后运行时跳转浏览器默认新标签页（manifest override 无法动态卸载）
@@ -430,7 +433,7 @@ CI（`python pack-edge.py --zip-only`）只打 zip，不生成商店图，也不
 
 #### Gemini 去水印冒烟清单
 
-1. 重载 formant（默认开启）；打开 `option.html#features`，应看到「Gemini 去水印」说明和「启用 Gemini 下载去水印」，默认勾选。概览里的已启用列表含「Gemini 去水印」。
+1. 重载 formant（默认开启）；打开 `option.html#features`，应看到「启用 Gemini 下载去水印」，默认勾选。概览里的已启用列表含「Gemini 去水印」。
 2. 打开 `https://gemini.google.com/`，下载一张生成图：保存下来的图右下角不应再有 Gemini 水印。
 3. 关掉 `features.gemini.enabled` 后再下载：图恢复带水印。其它网站的图片下载不受影响。
 
@@ -444,7 +447,7 @@ CI（`python pack-edge.py --zip-only`）只打 zip，不生成商店图，也不
 
 #### Gmail 邮箱冒烟清单
 
-1. 重载 formant（默认开启）；打开 `option.html#features`，应看到「Gmail 邮箱」说明和「启用 Gmail 当前邮箱」，默认勾选。概览里的已启用列表含「Gmail 邮箱」。
+1. 重载 formant（默认开启）；打开 `option.html#features`，应看到「启用 Gmail 当前邮箱」，默认勾选。概览里的已启用列表含「Gmail 邮箱」。
 2. 打开 `https://mail.google.com/`，顶栏问号左边应出现当前邮箱。点击后可贴到别处。
 3. 关掉 `features.gmail.enabled`：邮箱文字消失。其它网站顶栏不受影响。
 
@@ -458,7 +461,7 @@ CI（`python pack-edge.py --zip-only`）只打 zip，不生成商店图，也不
 
 #### Axure 原型冒烟清单
 
-1. 重载 formant（默认开启）；打开 `option.html#features`，应看到「Axure 原型」说明和「启用 Axure 本地原型」，默认勾选。概览里的已启用列表含「Axure 原型」。
+1. 重载 formant（默认开启）；打开 `option.html#features`，应看到「启用 Axure 本地原型」，默认勾选。概览里的已启用列表含「Axure 原型」。
 2. 扩展详情打开「允许访问文件 URL」。用 `file://` 打开一份本地发布的 Axure `index.html`：原型里的页面跳转和交互应能跨框架工作。首页 `body` 有 `pluginDetected="true"`。
 3. 关掉 `features.axure.enabled` 后刷新该本地页：`pluginDetected` 消失，跨框架交互不再经 formant 转发。
 4. 打开一份普通本地 HTML（没有 Axure 事件节点）：页面行为不变。
@@ -473,7 +476,7 @@ CI（`python pack-edge.py --zip-only`）只打 zip，不生成商店图，也不
 
 #### Vue 组件冒烟清单
 
-1. 重载 formant（默认开启）；打开 `option.html#features`，应看到「Vue 组件」说明和「启用 Vue 组件检查」，默认勾选。概览里的已启用列表含「Vue 组件」。工具栏 popup 仍是 formant 自己的。
+1. 重载 formant（默认开启）；打开 `option.html#features`，应看到「启用 Vue 组件检查」，默认勾选。概览里的已启用列表含「Vue 组件」。工具栏 popup 仍是 formant 自己的。
 2. 打开一个开发模式的 Vue 3 或 Vue 2 页面并刷新。工具栏 formant 图标右上角应出现绿色 V。DevTools 的「Vue」面板能看到组件树。点一个组件，右侧出现数据，页面上有蓝色高亮。
 3. Vue 3 + Pinia、Vue 3 + Vuex、Vue 2 + Vuex 都应能点开对应状态。离开这个页面后，图标右上角的 V 消失。
 4. 关掉 `features.vue.enabled`：面板提示已关闭，高亮消失，图标恢复。再打开一个新页面，不应再注入 hook。
@@ -488,7 +491,7 @@ CI（`python pack-edge.py --zip-only`）只打 zip，不生成商店图，也不
 
 #### HLS 播放冒烟清单
 
-1. 重载 formant（默认开启）；打开 `option.html#features`，应看到「HLS 播放」说明和「启用 HLS 播放」，默认勾选。概览里的已启用列表含「HLS 播放」。打开工具箱「HLS」，添加一条 m3u/txt 后点「播放」，应弹出「New Tab 卡片 / 播放页」；选播放页进扩展播放页，选 New Tab 应聚焦新标签第四卡并开始播。关掉 HLS 开关后，工具箱左侧不再显示 HLS，第四卡提示已关闭。
+1. 重载 formant（默认开启）；打开 `option.html#features`，应看到「启用 HLS 播放」，默认勾选。概览里的已启用列表含「HLS 播放」。打开工具箱「HLS」，添加一条 m3u/txt 后点「播放」，应弹出「New Tab 卡片 / 播放页」；选播放页进扩展播放页，选 New Tab 应聚焦新标签第四卡并开始播。关掉 HLS 开关后，工具箱左侧不再显示 HLS，第四卡提示已关闭。
 2. 打开一个 `.m3u8` 直链：应进入全屏黑底播放页并能播放。点画面应播停，鼠标停下约 3 秒后底栏消失，再移动应出现。齿轮里切换倍速和旋转立即生效。关掉这个标签再打开同一链接，倍速回到 1、旋转回到 0°。空格、`F`、`M`、`[` `]`、`R`、`←` `→` 同样可用。`←` `→` 应快退 / 快进约 5 秒，Shift 加方向键约 30 秒。
 3. 打开 `result.m3u` 这类重复台名的列表：抽屉里每个台只出现一次，角标是线路数；播不了应自动切源。抽屉应显示当前列表地址和播放地址。点源码应看到原始文本。工具箱添加的源与播放页列表源是同一份本机数据。打开普通 `readme.txt` 不应进播放页。
 4. 点底栏下载图标：应弹出保存框，得到的文件能用浏览器或本地播放器打开。保存过程中再点一次应停掉下载。
@@ -567,7 +570,7 @@ CI（`python pack-edge.py --zip-only`）只打 zip，不生成商店图，也不
 
 #### 滚动截屏冒烟清单
 
-1. 重载 formant（默认开启）；打开 `option.html#features`，应看到「滚动截屏」说明和开关，概览含「滚动截屏」。
+1. 重载 formant（默认开启）；打开 `option.html#features`，应看到「滚动截屏」开关，概览含「滚动截屏」。
 2. 打开一篇普通 https 长文，右键应有「formant 整页滚动截屏」和「formant 截取可见区域」。选可见区域：应弹出另存为，图是当前一屏。
 3. 选整页滚动截屏：右下角出现进度，页面自动往下滚，完成后另存为 PNG；打开图应是整页、顶栏不重复；原来的滚动位置应恢复。失败时应在页角看到红色/深色失败提示，而不是完全没反应。
 4. 截屏过程中点「取消」：应停下来，不下载，页面恢复。
@@ -585,7 +588,7 @@ CI（`python pack-edge.py --zip-only`）只打 zip，不生成商店图，也不
 
 #### oolafOffice 冒烟清单
 
-1. 重载 formant（默认开启）；打开 `option.html#features`，应看到「oolafOffice」说明、开关和「打开 oolafOffice 起始页」，概览含「oolafOffice」。点开 popup，主界面代理行下方应有 oolafOffice 快捷条。
+1. 重载 formant（默认开启）；打开 `option.html#features`，应看到「oolafOffice」开关和「打开 oolafOffice 起始页」，概览含「oolafOffice」。点开 popup，主界面代理行下方应有 oolafOffice 快捷条。
 2. popup 点起始页 / Word / Excel / PPT，以及任意 https 页右键「formant oolafOffice」子项，应各开对应扩展页；Word / Excel / PPT 能打字、填格或加形状。
 3. 起始页「打开」本机 `.docx` / `.doc` / `.xlsx` / `.xls` / `.pptx`，再「另存为」下载，用桌面 Office 能打开。打开 `.doc` 后保存会另存为 `.docx`；打开 `.xls` 后保存会另存为 `.xlsx`。页面标题和关于框应写 oolafOffice，不是 VibeOffice；起始页没有 Feedback / GitHub 链接，About 与任务窗不写「2003 Web Edition」。
 4. 关闭 `features.office.enabled`：popup 快捷条和右键菜单组都消失；截屏 / 图片另存为 / 翻译菜单不受影响。

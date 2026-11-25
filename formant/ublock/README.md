@@ -7,25 +7,34 @@ regional list. List texts refresh from the URLs in upstream `assets.json`.
 Bundled copies keep the integration usable without the separately installed
 uBlock Origin extension and without network access.
 
-At runtime formant uses the upstream compiler outputs for:
+At runtime formant uses a hybrid MV3 pipeline:
 
-- Network `block`, `allow`, `redirect` and supported `modifyHeaders` rules.
-- Generic and domain-specific CSS selectors, including CSSable `:style()`.
-- Built-in and redirect-resource scriptlets, registered for the main and user
-  script worlds. Edge must allow user scripts for formant on the extension's
-  details page. Reload an open site after changing this permission or lists.
-
-MV3 cannot reproduce uBO 1.76.0's MV2 `webRequestBlocking` behavior. DNR has
-a 30,000 dynamic-rule budget and a 1,000 regex-rule budget; excess network
-rules are reported in formant's settings. Procedural cosmetic rules and some
-network modifiers are not applied. The settings page reports when scriptlet
-registration is unavailable. For exact uBO 1.76.0 behavior, keep the original
-extension installed.
+- **Static DNR rulesets (`ublock/rulesets/*.json`)**: All 10 bundled lists are
+  pre-compiled into MV3 `rule_resources` (~134k network rules), avoiding the
+  30,000 dynamic-rule cap so no bundled network rules are dropped.
+- **Dynamic DNR delta**: When CDN updates arrive, only rules that differ from
+  the bundled static rulesets are installed via `updateDynamicRules` within the
+  30,000 dynamic-rule and remaining regex budget.
+- **Cosmetic & procedural filtering**: Generic and domain-specific CSS
+  selectors, CSSable `:style()`, plus a procedural DOM engine (`procedural.js`)
+  supporting `:has-text()`, `:upward()`, `:has()`, `:not()`, `:matches-css*()`,
+  `:matches-attr()`, `:matches-path()`, `:xpath()`, `:spath()`, `:others()`,
+  `:remove()`, `:remove-attr()`, `:remove-class()`, and `:style()`.
+- **Dual-channel scriptlets**: Uses `chrome.userScripts` for dynamic CDN-updated
+  scriptlets when allowed, and automatically falls back to pre-compiled static
+  scriptlets (`ublock/rulesets/scriptlets-{main,isolated}.js`) registered via
+  `chrome.scripting.registerContentScripts` when user scripts are not enabled.
 
 Rebuild bundled list seeds:
 
 ```sh
 node scripts/fetch-ublock-seeds.mjs
+```
+
+Rebuild static DNR rulesets & fallback scriptlets after updating seeds:
+
+```sh
+node scripts/build-ublock-static.mjs
 ```
 
 Run the offline compiler smoke test:

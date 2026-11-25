@@ -8,7 +8,9 @@
   const styles = new Map();
   let pendingKeys = new Set();
   let scheduled = false;
+  let proceduralScheduled = false;
   let observer;
+  const procedural = () => window.__FORMANT_UBO_PROCEDURAL__;
 
   function send(message) {
     return new Promise((resolve) => {
@@ -62,24 +64,39 @@
     setTimeout(flushKeys, 120);
   }
 
+  function scheduleProcedural() {
+    if (proceduralScheduled || !enabled || !procedural()?.hasRules()) return;
+    proceduralScheduled = true;
+    setTimeout(() => {
+      proceduralScheduled = false;
+      if (enabled) procedural()?.run();
+    }, 150);
+  }
+
   async function loadRules() {
     const response = await send({ type: "FORMANT_UBLOCK_PAGE_RULES" });
     if (!enabled || !response?.ok) return;
     genericEnabled = response.genericEnabled;
     setCss("specific", response.specific);
     setCss("generic-high", response.genericHigh);
+    procedural()?.setRules(response.procedural || []);
     if (genericEnabled && document.documentElement) {
       collectKeys(document.documentElement);
       schedule();
     }
   }
 
+  function resetState() {
+    for (const style of styles.values()) style.remove();
+    styles.clear();
+    knownKeys.clear();
+    pendingKeys.clear();
+    procedural()?.clear();
+  }
+
   chrome.runtime.onMessage.addListener((message) => {
     if (message?.type === "FORMANT_UBLOCK_RULES_UPDATED" && enabled) {
-      for (const style of styles.values()) style.remove();
-      styles.clear();
-      knownKeys.clear();
-      pendingKeys.clear();
+      resetState();
       void loadRules();
       return;
     }
@@ -87,10 +104,7 @@
     enabled = Boolean(message.enabled);
     if (!enabled) {
       observer?.disconnect();
-      for (const style of styles.values()) style.remove();
-      styles.clear();
-      knownKeys.clear();
-      pendingKeys.clear();
+      resetState();
       return;
     }
     observe();
@@ -106,6 +120,7 @@
         for (const node of mutation.addedNodes) collectKeys(node);
       }
       schedule();
+      scheduleProcedural();
     });
     observer.observe(document.documentElement, {
       childList: true,

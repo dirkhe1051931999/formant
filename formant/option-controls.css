@@ -442,14 +442,6 @@ dialog::backdrop {
   font-size: 13px;
 }
 
-.ext-row__main small {
-  color: var(--muted, #667084);
-  font-size: 12px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
 .ext-row__actions {
   display: flex;
   align-items: center;
@@ -466,21 +458,6 @@ dialog::backdrop {
 }
 
 @media (max-width: 960px) {
-  .shell {
-    grid-template-columns: 1fr;
-  }
-
-  .shell-nav {
-    position: static;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-  }
-
-  .shell-nav__item {
-    text-align: center;
-    padding: 8px 6px;
-    font-size: 12px;
-  }
-
   .layout {
     grid-template-columns: 1fr;
   }

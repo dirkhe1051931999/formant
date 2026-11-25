@@ -2,44 +2,24 @@ import "./ublock/core/vapi-shim.js";
 import { dnrRulesetFromRawLists } from "./ublock/core/static-dnr-filtering.js";
 import publicSuffixList from "./ublock/core/publicsuffix.js";
 import punycode from "./ublock/lib/punycode.js";
-import { SUBSCRIBED_LISTS, UBLOCK_STATUS_KEY } from "./ublock-sync.js";
+import { SEED_PATHS, SUBSCRIBED_LISTS, UBLOCK_STATUS_KEY } from "./ublock-sync.js";
+import { loadUblockConfig } from "./ublock-config.js";
 import { clearPageRules, clearUblockScriptlets, setPageRules, syncUblockScriptlets } from "./ublock-page-rules.js";
-import redirectResources from "./ublock/core/redirect-resources.js";
+import {
+  ENV,
+  MAX_REGEX_DEFAULT,
+  STATIC_RULESETS,
+  STATIC_RULESET_IDS,
+  explodeDomains,
+  extensionPaths,
+  ruleFingerprint,
+  sanitizeRule,
+} from "./ublock-dnr-utils.js";
 
 export const UBLOCK_RULE_ID_MIN = 20_000;
 export const UBLOCK_RULE_ID_MAX = 49_999;
 
-const DNR_RESOURCE_TYPES = new Set([
-  "main_frame",
-  "sub_frame",
-  "stylesheet",
-  "script",
-  "image",
-  "font",
-  "object",
-  "xmlhttprequest",
-  "ping",
-  "csp_report",
-  "media",
-  "websocket",
-  "webtransport",
-  "webbundle",
-  "other",
-]);
-
 const BATCH = 400;
-const MAX_REGEX_DEFAULT = 1_000;
-const MAX_DOMAINS_PER_RULE = 1_000;
-const ENV = ["chromium", "native_css_has"];
-
-const extensionPaths = [];
-for (const [name, details] of redirectResources) {
-  if (name === "click2load.html") continue;
-  const path = `/ublock/core/web_accessible_resources/${name}`;
-  extensionPaths.push([name, path]);
-  const aliases = Array.isArray(details.alias) ? details.alias : details.alias ? [details.alias] : [];
-  for (const alias of aliases) extensionPaths.push([alias, path]);
-}
 
 /** @type {Promise<void> | null} */
 let pslReady = null;
@@ -75,128 +55,65 @@ function ensurePsl() {
 }
 
 /**
- * @param {unknown} value
- * @returns {string[]}
+ * @param {string[]} [enabledIds]
  */
-function asStringArray(value) {
-  if (!Array.isArray(value)) return [];
-  return value.filter((item) => typeof item === "string" && item.length > 0);
+async function setStaticRulesetsEnabled(enabledIds = []) {
+  if (typeof chrome.declarativeNetRequest.updateEnabledRulesets !== "function") return;
+  const enabledSet = new Set(enabledIds);
+  const enableRulesetIds = STATIC_RULESETS.filter((r) => enabledSet.has(r.listId)).map((r) => r.rulesetId);
+  const disableRulesetIds = STATIC_RULESETS.filter((r) => !enabledSet.has(r.listId)).map((r) => r.rulesetId);
+  await chrome.declarativeNetRequest.updateEnabledRulesets({
+    enableRulesetIds,
+    disableRulesetIds,
+  });
 }
 
 /**
- * @param {Record<string, any>} rule
- * @returns {chrome.declarativeNetRequest.Rule | null}
+ * @param {string[]} enabledIds
+ * @returns {Promise<{ totalRules: number, totalRegex: number }>}
  */
-function sanitizeRule(rule) {
-  if (!rule || typeof rule !== "object") return null;
-  if (rule._error) return null;
-  const actionType = rule.action?.type;
-  if (!["block", "allow", "redirect", "modifyHeaders"].includes(actionType)) return null;
-
-  const conditionIn = rule.condition && typeof rule.condition === "object" ? rule.condition : {};
-  /** @type {chrome.declarativeNetRequest.RuleCondition} */
-  const condition = {};
-
-  if (typeof conditionIn.urlFilter === "string" && conditionIn.urlFilter) {
-    if (conditionIn.urlFilter.length > 1024) return null;
-    condition.urlFilter = conditionIn.urlFilter;
-  }
-  if (typeof conditionIn.regexFilter === "string" && conditionIn.regexFilter) {
-    if (condition.urlFilter) return null;
-    if (conditionIn.regexFilter.length > 1024) return null;
-    condition.regexFilter = conditionIn.regexFilter;
-    if (conditionIn.isUrlFilterCaseSensitive === true) {
-      condition.isUrlFilterCaseSensitive = true;
+async function loadStaticMeta(enabledIds) {
+  try {
+    const res = await fetch(chrome.runtime.getURL("ublock/rulesets/meta.json"));
+    if (!res.ok) return { totalRules: 0, totalRegex: 0 };
+    const meta = await res.json();
+    const list = Array.isArray(meta.rulesets) ? meta.rulesets : [];
+    const enabledSet = new Set(enabledIds);
+    let totalRules = 0;
+    let totalRegex = 0;
+    for (const item of list) {
+      if (!enabledSet.has(item.listId)) continue;
+      totalRules += Number(item.count) || 0;
+      totalRegex += Number(item.regexCount) || 0;
     }
+    return { totalRules, totalRegex };
+  } catch {
+    return { totalRules: 0, totalRegex: 0 };
   }
-
-  const resourceTypes = asStringArray(conditionIn.resourceTypes).filter((type) =>
-    DNR_RESOURCE_TYPES.has(type),
-  );
-  if (resourceTypes.length) condition.resourceTypes = resourceTypes;
-  else if (asStringArray(conditionIn.resourceTypes).length) return null;
-
-  const excludedResourceTypes = asStringArray(conditionIn.excludedResourceTypes).filter((type) =>
-    DNR_RESOURCE_TYPES.has(type),
-  );
-  if (excludedResourceTypes.length) condition.excludedResourceTypes = excludedResourceTypes;
-
-  const requestDomains = asStringArray(conditionIn.requestDomains);
-  if (requestDomains.length) condition.requestDomains = requestDomains;
-  const excludedRequestDomains = asStringArray(conditionIn.excludedRequestDomains);
-  if (excludedRequestDomains.length) condition.excludedRequestDomains = excludedRequestDomains;
-  const initiatorDomains = asStringArray(conditionIn.initiatorDomains);
-  if (initiatorDomains.length) condition.initiatorDomains = initiatorDomains;
-  const excludedInitiatorDomains = asStringArray(conditionIn.excludedInitiatorDomains);
-  if (excludedInitiatorDomains.length) condition.excludedInitiatorDomains = excludedInitiatorDomains;
-
-  if (conditionIn.domainType === "firstParty" || conditionIn.domainType === "thirdParty") {
-    condition.domainType = conditionIn.domainType;
-  }
-
-  if (
-    !condition.urlFilter &&
-    !condition.regexFilter &&
-    !condition.requestDomains &&
-    !condition.initiatorDomains
-  ) {
-    return null;
-  }
-
-  /** @type {chrome.declarativeNetRequest.Rule} */
-  const action = { type: actionType };
-  if (actionType === "redirect") {
-    const extensionPath = rule.action.redirect?.extensionPath;
-    if (typeof extensionPath !== "string" || !extensionPath.startsWith("/ublock/core/web_accessible_resources/")) return null;
-    action.redirect = { extensionPath };
-  }
-  if (actionType === "modifyHeaders") {
-    const headers = rule.action.responseHeaders;
-    if (!Array.isArray(headers) || !headers.length) return null;
-    if (!headers.every((item) => item && item.operation === "remove" && typeof item.header === "string")) return null;
-    action.responseHeaders = headers.map(({ header }) => ({ header, operation: "remove" }));
-  }
-  const out = {
-    id: 1,
-    action,
-    condition,
-  };
-  if (typeof rule.priority === "number" && Number.isFinite(rule.priority) && rule.priority >= 1) {
-    out.priority = Math.min(Math.floor(rule.priority), 2_147_483_647);
-  }
-  return out;
 }
 
 /**
- * @param {chrome.declarativeNetRequest.Rule} rule
- * @param {"requestDomains" | "initiatorDomains"} key
- * @returns {chrome.declarativeNetRequest.Rule[]}
+ * Build fingerprint set for a single static ruleset so CDN updates only consume dynamic budget for deltas.
+ * @param {string} listId
+ * @returns {Promise<Set<string>>}
  */
-function splitDomainKey(rule, key) {
-  const values = rule.condition[key];
-  if (!Array.isArray(values) || values.length <= MAX_DOMAINS_PER_RULE) return [rule];
-  /** @type {chrome.declarativeNetRequest.Rule[]} */
-  const parts = [];
-  for (let i = 0; i < values.length; i += MAX_DOMAINS_PER_RULE) {
-    parts.push({
-      ...rule,
-      condition: {
-        ...rule.condition,
-        [key]: values.slice(i, i + MAX_DOMAINS_PER_RULE),
-      },
-    });
+async function loadStaticFingerprintSet(listId) {
+  /** @type {Set<string>} */
+  const set = new Set();
+  const item = STATIC_RULESETS.find((entry) => entry.listId === listId);
+  if (!item) return set;
+  try {
+    const res = await fetch(chrome.runtime.getURL(item.path));
+    if (!res.ok) return set;
+    const rules = await res.json();
+    if (!Array.isArray(rules)) return set;
+    for (const rule of rules) {
+      set.add(ruleFingerprint(rule));
+    }
+  } catch (error) {
+    console.warn("[formant] failed reading static ruleset for diff", item.rulesetId, error);
   }
-  return parts;
-}
-
-/**
- * @param {chrome.declarativeNetRequest.Rule} rule
- * @returns {chrome.declarativeNetRequest.Rule[]}
- */
-function explodeDomains(rule) {
-  return splitDomainKey(rule, "requestDomains").flatMap((item) =>
-    splitDomainKey(item, "initiatorDomains"),
-  );
+  return set;
 }
 
 /**
@@ -211,7 +128,7 @@ function pickRules(rules, budget, regexBudget, unsafeBudget) {
   const modifyHeaders = [];
   const block = [];
   for (const rule of rules) {
-    if (rule.action.type === "allow") allow.push(rule);
+    if (rule.action.type === "allow" || rule.action.type === "allowAllRequests") allow.push(rule);
     else if (rule.action.type === "redirect") redirect.push(rule);
     else if (rule.action.type === "modifyHeaders") modifyHeaders.push(rule);
     else if (rule.action.type === "block") block.push(rule);
@@ -260,36 +177,40 @@ async function removeRuleIds(ids) {
 }
 
 /**
+ * @param {chrome.declarativeNetRequest.Rule[]} chunk
+ * @param {{ skipped: number }} stats
+ */
+async function addChunkBisect(chunk, stats) {
+  if (!chunk.length) return;
+  try {
+    await chrome.declarativeNetRequest.updateDynamicRules({
+      addRules: chunk,
+      removeRuleIds: [],
+    });
+  } catch (error) {
+    if (chunk.length === 1) {
+      stats.skipped += 1;
+      if (stats.skipped <= 8) {
+        console.warn("[formant] uBO DNR skip rule", chunk[0].id, error);
+      }
+      return;
+    }
+    const mid = Math.floor(chunk.length / 2);
+    await addChunkBisect(chunk.slice(0, mid), stats);
+    await addChunkBisect(chunk.slice(mid), stats);
+  }
+}
+
+/**
  * @param {chrome.declarativeNetRequest.Rule[]} rules
  * @returns {Promise<number>} skipped because Chrome rejected them
  */
 async function addRulesBatched(rules) {
-  let skipped = 0;
+  const stats = { skipped: 0 };
   for (let i = 0; i < rules.length; i += BATCH) {
-    const chunk = rules.slice(i, i + BATCH);
-    try {
-      await chrome.declarativeNetRequest.updateDynamicRules({
-        addRules: chunk,
-        removeRuleIds: [],
-      });
-    } catch (error) {
-      console.warn("[formant] uBO DNR batch failed, retrying singly", error);
-      for (const rule of chunk) {
-        try {
-          await chrome.declarativeNetRequest.updateDynamicRules({
-            addRules: [rule],
-            removeRuleIds: [],
-          });
-        } catch (inner) {
-          skipped += 1;
-          if (skipped <= 8) {
-            console.warn("[formant] uBO DNR skip rule", rule.id, inner);
-          }
-        }
-      }
-    }
+    await addChunkBisect(rules.slice(i, i + BATCH), stats);
   }
-  return skipped;
+  return stats.skipped;
 }
 
 /**
@@ -307,12 +228,14 @@ export async function clearUblockDynamicRules() {
 
 /**
  * @param {import("./ublock-sync.js").UblockListsState} state
- * @param {{ enabled: boolean }} extras
+ * @param {{ enabled: boolean, onLog?: (msg: string) => void }} extras
  * @returns {Promise<UblockStatus>}
  */
 export async function applyUblockLists(state, extras) {
   const enabled = Boolean(extras.enabled);
+  const onLog = typeof extras.onLog === "function" ? extras.onLog : null;
   if (!enabled) {
+    await setStaticRulesetsEnabled([]);
     await clearUblockDynamicRules();
     await clearUblockScriptlets();
     clearPageRules();
@@ -331,60 +254,151 @@ export async function applyUblockLists(state, extras) {
   }
 
   await ensurePsl();
+  const config = await loadUblockConfig();
 
-  const lists = SUBSCRIBED_LISTS.map((id) => state.lists[id]).filter(Boolean);
-  if (!lists.length) {
+  const allLists = SUBSCRIBED_LISTS.map((id) => state.lists[id]).filter(Boolean);
+  if (!allLists.length) {
     throw new Error("没有可用的 uBO 过滤列表");
   }
+  const lists = allLists.filter((list) => config.lists[list.id] !== false);
+  const enabledIds = lists.map((list) => list.id);
+  const customText = config.customFilters.trim();
 
-  const result = await dnrRulesetFromRawLists(
-    lists.map((list) => ({
-      name: list.id,
-      text: list.text,
-      trustedSource: list.id.startsWith("ublock-"),
-    })),
-    { env: ENV, extensionPaths },
-  );
-
-  const cosmeticCount = setPageRules(result);
-  let scriptlets = "unavailable";
-  try {
-    scriptlets = await syncUblockScriptlets(result);
-  } catch (error) {
-    console.warn("[formant] uBO scriptlet build failed", error);
-    scriptlets = error instanceof Error ? error.message : String(error);
-  }
-
-  const rawRules = Array.isArray(result?.network?.ruleset) ? result.network.ruleset : [];
-  /** @type {chrome.declarativeNetRequest.Rule[]} */
-  const sanitized = [];
-  for (const raw of rawRules) {
-    const clean = sanitizeRule(raw);
-    if (clean) sanitized.push(...explodeDomains(clean));
-  }
-
-  const existing = await chrome.declarativeNetRequest.getDynamicRules();
-  const others = existing.filter(
-    (rule) => rule.id < UBLOCK_RULE_ID_MIN || rule.id > UBLOCK_RULE_ID_MAX,
-  );
-  const maxDynamic = chrome.declarativeNetRequest.MAX_NUMBER_OF_DYNAMIC_RULES || 30_000;
-  const regexCap = chrome.declarativeNetRequest.MAX_NUMBER_OF_REGEX_RULES || MAX_REGEX_DEFAULT;
-  const regexBudget = Math.min(MAX_REGEX_DEFAULT, Number(regexCap) || MAX_REGEX_DEFAULT);
-  const budget = Math.max(0, Math.min(maxDynamic - others.length, UBLOCK_RULE_ID_MAX - UBLOCK_RULE_ID_MIN + 1));
-  const maxUnsafe = chrome.declarativeNetRequest.MAX_NUMBER_OF_UNSAFE_DYNAMIC_RULES || 5_000;
-  const otherUnsafe = others.filter((rule) => !["block", "allow", "allowAllRequests", "upgradeScheme"].includes(rule.action?.type)).length;
-  const { picked, skipped } = pickRules(sanitized, budget, regexBudget, Math.max(0, maxUnsafe - otherUnsafe));
-
-  const numbered = picked.map((rule, index) => ({
-    ...rule,
-    id: UBLOCK_RULE_ID_MIN + index,
+  const compileInputs = lists.map((list) => ({
+    name: list.id,
+    text: list.text,
+    trustedSource: list.id.startsWith("ublock-"),
   }));
+  if (customText) {
+    compileInputs.push({ name: "user-custom", text: customText, trustedSource: false });
+  }
+
+  const compileStarted = Date.now();
+  onLog?.(`正在编译 ${compileInputs.length} 个规则源（元素隐藏与脚本）...`);
+  const result = compileInputs.length
+    ? await dnrRulesetFromRawLists(compileInputs, { env: ENV, extensionPaths })
+    : { specificCosmetic: [], genericCosmeticExceptions: [], genericCosmeticFilters: [], network: {}, scriptlet: new Map() };
+
+  let cosmeticCount = 0;
+  if (config.cosmetic) {
+    cosmeticCount = setPageRules(result, config.trustedSites);
+  } else {
+    clearPageRules();
+  }
+
+  let scriptlets = "disabled";
+  if (!config.scriptlets) {
+    await clearUblockScriptlets();
+  } else {
+    try {
+      scriptlets = await syncUblockScriptlets(result);
+    } catch (error) {
+      console.warn("[formant] uBO scriptlet build failed", error);
+      scriptlets = error instanceof Error ? error.message : String(error);
+    }
+  }
+  onLog?.(`页面规则编译完成 (${Date.now() - compileStarted}ms): 元素隐藏 ${cosmeticCount} 条，scriptlet ${scriptlets}`);
+
+  await setStaticRulesetsEnabled(enabledIds);
+  const meta = await loadStaticMeta(enabledIds);
+  const hasCdnLists = lists.some((list) => list.source === "cdn");
+
+  let skipped = 0;
+  let rejected = 0;
+  /** @type {chrome.declarativeNetRequest.Rule[]} */
+  let numbered = [];
+
+  /** @type {chrome.declarativeNetRequest.Rule[]} */
+  const delta = [];
+  if (config.trustedSites.length) {
+    delta.push({
+      id: 1,
+      priority: 1_000_000,
+      action: { type: "allowAllRequests" },
+      condition: {
+        requestDomains: config.trustedSites,
+        resourceTypes: ["main_frame", "sub_frame"],
+      },
+    });
+  }
+  if (customText) {
+    const customResult = await dnrRulesetFromRawLists(
+      [{ name: "user-custom", text: customText, trustedSource: false }],
+      { env: ENV, extensionPaths },
+    );
+    for (const raw of customResult?.network?.ruleset || []) {
+      const clean = sanitizeRule(raw);
+      if (clean) delta.push(...explodeDomains(clean));
+    }
+  }
+
+  if (hasCdnLists || (meta.totalRules === 0 && lists.length > 0)) {
+    if (meta.totalRules === 0) {
+      const rawRules = Array.isArray(result?.network?.ruleset) ? result.network.ruleset : [];
+      for (const raw of rawRules) {
+        const clean = sanitizeRule(raw);
+        if (clean) delta.push(...explodeDomains(clean));
+      }
+    } else {
+      let changedLists = 0;
+      const diffStarted = Date.now();
+      for (const list of lists) {
+        if (list.source !== "cdn") continue;
+        const seedPath = SEED_PATHS[list.id];
+        if (seedPath) {
+          try {
+            const seedRes = await fetch(chrome.runtime.getURL(seedPath));
+            if (seedRes.ok && (await seedRes.text()) === list.text) continue;
+          } catch {}
+        }
+        changedLists += 1;
+        const listResult = await dnrRulesetFromRawLists(
+          [{ name: list.id, text: list.text, trustedSource: list.id.startsWith("ublock-") }],
+          { env: ENV, extensionPaths },
+        );
+        const staticSet = await loadStaticFingerprintSet(list.id);
+        const rawRules = Array.isArray(listResult?.network?.ruleset) ? listResult.network.ruleset : [];
+        for (const raw of rawRules) {
+          const clean = sanitizeRule(raw);
+          if (!clean) continue;
+          for (const part of explodeDomains(clean)) {
+            if (staticSet.size > 0 && staticSet.has(ruleFingerprint(part))) continue;
+            delta.push(part);
+          }
+        }
+      }
+      onLog?.(`CDN 增量比对完成 (${Date.now() - diffStarted}ms): ${changedLists} 个列表有变化，待写入动态规则 ${delta.length} 条`);
+    }
+  }
+
+  if (delta.length) {
+    const existing = await chrome.declarativeNetRequest.getDynamicRules();
+    const others = existing.filter(
+      (rule) => rule.id < UBLOCK_RULE_ID_MIN || rule.id > UBLOCK_RULE_ID_MAX,
+    );
+    const maxDynamic = chrome.declarativeNetRequest.MAX_NUMBER_OF_DYNAMIC_RULES || 30_000;
+    const regexCap = chrome.declarativeNetRequest.MAX_NUMBER_OF_REGEX_RULES || MAX_REGEX_DEFAULT;
+    const regexBudget = Math.max(0, (Number(regexCap) || MAX_REGEX_DEFAULT) - meta.totalRegex);
+    const budget = Math.max(0, Math.min(maxDynamic - others.length, UBLOCK_RULE_ID_MAX - UBLOCK_RULE_ID_MIN + 1));
+    const maxUnsafe = chrome.declarativeNetRequest.MAX_NUMBER_OF_UNSAFE_DYNAMIC_RULES || 5_000;
+    const otherUnsafe = others.filter((rule) => !["block", "allow", "allowAllRequests", "upgradeScheme"].includes(rule.action?.type)).length;
+    const pickedResult = pickRules(delta, budget, regexBudget, Math.max(0, maxUnsafe - otherUnsafe));
+    skipped = pickedResult.skipped;
+    numbered = pickedResult.picked.map((rule, index) => ({
+      ...rule,
+      id: UBLOCK_RULE_ID_MIN + index,
+    }));
+  }
 
   await clearUblockDynamicRules();
-  const rejected = await addRulesBatched(numbered);
+  if (numbered.length) {
+    const dnrStarted = Date.now();
+    rejected = await addRulesBatched(numbered);
+    onLog?.(`动态规则写入完成 (${Date.now() - dnrStarted}ms): 成功 ${numbered.length - rejected} 条，跳过 ${rejected} 条`);
+  }
   const live = await getUblockDynamicRules();
 
-  const source = Object.values(state.lists).some((list) => list.source === "cdn")
+  const source = hasCdnLists
     ? "cdn"
     : state.catalogSource === "cdn"
       ? "cache"
@@ -392,7 +406,7 @@ export async function applyUblockLists(state, extras) {
 
   const status = {
     enabled: true,
-    ruleCount: live.length,
+    ruleCount: meta.totalRules + live.length,
     skipped: skipped + Math.max(rejected, numbered.length - live.length),
     lastUpdated: Date.now(),
     lastError: null,

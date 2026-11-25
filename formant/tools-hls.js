@@ -34,7 +34,6 @@ export function mount(root) {
           <button type="submit" class="tl-btn">添加源</button>
         </div>
       </form>
-      <p class="tl-note">保存 m3u / txt 到本机（formantHlsSources），不同步 mono。点播放可选 New Tab 卡片或独立播放页。开关在设置 → 功能。</p>
       <div class="hls-feeds" data-list></div>
     </section>
   `;
@@ -105,6 +104,18 @@ export function mount(root) {
       play.addEventListener("click", () => {
         void openPlayer(play, item.url);
       });
+      const copy = document.createElement("button");
+      copy.type = "button";
+      copy.className = "tl-btn tl-btn--ghost";
+      copy.textContent = "复制";
+      copy.addEventListener("click", async () => {
+        try {
+          await navigator.clipboard.writeText(item.url);
+          toast("已复制地址");
+        } catch (error) {
+          toast(error instanceof Error ? error.message : "复制失败");
+        }
+      });
       const makeDefault = document.createElement("button");
       makeDefault.type = "button";
       makeDefault.className = "tl-btn tl-btn--ghost";
@@ -126,7 +137,7 @@ export function mount(root) {
         toast("已删除");
         void paint();
       });
-      actions.append(play, makeDefault, del);
+      actions.append(play, copy, makeDefault, del);
       row.append(main, actions);
       listEl.appendChild(row);
     }

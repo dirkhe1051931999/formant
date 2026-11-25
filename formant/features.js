@@ -34,6 +34,7 @@ export const FEATURES_KEY = "formantFeatures";
  *   gmail: { enabled: boolean },
  *   axure: { enabled: boolean },
  *   vue: { enabled: boolean },
+ *   techDetect: { enabled: boolean },
  *   hls: { enabled: boolean },
  *   imagePrompt: { enabled: boolean },
  *   tools: { enabled: boolean },
@@ -123,6 +124,9 @@ export const DEFAULT_FEATURES = {
   vue: {
     enabled: true,
   },
+  techDetect: {
+    enabled: true,
+  },
   hls: {
     enabled: true,
   },
@@ -180,6 +184,7 @@ export function normalizeFeatures(raw) {
   const gmail = src.gmail && typeof src.gmail === "object" ? src.gmail : {};
   const axure = src.axure && typeof src.axure === "object" ? src.axure : {};
   const vue = src.vue && typeof src.vue === "object" ? src.vue : {};
+  const techDetect = src.techDetect && typeof src.techDetect === "object" ? src.techDetect : {};
   const hls = src.hls && typeof src.hls === "object" ? src.hls : {};
   const imagePrompt = src.imagePrompt && typeof src.imagePrompt === "object" ? src.imagePrompt : {};
   const tools = src.tools && typeof src.tools === "object" ? src.tools : {};
@@ -265,6 +270,9 @@ export function normalizeFeatures(raw) {
     },
     vue: {
       enabled: asBool(vue.enabled, DEFAULT_FEATURES.vue.enabled),
+    },
+    techDetect: {
+      enabled: asBool(techDetect.enabled, DEFAULT_FEATURES.techDetect.enabled),
     },
     hls: {
       enabled: asBool(hls.enabled, DEFAULT_FEATURES.hls.enabled),
@@ -440,6 +448,10 @@ export function isAxureEnabled(f) {
 
 export function isVueEnabled(f) {
   return f.vue.enabled;
+}
+
+export function isTechDetectEnabled(f) {
+  return f.techDetect.enabled;
 }
 
 export function isHlsEnabled(f) {
