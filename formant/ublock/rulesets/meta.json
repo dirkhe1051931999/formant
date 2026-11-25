@@ -1,22 +1,22 @@
 {
-  "generatedAt": "2026-11-25T01:49:37.507Z",
-  "totalRules": 134749,
-  "totalRegex": 374,
+  "generatedAt": "2026-11-25T05:50:00.507Z",
+  "totalRules": 134706,
+  "totalRegex": 351,
   "droppedRegex": 0,
   "rulesets": [
     {
       "id": "ublock_ublock-filters",
       "listId": "ublock-filters",
       "file": "ublock-filters.json",
-      "count": 4129,
-      "regexCount": 174
+      "count": 4088,
+      "regexCount": 153
     },
     {
       "id": "ublock_ublock-badware",
       "listId": "ublock-badware",
       "file": "ublock-badware.json",
-      "count": 1554,
-      "regexCount": 134
+      "count": 1553,
+      "regexCount": 133
     },
     {
       "id": "ublock_ublock-privacy",
@@ -29,8 +29,8 @@
       "id": "ublock_ublock-quick-fixes",
       "listId": "ublock-quick-fixes",
       "file": "ublock-quick-fixes.json",
-      "count": 99,
-      "regexCount": 3
+      "count": 98,
+      "regexCount": 2
     },
     {
       "id": "ublock_ublock-unbreak",

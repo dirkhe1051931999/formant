@@ -68,6 +68,7 @@ globalThis.fetch = async (url) => {
 
 const { applyUblockLists } = await import('../formant/ublock-apply.js');
 const { getPageCss, getGenericCss } = await import('../formant/ublock-page-rules.js');
+const { sanitizeRule } = await import('../formant/ublock-dnr-utils.js');
 const lists = Object.fromEntries(await Promise.all(Object.entries(source).map(async ([id, path]) => [
   id,
   { id, text: await readFile(resolve(ext, 'ublock/assets', path), 'utf8'), source: 'seed' },
@@ -121,6 +122,36 @@ const fbStatus = await applyUblockLists(state, { enabled: true });
 console.log = originalLog;
 assert.equal(fbStatus.scriptlets, '2 worlds (static fallback)');
 assert.equal(fallbackCount, 2);
+
+// Verify sanitizeRule drops rules with unsupported condition keys instead of widening them.
+assert.equal(sanitizeRule({
+  action: { type: 'block' },
+  condition: {
+    regexFilter: '^https:\\/\\/[a-z]{3,}\\.[a-z]{7,}\\.[a-z]{2,4}\\/',
+    resourceTypes: ['script'],
+    domainType: 'thirdParty',
+    responseHeaders: [{ header: 'x-xcxurl', values: ['https://*'] }],
+  },
+}), null);
+assert.equal(sanitizeRule({
+  action: { type: 'block' },
+  condition: { urlFilter: '||example.com^', topDomains: ['foo.example'] },
+}), null);
+assert.equal(sanitizeRule({
+  action: { type: 'block' },
+  condition: { urlFilter: '||example.com^', unknownFutureCondition: true },
+}), null);
+
+// Verify ublock-filters.json does not contain the broad third-party script regex rules that lost responseHeaders.
+const ublockFiltersRules = JSON.parse(await readFile(resolve(ext, 'ublock/rulesets/ublock-filters.json'), 'utf8'));
+const broadScriptRule = ublockFiltersRules.find((r) =>
+  r.action?.type === 'block' &&
+  typeof r.condition?.regexFilter === 'string' &&
+  r.condition.regexFilter.startsWith('^https:\\/\\/[a-z]{3,}\\.[a-z]{7,}\\.[a-z]{2,4}\\/') &&
+  !r.condition.initiatorDomains &&
+  !r.condition.requestDomains,
+);
+assert.equal(broadScriptRule, undefined, `Unexpected broad regex rule in ublock-filters.json: ${JSON.stringify(broadScriptRule)}`);
 
 const disabled = await applyUblockLists(state, { enabled: false });
 assert.equal(disabled.ruleCount, 0);

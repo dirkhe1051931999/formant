@@ -3777,7 +3777,7 @@ function xmlPrune(
     });
 }
 
-function zeta_08b1e3c509cc4e6a8d737cf970dabe63() { // fingerprint2.js
+function zeta_bf007897e9444e97b45ba51b9d31db7d() { // fingerprint2.js
 // Reference:
 // https://github.com/fingerprintjs/fingerprintjs/tree/v2
 
@@ -3814,7 +3814,7 @@ function zeta_08b1e3c509cc4e6a8d737cf970dabe63() { // fingerprint2.js
 })();
 }
 
-function zeta_74313e09f6a2475a8a52b1c1114fbf05() { // google-ima.js
+function zeta_455e9433c95d42119053d8fe06b0ff25() { // google-ima.js
 'use strict';
 
 
@@ -4443,7 +4443,7 @@ if (!window.google || !window.google.ima || !window.google.ima.VERSION) {
 }
 }
 
-function zeta_78375f1539704a08baabf9de5895bb05() { // noeval.js
+function zeta_5a5b2e808d404b088ffafe5aa4490953() { // noeval.js
 (function() {
     'use strict';
     const log = console.log.bind(console);
@@ -4455,7 +4455,7 @@ function zeta_78375f1539704a08baabf9de5895bb05() { // noeval.js
 })();
 }
 
-function zeta_6e5f393ac26444559f7745ff89c9f055() { // nofab.js
+function zeta_aa9252a7ac6d4eafac6c5d569a29fd31() { // nofab.js
 (function() {
     'use strict';
     const noopfn = function() {
@@ -4504,7 +4504,7 @@ function zeta_6e5f393ac26444559f7745ff89c9f055() { // nofab.js
 })();
 }
 
-function zeta_7297bfe025634a47b2fad3c4ac36f11b() { // popads-dummy.js
+function zeta_abd5e5c807194ecaa68419d89caab3b4() { // popads-dummy.js
 (function() {
     'use strict';
     delete window.PopAds;
@@ -4563,7 +4563,7 @@ scriptletGlobals.origins = (( ) => {
     return out;
 })();
 
-scriptletGlobals.functionRefs = /* 43 */ [setConstant,jsonPrune,jsonPruneFetchResponse,jsonEditFetchResponse,preventAddEventListener,preventSetInterval,preventFetch,zeta_78375f1539704a08baabf9de5895bb05,abortOnPropertyRead,jsonPruneXhrResponse,jsonEdit,jsonlEditXhrResponse,preventSetTimeout,abortCurrentScript,adjustSetTimeout,abortOnPropertyWrite,noWebrtc,preventXhr,noWindowOpenIf,abortOnStackTrace,zeta_6e5f393ac26444559f7745ff89c9f055,removeAttr,adjustSetInterval,zeta_7297bfe025634a47b2fad3c4ac36f11b,preventRequestAnimationFrame,noEvalIf,preventBab,disableNewtabLinks,preventInnerHTML,editObjectOnSetter,jsonEditXhrResponse,xmlPrune,m3uPrune,trustedPreventXhr,spoofCSS,zeta_74313e09f6a2475a8a52b1c1114fbf05,alertBuster,preventCanvas,mpegdashPrune,jsonEditFetchRequest,proxyApplyConfig,zeta_08b1e3c509cc4e6a8d737cf970dabe63,evaldataPrune];
+scriptletGlobals.functionRefs = /* 43 */ [setConstant,jsonPrune,jsonPruneFetchResponse,jsonEditFetchResponse,preventAddEventListener,preventSetInterval,preventFetch,zeta_5a5b2e808d404b088ffafe5aa4490953,abortOnPropertyRead,jsonPruneXhrResponse,jsonEdit,jsonlEditXhrResponse,preventSetTimeout,abortCurrentScript,adjustSetTimeout,abortOnPropertyWrite,noWebrtc,preventXhr,noWindowOpenIf,abortOnStackTrace,zeta_aa9252a7ac6d4eafac6c5d569a29fd31,removeAttr,adjustSetInterval,zeta_abd5e5c807194ecaa68419d89caab3b4,preventRequestAnimationFrame,noEvalIf,preventBab,disableNewtabLinks,preventInnerHTML,editObjectOnSetter,jsonEditXhrResponse,xmlPrune,m3uPrune,trustedPreventXhr,spoofCSS,zeta_455e9433c95d42119053d8fe06b0ff25,alertBuster,preventCanvas,mpegdashPrune,jsonEditFetchRequest,proxyApplyConfig,zeta_bf007897e9444e97b45ba51b9d31db7d,evaldataPrune];
 
 /******************************************************************************/
 

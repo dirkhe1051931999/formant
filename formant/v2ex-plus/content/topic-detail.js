@@ -238,6 +238,29 @@
     head.append(trigger, input);
   }
 
+  function isExternalV2exLink(anchor) {
+    if (!(anchor instanceof HTMLAnchorElement) || !anchor.getAttribute("href")) return false;
+    try {
+      const url = new URL(anchor.href);
+      if (url.protocol !== "http:" && url.protocol !== "https:") return false;
+      const host = url.hostname.toLowerCase();
+      return host !== "v2ex.com" && !host.endsWith(".v2ex.com");
+    } catch {
+      return false;
+    }
+  }
+
+  function installExternalLinks() {
+    document.querySelectorAll(".topic_content a[href], .subtle a[href], .reply_content a[href]").forEach((link) => {
+      if (!isExternalV2exLink(link)) return;
+      link.target = "_blank";
+      const rel = new Set(String(link.getAttribute("rel") || "").split(/\s+/).filter(Boolean));
+      rel.add("noopener");
+      rel.add("noreferrer");
+      link.rel = [...rel].join(" ");
+    });
+  }
+
   function imageUrl(value) {
     return /^https?:\/\/[^\s]+\.(?:png|jpe?g|gif|webp)(?:\?[^\s]*)?$/i.test(value);
   }
@@ -403,6 +426,7 @@
     addUserOutlines(options.userMarkList, options.markColor);
     installThankColor(options.thankColor);
     if (options.imageParsing) installImageParsing();
+    installExternalLinks();
     document.querySelectorAll("img[src^='http:']").forEach((image) => {
       image.src = image.src.replace(/^http:/, "https:");
     });

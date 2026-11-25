@@ -1513,3 +1513,15 @@ egexFilter 与 urlFilter 规则，重新生成 134,749 条静态 DNR 规则集�
 2026-11-25 11:57:25
 
 1. 移除工具箱 HLS 页面中冗余的存储与播放提示描述文案（`tools-hls.js`）。
+
+2026-11-25 13:50:20
+
+1. 修复 `formant/ublock-dnr-utils.js` 中 `sanitizeRule` 静默丢弃 `responseHeaders`、`topDomains` 等未支持条件键导致宽泛规则误杀 GitHub 等正常站点资源的问题：拒绝包含未支持条件键的规则并补全 `requestMethods` / `excludedRequestMethods` 校验，重新编译静态 DNR 规则集并在 `scripts/test-ublock-compile.mjs` 补充回归测试。
+
+2026-11-25 13:52:23
+
+1. 新增网页右键菜单「为此网站生成二维码」（`qr-bridge.js`、`qr-overlay.js` 并在 `background.js` 注册）：支持在当前网页弹出 Shadow DOM 二维码浮层，实时编辑网址重绘、复制图片及下载 PNG。
+
+2026-11-25 14:03:37
+
+1. 为 V2EX 帖子详情（`v2ex-plus/content/topic-detail.js`）与 linux.do 帖子详情（`linuxdo/content/main.js`）补充第三方外链新标签页打开处理：自动设置 `target="_blank"` 及 `noopener noreferrer`，并在 linux.do 捕获点击阶段回退 `window.open(..., "_blank")`。

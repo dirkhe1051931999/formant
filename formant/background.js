@@ -17,6 +17,7 @@ import {
   addOfficeContextMenus,
   handleOfficeContextMenu,
 } from "./office-bridge.js";
+import { QR_MENU_IDS, addQrContextMenus, handleQrContextMenu } from "./qr-bridge.js";
 import {
   GITZIP_MENU_IDS,
   addGitzipContextMenus,
@@ -106,6 +107,7 @@ const OWNED_MENU_IDS = [
   V2EX_MENU_SOV2EX,
   ...SCREENSHOT_MENU_IDS,
   ...OFFICE_MENU_IDS,
+  ...QR_MENU_IDS,
   ...GITZIP_MENU_IDS,
 ];
 let contextMenusJob = Promise.resolve();
@@ -194,6 +196,7 @@ async function rebuildContextMenus() {
     addV2exContextMenus(collectMenu, features, v2exOptions);
     addScreenshotContextMenus(collectMenu, features);
     addOfficeContextMenus(collectMenu, features);
+    addQrContextMenus(collectMenu);
     addGitzipContextMenus(collectMenu, features);
     for (const props of menus) await createMenu(props);
 
@@ -304,6 +307,8 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
     if (await handleScreenshotContextMenu(info, tab)) return;
 
     if (await handleOfficeContextMenu(info, tab)) return;
+
+    if (await handleQrContextMenu(info, tab)) return;
 
     if (await handleGitzipContextMenu(info, tab)) return;
 

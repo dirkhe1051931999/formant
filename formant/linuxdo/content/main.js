@@ -167,6 +167,15 @@
       const wrap = icon.closest("button, a, li") || icon.parentElement;
       wrap?.classList.add(HIDE_CLASS);
     }
+
+    for (const anchor of document.querySelectorAll(".topic-post .cooked a[href]")) {
+      if (!externalTopicLinkHref(anchor)) continue;
+      anchor.target = "_blank";
+      const rel = new Set(String(anchor.getAttribute("rel") || "").split(/\s+/).filter(Boolean));
+      rel.add("noopener");
+      rel.add("noreferrer");
+      anchor.rel = [...rel].join(" ");
+    }
   }
 
   function markSidebarChrome() {
@@ -235,7 +244,25 @@
   }
 
   /**
-   * 列表 / 搜索点帖子：window.open _blank，避免 Discourse SPA 同页跳转。
+   * @param {HTMLAnchorElement} anchor
+   */
+  function externalTopicLinkHref(anchor) {
+    if (!isTopicPath()) return "";
+    if (!(anchor instanceof HTMLAnchorElement) || anchor.classList.contains("lightbox")) return "";
+    if (!anchor.closest(".topic-post .cooked") || !anchor.getAttribute("href")) return "";
+    try {
+      const url = new URL(anchor.href);
+      if (url.protocol !== "http:" && url.protocol !== "https:") return "";
+      const host = url.hostname.toLowerCase();
+      if (host === "linux.do" || host.endsWith(".linux.do")) return "";
+      return url.href;
+    } catch {
+      return "";
+    }
+  }
+
+  /**
+   * 列表 / 搜索点帖子与帖子内第三方外链：window.open _blank，避免 Discourse SPA 同页跳转。
    * @param {MouseEvent} event
    */
   function onTopicOpenClick(event) {
@@ -246,7 +273,7 @@
     if (!(target instanceof Element)) return;
     const anchor = target.closest("a");
     if (!anchor) return;
-    const url = topicOpenHref(anchor);
+    const url = topicOpenHref(anchor) || externalTopicLinkHref(anchor);
     if (!url) return;
     event.preventDefault();
     event.stopPropagation();

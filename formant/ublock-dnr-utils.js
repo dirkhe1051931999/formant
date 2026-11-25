@@ -19,6 +19,33 @@ export const DNR_RESOURCE_TYPES = new Set([
   "other",
 ]);
 
+export const DNR_REQUEST_METHODS = new Set([
+  "connect",
+  "delete",
+  "get",
+  "head",
+  "options",
+  "patch",
+  "post",
+  "put",
+  "other",
+]);
+
+export const SUPPORTED_CONDITION_KEYS = new Set([
+  "urlFilter",
+  "regexFilter",
+  "isUrlFilterCaseSensitive",
+  "resourceTypes",
+  "excludedResourceTypes",
+  "requestDomains",
+  "excludedRequestDomains",
+  "initiatorDomains",
+  "excludedInitiatorDomains",
+  "domainType",
+  "requestMethods",
+  "excludedRequestMethods",
+]);
+
 export const ENV = ["chromium", "native_css_has"];
 export const MAX_DOMAINS_PER_RULE = 1_000;
 export const MAX_REGEX_DEFAULT = 1_000;
@@ -86,6 +113,12 @@ export function sanitizeRule(rule) {
   if (!["block", "allow", "redirect", "modifyHeaders"].includes(actionType)) return null;
 
   const conditionIn = rule.condition && typeof rule.condition === "object" ? rule.condition : {};
+  // Reject rules with unsupported condition keys (e.g. responseHeaders, topDomains)
+  // rather than stripping them and turning a narrow rule into a broad block.
+  for (const key of Object.keys(conditionIn)) {
+    if (!SUPPORTED_CONDITION_KEYS.has(key)) return null;
+  }
+
   /** @type {chrome.declarativeNetRequest.RuleCondition} */
   const condition = {};
 
@@ -97,21 +130,34 @@ export function sanitizeRule(rule) {
     if (condition.urlFilter) return null;
     if (conditionIn.regexFilter.length > 1024 || !isSafeRe2Regex(conditionIn.regexFilter)) return null;
     condition.regexFilter = conditionIn.regexFilter;
-    if (conditionIn.isUrlFilterCaseSensitive === true) {
-      condition.isUrlFilterCaseSensitive = true;
-    }
+  }
+  if ((condition.urlFilter || condition.regexFilter) && conditionIn.isUrlFilterCaseSensitive === true) {
+    condition.isUrlFilterCaseSensitive = true;
   }
 
-  const resourceTypes = asStringArray(conditionIn.resourceTypes).filter((type) =>
-    DNR_RESOURCE_TYPES.has(type),
-  );
+  const rawResourceTypes = asStringArray(conditionIn.resourceTypes);
+  const resourceTypes = rawResourceTypes.filter((type) => DNR_RESOURCE_TYPES.has(type));
+  if (resourceTypes.length !== rawResourceTypes.length) return null;
   if (resourceTypes.length) condition.resourceTypes = resourceTypes;
-  else if (asStringArray(conditionIn.resourceTypes).length) return null;
 
-  const excludedResourceTypes = asStringArray(conditionIn.excludedResourceTypes).filter((type) =>
+  const rawExcludedResourceTypes = asStringArray(conditionIn.excludedResourceTypes);
+  const excludedResourceTypes = rawExcludedResourceTypes.filter((type) =>
     DNR_RESOURCE_TYPES.has(type),
   );
+  if (excludedResourceTypes.length !== rawExcludedResourceTypes.length) return null;
   if (excludedResourceTypes.length) condition.excludedResourceTypes = excludedResourceTypes;
+
+  const rawRequestMethods = asStringArray(conditionIn.requestMethods);
+  const requestMethods = rawRequestMethods.filter((method) => DNR_REQUEST_METHODS.has(method));
+  if (requestMethods.length !== rawRequestMethods.length) return null;
+  if (requestMethods.length) condition.requestMethods = requestMethods;
+
+  const rawExcludedRequestMethods = asStringArray(conditionIn.excludedRequestMethods);
+  const excludedRequestMethods = rawExcludedRequestMethods.filter((method) =>
+    DNR_REQUEST_METHODS.has(method),
+  );
+  if (excludedRequestMethods.length !== rawExcludedRequestMethods.length) return null;
+  if (excludedRequestMethods.length) condition.excludedRequestMethods = excludedRequestMethods;
 
   const requestDomains = asStringArray(conditionIn.requestDomains);
   if (requestDomains.length) condition.requestDomains = requestDomains;
